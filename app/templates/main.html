@@ -1,12 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <ul>
+    <form action="/api/login_register">
+        Username:
+        <input type="text" name="username">
+        <br>
+        Password:
+        <input type="text" name="password">
+        <br>
+        <button type="submit" name="action" value="login">Login</button>
+        <button type="submit" name="action" value="register">Register</button>
+    </form>
+    
+    <!-- <ul>
         <li><a href="{{url_for('trivial')}}">Trivial</a></li>
         <li><a href="{{url_for('courses_list')}}">Courses</a></li>
         <li><a href="{{url_for('students_list')}}">Students</a></li>
         <li><a href="{{url_for('sections_list')}}">Sections</a></li>
 
-    </ul>
+    </ul> -->
 
 {% endblock %}
