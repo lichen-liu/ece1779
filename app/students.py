@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, request, g
 from app import webapp
 
-import mysql.connector
+#import mysql.connector
 
 import re
 

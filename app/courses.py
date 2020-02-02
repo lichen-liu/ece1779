@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, request, g
 from app import webapp
 
-import mysql.connector
+#import mysql.connector
 
 from app.config import db_config
 
@@ -26,15 +26,15 @@ def teardown_db(exception):
 @webapp.route('/courses',methods=['GET'])
 # Display an HTML list of all courses.
 def courses_list():
-    cnx = get_db()
+    # cnx = get_db()
 
-    cursor = cnx.cursor()
+    # cursor = cnx.cursor()
 
-    query = "SELECT * FROM courses"
+    # query = "SELECT * FROM courses"
 
-    cursor.execute(query)
+    # cursor.execute(query)
     
-    return render_template("courses/list.html",title="Courses List", cursor=cursor)
+    return render_template("courses/list.html",title="Courses List")#, cursor=cursor)
 
 
 @webapp.route('/courses/<int:id>',methods=['GET'])
@@ -119,38 +119,38 @@ def courses_create():
 @webapp.route('/courses/create',methods=['POST'])
 # Create a new student and save them in the database.
 def courses_create_save():
-    cnx = get_db()
-    cursor = cnx.cursor()
+    # cnx = get_db()
+    # cursor = cnx.cursor()
 
 
-    code = 
-    title = 
-    description = 
+    # code = 
+    # title = 
+    # description = 
 
-    error = False
+    # error = False
 
-    if code == "" or title== "" or description == "":
-        error=True
-        error_msg="Error: All fields are required!"
+    # if code == "" or title== "" or description == "":
+    #     error=True
+    #     error_msg="Error: All fields are required!"
     
    
-    if error:
-        return render_template("courses/new.html",
-                               title="New Course",
-                               error_msg=error_msg, 
-                               code=code, 
-                               ctitle=title, 
-                               description=description)
+    # if error:
+    #     return render_template("courses/new.html",
+    #                            title="New Course",
+    #                            error_msg=error_msg, 
+    #                            code=code, 
+    #                            ctitle=title, 
+    #                            description=description)
 
 
 
-    query = ''' INSERT INTO 
+    # query = ''' INSERT INTO 
             
-            '''
+    #         '''
     
 
-    cursor.execute(query,(               ))
-    cnx.commit()
+    # cursor.execute(query,(               ))
+    # cnx.commit()
     
     return redirect(url_for('courses_list'))
 
