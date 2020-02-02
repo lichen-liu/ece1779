@@ -1,6 +1,7 @@
 # ece1779_a1
+http://www.cs.toronto.edu/~delara/courses/ece1779/projects/ECE1779-a1.pdf
 
-## Setup
+## 1.0 Setup
 Use latest python: Python 3.8.1
 
 For Windows (Powershell):
@@ -14,7 +15,10 @@ $env:FLASK_APP = "main.py"
 python -m flask run
 ```
 
+## 2.0 Notes
+When committing the code, double check to make sure no OS/IDE-dependent temporary files are included!
 
+## 3.0 Notes Copied from the Original Course Demo Project
 ```
 All lecture and tutorial examples require the following in order to work:
     - Python 3.5 (or better)
