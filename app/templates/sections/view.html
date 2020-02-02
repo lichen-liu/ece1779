@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+    <form action='{{url_for('sections_list')}}' method='get'>
+        <input type='submit' value='Back'/ >
+    </form>
+    
+    <div>Course Name: {{ course_name }}</div>
+    <div>Time: {{time}}</div>
+    <div>Location: {{location}}</div>
+    <div>Maximum enrolment: {{max_enrolment}}</div>
+    <div>Current enrolment: {{cur_enrolment}}</div>
+    
+    <h2>Registered Students</h2>
+    
+    <ul>
+    {% for s in students %}
+        <li>{{s[0]}}</li>
+    {% endfor %}
+    </ul>
+    
+{% endblock %}

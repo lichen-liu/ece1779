@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class='error'>{{error_msg if error_mag != None}}</div>
+    
+    <form action='{{url_for('students_edit_save',id=id)}}' method='post'>
+        <div><input type="submit" value="Save"></div>
+        
+        <div> 
+        <label>Name</label>
+        <input type='text' name='name' value='{{name if name  != None}}'>
+        </div>
+        
+        <div>
+        <label>Email</label>
+        <input type='text' name='email' value='{{email if email  != None}}'>
+        </div>
+
+        <div>
+        <label>Date of Birth (YYYY-MM-DD)</label>
+        <input type='text' name='dob' value='{{dob if dob  != None}}'>
+        </div>
+
+        <div>
+        <label>Program</label>
+        <input type='text' name='program' value='{{program if program  != None}}'>
+        </div>
+
+        <div><input type="submit" value="Save"></div>
+    </form>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <ul>
+        <li><a href="{{url_for('trivial')}}">Trivial</a></li>
+        <li><a href="{{url_for('courses_list')}}">Courses</a></li>
+        <li><a href="{{url_for('students_list')}}">Students</a></li>
+        <li><a href="{{url_for('sections_list')}}">Sections</a></li>
+
+    </ul>
+
+{% endblock %}

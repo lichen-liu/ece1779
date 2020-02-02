@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <form action="{{url_for('sections_create')}}" method="get">
+        <input type="submit" value="New">
+    </form>
+
+    <table /> 
+    <thead> 
+           <th>ID</th>
+           <th>Course Code</th>
+           <th>Course Title</th>
+           <th>Time</th>
+           <th>Location</th>
+           <th>Maximum enrolment</th>
+           <th>Current enrolment</th>
+           
+           <th></th>
+           
+    </thead> 
+    {% for row in cursor %}
+        <tr>
+            <td>{{ row[0]}}</td> 
+            <td>{{ row[1]}}</td> 
+            <td>{{ row[2]}}</td> 
+            <td>{{ row[3]}}</td> 
+            <td>{{ row[4]}}</td> 
+            <td>{{ row[5]}}</td> 
+            <td>{{ row[6]}}</td> 
+            
+            <td>
+                <form action="{{url_for('sections_view',id=row[0])}}" method='get'>
+                     <input type='submit' value='Details' />
+                </form>
+            </td>
+            
+            <td>
+                <form action="{{url_for('sections_delete',id=row[0])}}" method='post' onsubmit='return confirm("Are you sure?")'>
+                    <input type='submit' value='Delete' />
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}
