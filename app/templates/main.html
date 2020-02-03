@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <form action="/api/login_register">
+    <form action="/api/account_actions" method='POST'>
         Username:
         <input type="text" name="username">
         <br>
@@ -12,12 +12,5 @@
         <button type="submit" name="action" value="register">Register</button>
     </form>
     
-    <!-- <ul>
-        <li><a href="{{url_for('trivial')}}">Trivial</a></li>
-        <li><a href="{{url_for('courses_list')}}">Courses</a></li>
-        <li><a href="{{url_for('students_list')}}">Students</a></li>
-        <li><a href="{{url_for('sections_list')}}">Sections</a></li>
-
-    </ul> -->
 
 {% endblock %}
