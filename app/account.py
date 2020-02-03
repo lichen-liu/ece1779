@@ -28,4 +28,9 @@ def account_register(username, password):
     return 'Registering: u=' + username + ' p=' + password
 
 def account_login(username, password):
+    print('Login: u=' + username + ' p=' + password)
     return 'Login: u=' + username + ' p=' + password
+
+# Mock database for accounts (Clear Text)
+# {username:password}
+accounts = dict()
