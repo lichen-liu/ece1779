@@ -16,6 +16,7 @@ def account_actions_handler():
         # No other actions are supported yet
         assert 0
 
+
 @webapp.route('/api/register', methods=['POST'])
 # API handler for account register
 def account_register_handler():
@@ -23,13 +24,43 @@ def account_register_handler():
     password = request.form.get('password')
     return account_register(username, password)
 
+
 def account_register(username, password):
     print('Registering: u=' + username + ' p=' + password)
-    return 'Registering: u=' + username + ' p=' + password
+    
+    if not username:
+        return 'Error! Username is not valid!'
+    if not password:
+        return 'Error! Password is not valid!'
+    
+    if username in accounts:
+        return 'Error! ' + username + ' is already registered!'
+
+    accounts[username] = password
+    print('    Successful!')
+
+    login_result = account_login(username, password)
+
+    return 'Successfully Registered: u=' + username + ' p=' + password + '! ' + login_result
+
 
 def account_login(username, password):
     print('Login: u=' + username + ' p=' + password)
-    return 'Login: u=' + username + ' p=' + password
+
+    if not username:
+        return 'Error! Username is not valid!'
+    if not password:
+        return 'Error! Password is not valid!'
+
+    if accounts.get(username) is None or accounts.get(username) != password:
+        return 'Error! Username or Password is not correct!'
+
+    print('    Successful!')
+    return 'Successfully Login: u=' + username + ' p=' + password
+
+
+def account_logout():
+    pass
 
 # Mock database for accounts (Clear Text)
 # {username:password}
