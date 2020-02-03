@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, request, g
+from flask import render_template, redirect, url_for, request, g, session
 from app import webapp
 
 
@@ -14,7 +14,7 @@ def account_actions_handler():
         return account_register(username, password)
     else:
         # No other actions are supported yet
-        assert 0
+        assert(False)
 
 
 @webapp.route('/api/register', methods=['POST'])
@@ -25,42 +25,73 @@ def account_register_handler():
     return account_register(username, password)
 
 
+@webapp.route('/api/logout', methods=['GET'])
+# Web handler for logout
+def account_logout_handler():
+    if account_is_logged_in():
+        account_logout()
+    return render_template('guest_welcome.html',title='Hello! NI MA ZHA LE!')
+
+
 def account_register(username, password):
     print('Registering: u=' + username + ' p=' + password)
     
+    # Validate input (format)
     if not username:
         return 'Error! Username is not valid!'
     if not password:
         return 'Error! Password is not valid!'
     
+    # Validate input (business)
     if username in accounts:
         return 'Error! ' + username + ' is already registered!'
 
+    # Register the user (business)
     accounts[username] = password
     print('    Successful!')
 
+    # Login the user (business)
     login_result = account_login(username, password)
 
-    return 'Successfully Registered: u=' + username + ' p=' + password + '! ' + login_result
+    return login_result
+
+
+def account_is_logged_in():
+    return session.get('username')
 
 
 def account_login(username, password):
-    print('Login: u=' + username + ' p=' + password)
+    if session.get('username') is None:
+        print('Login: u=' + username + ' p=' + password)
 
-    if not username:
-        return 'Error! Username is not valid!'
-    if not password:
-        return 'Error! Password is not valid!'
+        # Validate input (format)
+        if not username:
+            return 'Error! Username is not valid!'
+        if not password:
+            return 'Error! Password is not valid!'
 
-    if accounts.get(username) is None or accounts.get(username) != password:
-        return 'Error! Username or Password is not correct!'
+        # Validate input (business)
+        if accounts.get(username) is None or accounts.get(username) != password:
+            return 'Error! Username or Password is not correct!'
 
-    print('    Successful!')
-    return 'Successfully Login: u=' + username + ' p=' + password
+        # Create a session (business)
+        assert(session.get('username') is None)
+        session['username'] = username
+        session.permanent = True
+        print('    Successful!')
+
+    return render_template('user_welcome.html',title='Hello! NI MA ZHA LE!',username=session.get('username'))
 
 
 def account_logout():
-    pass
+    # Clear the session (business)
+    assert(session.get('username') is not None)
+    username = session.get('username')
+    print('Logout: u=' + username)
+    session.pop('username')
+    session.clear()
+    print('    Successful!')
+
 
 # Mock database for accounts (Clear Text)
 # {username:password}

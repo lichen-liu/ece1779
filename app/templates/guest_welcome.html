@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <form action="/api/account_actions" method='POST'>
+    <form action="/api/account_actions" method="POST">
         Username:
         <input type="text" name="username">
         <br>
@@ -11,6 +11,5 @@
         <button type="submit" name="action" value="login">Login</button>
         <button type="submit" name="action" value="register">Register</button>
     </form>
-    
 
 {% endblock %}

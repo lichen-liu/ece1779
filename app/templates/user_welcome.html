@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+
+    Welcome {{username}}
+
+    <form action="/api/logout" method="GET">
+        <input type="submit" value="Logout" onclick="return confirm('{{username}}, Do you really want to log out?')">
+    </form>
+
+{% endblock %}
