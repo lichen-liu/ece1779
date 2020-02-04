@@ -8,9 +8,8 @@ from app import account
 @webapp.route('/main',methods=['GET'])
 # Display an HTML page with links
 def main_handler():
-    logged_in_user = account.account_is_logged_in()
-    if logged_in_user:
-        return render_template('user_welcome.html',title='Hello! NI BA ZHA LE!',username=logged_in_user)
+    if account.account_is_logged_in():
+        return render_template('user_welcome.html',title='Hello! NI BA ZHA LE!',username=account.account_get_logged_in_user())
     else:
         return main_guest_welcome()
 

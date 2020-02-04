@@ -74,6 +74,11 @@ def account_is_logged_in():
     return session.get('username') is not None
 
 
+def account_get_logged_in_user():
+    assert(account_is_logged_in())
+    return session['username']
+
+
 def account_login(username, password, rememberme=False):
     if not account_is_logged_in():
         print('Login: u=' + username + ' p=' + password + ' rememberme=' + str(rememberme))
@@ -99,8 +104,7 @@ def account_login(username, password, rememberme=False):
 
 def account_logout():
     # Clear the session (business)
-    assert(account_is_logged_in())
-    username = session.get('username')
+    username = account_get_logged_in_user()
     print('Logout: u=' + username)
     session.pop('username')
     session.clear()
