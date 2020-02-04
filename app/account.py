@@ -45,6 +45,10 @@ def account_register(username, password):
     # Validate input (business)
     if username in accounts:
         return 'Error! ' + username + ' is already registered!'
+    
+    USERNAME_MAX_LENGTH = 100
+    if len(username) > USERNAME_MAX_LENGTH:
+        return 'Error! ' + username + ' exceeds ' + str(USERNAME_MAX_LENGTH) + ' characters!'
 
     # Register the user (business)
     accounts[username] = password
