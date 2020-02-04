@@ -15,3 +15,4 @@ print('PERMANENT_SESSION_LIFETIME = ' + str(webapp.config['PERMANENT_SESSION_LIF
 
 from app import account
 from app import main
+from app import uploadPhoto

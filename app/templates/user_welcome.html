@@ -7,4 +7,16 @@
         <input type="submit" value="Logout" onclick="return confirm('{{username}}, Do you really want to log out?')">
     </form>
 
+    Upload your favorate photo here
+
+    <form method="post" action="/api/handle_photo_upload" enctype="multipart/form-data">
+        <dl>
+            <p>
+                <input type="file" name="file" autocomplete="off" required>
+            </p>
+        </dl>
+        <p>
+            <input type="submit" value="Submit">
+        </p>
+    </form>
 {% endblock %}

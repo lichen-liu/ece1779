@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+    Upload your favorate photo {{username}}
+
+    <form method="post" action="/" enctype="multipart/form-data">
+        <dl>
+            <p>
+                <input type="file" name="file" autocomplete="off" required>
+            </p>
+        </dl>
+        <p>
+            <input type="submit" value="Submit">
+        </p>
+    </form>
+
+{% endblock %}
