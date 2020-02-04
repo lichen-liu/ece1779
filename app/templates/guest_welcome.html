@@ -3,14 +3,16 @@
 
     <form action="/api/account_actions" method="POST">
         Username:
-        <input type="text" name="username">
+        <input type="text" name="username" value={{username if username}}>
         <br>
         Password:
-        <input type="text" name="password">
+        <input type="text" name="password" value={{password if password}}>
         <br>
         <input type="checkbox" name="rememberme" value="True">Remember Me</input>
         <button type="submit" name="action" value="login">Login</button>
         <button type="submit" name="action" value="register">Register</button>
     </form>
+
+    <p style="color:red">{{error_message if error_message}}</p>
 
 {% endblock %}

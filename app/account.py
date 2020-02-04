@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, request, g, session
-from app import webapp
+from app import webapp, main
 
 
 @webapp.route('/api/account_actions', methods=['POST'])
@@ -39,17 +39,17 @@ def account_register(username, password, rememberme=False):
     
     # Validate input (format)
     if not username:
-        return 'Error! Username is not valid!'
+        return main.main_guest_welcome(username, password, 'Error! Username is not valid!')
     if not password:
-        return 'Error! Password is not valid!'
+        return main.main_guest_welcome(username, password, 'Error! Password is not valid!')
     
     # Validate input (business)
     if username in accounts:
-        return 'Error! ' + username + ' is already registered!'
+        return main.main_guest_welcome(username, password, 'Error! ' + username + ' is already registered!')
     
     USERNAME_MAX_LENGTH = 100
     if len(username) > USERNAME_MAX_LENGTH:
-        return 'Error! ' + username + ' exceeds ' + str(USERNAME_MAX_LENGTH) + ' characters!'
+        return main.main_guest_welcome(username, password, 'Error! "' + username + '" exceeds ' + str(USERNAME_MAX_LENGTH) + ' characters!')
 
     # Register the user (business)
     accounts[username] = password
@@ -71,13 +71,13 @@ def account_login(username, password, rememberme=False):
 
         # Validate input (format)
         if not username:
-            return 'Error! Username is not valid!'
+            return main.main_guest_welcome(username, password, 'Error! Username is not valid!')
         if not password:
-            return 'Error! Password is not valid!'
+            return main.main_guest_welcome(username, password, 'Error! Password is not valid!')
 
         # Validate input (business)
         if accounts.get(username) is None or accounts.get(username) != password:
-            return 'Error! Username or Password is not correct!'
+            return main.main_guest_welcome(username, password, 'Error! Username or Password is not correct!')
 
         # Create a session (business)
         assert(session.get('username') is None)
