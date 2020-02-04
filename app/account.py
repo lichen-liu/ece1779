@@ -30,7 +30,7 @@ def account_register_handler():
 def account_logout_handler():
     if account_is_logged_in():
         account_logout()
-    return render_template('guest_welcome.html',title='Hello! NI MA ZHA LE!')
+    return redirect('/')
 
 
 def account_register(username, password):
@@ -84,7 +84,7 @@ def account_login(username, password):
         session.permanent = True
         print('    Successful!')
 
-    return render_template('user_welcome.html',title='Hello! NI MA ZHA LE!',username=session.get('username'))
+    return redirect('/')
 
 
 def account_logout():
