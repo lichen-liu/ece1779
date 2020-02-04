@@ -1,14 +1,19 @@
 from flask import render_template, redirect, url_for, request, g, session
 from app import webapp, main
+import random
+import hashlib
+import struct
 
 
 @webapp.route('/api/account_actions', methods=['POST'])
 # Web handler for account actions
 def account_actions_handler():
+    # Get requests
     account_action_type = request.form.get('action')
     username = request.form.get('username')
     password = request.form.get('password')
     rememberme = (request.form.get('rememberme') == 'True')
+
     if account_action_type == 'login':
         return account_login(username, password, rememberme)
     elif account_action_type == 'register':
@@ -21,8 +26,10 @@ def account_actions_handler():
 @webapp.route('/api/register', methods=['POST'])
 # API handler for account register
 def account_register_handler():
+    # Get requests
     username = request.form.get('username')
     password = request.form.get('password')
+
     return account_register(username, password)
 
 
@@ -52,7 +59,9 @@ def account_register(username, password, rememberme=False):
         return main.main_guest_welcome(username, password, 'Error! "' + username + '" exceeds ' + str(USERNAME_MAX_LENGTH) + ' characters!')
 
     # Register the user (business)
-    accounts[username] = password
+    salt = random.random()
+    encrypted_password = account_hash_password(password, salt)
+    accounts[username] = (encrypted_password, salt)
     print('    Successful!')
 
     # Login the user (business)
@@ -62,11 +71,11 @@ def account_register(username, password, rememberme=False):
 
 
 def account_is_logged_in():
-    return session.get('username')
+    return session.get('username') is not None
 
 
 def account_login(username, password, rememberme=False):
-    if session.get('username') is None:
+    if not account_is_logged_in():
         print('Login: u=' + username + ' p=' + password + ' rememberme=' + str(rememberme))
 
         # Validate input (format)
@@ -76,11 +85,11 @@ def account_login(username, password, rememberme=False):
             return main.main_guest_welcome(username, password, 'Error! Password is not valid!')
 
         # Validate input (business)
-        if accounts.get(username) is None or accounts.get(username) != password:
+        if accounts.get(username) is None or not account_verify_password(username, password):
             return main.main_guest_welcome(username, password, 'Error! Username or Password is not correct!')
 
         # Create a session (business)
-        assert(session.get('username') is None)
+        assert(not account_is_logged_in())
         session['username'] = username
         session.permanent = rememberme
         print('    Successful!')
@@ -90,7 +99,7 @@ def account_login(username, password, rememberme=False):
 
 def account_logout():
     # Clear the session (business)
-    assert(session.get('username') is not None)
+    assert(account_is_logged_in())
     username = session.get('username')
     print('Logout: u=' + username)
     session.pop('username')
@@ -98,6 +107,26 @@ def account_logout():
     print('    Successful!')
 
 
+def account_verify_password(username, password):
+    encrypted_password, salt = accounts[username]
+    return account_hash_password(password, salt) == encrypted_password
+
+
+def account_hash_password(password, salt):
+    '''
+    password must be a str type
+    salt must be a float type
+    encrypted_password is bytes type
+    '''
+
+    password_salt_bytearray = bytearray()
+    password_salt_bytearray.extend(str(password).encode())
+    password_salt_bytearray.extend(struct.pack('f', float(salt)))
+
+    encrypted_password = hashlib.sha256(password_salt_bytearray).digest()
+    return encrypted_password
+
+
 # Mock database for accounts (Clear Text)
-# {username:password}
+# {username:(account_hash_password(password+salt):bytes, salt:float)}
 accounts = dict()
