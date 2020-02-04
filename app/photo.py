@@ -17,6 +17,7 @@ def photo_upload_handler():
 
     photo_file = request.files['file']
     # filename here must be renamed, because we have to support user uploading different images with same name
+    # This can be fixed by storing a mapping of file_id to file_name. Assign a new file_id, set path+file_id as filename
     filename = photo_file.filename
 
     if not os.path.exists(users_photo_dir):
@@ -37,3 +38,8 @@ def photo_upload_handler():
 #     image = Image.open(image_file)
 #     image.thumbnail(size, Image.ANTIALIAS)
 #     return image
+
+
+# Mock database for photos
+# {file_id: (original_filename, user)}
+photos = dict()

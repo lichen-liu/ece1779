@@ -133,6 +133,6 @@ def account_hash_password(password, salt):
     return encrypted_password
 
 
-# Mock database for accounts (Clear Text)
+# Mock database for accounts (Encrypted Text)
 # {username:(account_hash_password(password+salt):bytes, salt:float)}
 accounts = dict()
