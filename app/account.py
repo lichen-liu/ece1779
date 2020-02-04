@@ -1,8 +1,10 @@
-from flask import render_template, redirect, url_for, request, g, session
-from app import webapp, main
-import random
 import hashlib
+import random
 import struct
+
+from flask import g, redirect, render_template, request, session, url_for
+
+from app import main, webapp
 
 
 @webapp.route('/api/account_actions', methods=['POST'])

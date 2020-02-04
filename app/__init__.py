@@ -1,6 +1,9 @@
 
-from flask import Flask
 from datetime import timedelta
+
+from flask import Flask
+
+from app import account, main, photo
 
 webapp = Flask(__name__)
 webapp.config['SECRET_KEY'] = 'NIDEMAMAMASHANGJIUYAOBAOZHALE'
@@ -12,7 +15,3 @@ print('PERMANENT_SESSION_LIFETIME = ' + str(webapp.config['PERMANENT_SESSION_LIF
 # from app import courses
 # from app import students
 # from app import sections
-
-from app import account
-from app import main
-from app import uploadPhoto
