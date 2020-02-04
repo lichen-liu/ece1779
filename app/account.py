@@ -8,10 +8,11 @@ def account_actions_handler():
     account_action_type = request.form.get('action')
     username = request.form.get('username')
     password = request.form.get('password')
+    rememberme = (request.form.get('rememberme') == 'True')
     if account_action_type == 'login':
-        return account_login(username, password)
+        return account_login(username, password, rememberme)
     elif account_action_type == 'register':
-        return account_register(username, password)
+        return account_register(username, password, rememberme)
     else:
         # No other actions are supported yet
         assert(False)
@@ -33,7 +34,7 @@ def account_logout_handler():
     return redirect('/')
 
 
-def account_register(username, password):
+def account_register(username, password, rememberme=False):
     print('Registering: u=' + username + ' p=' + password)
     
     # Validate input (format)
@@ -55,7 +56,7 @@ def account_register(username, password):
     print('    Successful!')
 
     # Login the user (business)
-    login_result = account_login(username, password)
+    login_result = account_login(username, password, rememberme)
 
     return login_result
 
@@ -64,9 +65,9 @@ def account_is_logged_in():
     return session.get('username')
 
 
-def account_login(username, password):
+def account_login(username, password, rememberme=False):
     if session.get('username') is None:
-        print('Login: u=' + username + ' p=' + password)
+        print('Login: u=' + username + ' p=' + password + ' rememberme=' + str(rememberme))
 
         # Validate input (format)
         if not username:
@@ -81,7 +82,7 @@ def account_login(username, password):
         # Create a session (business)
         assert(session.get('username') is None)
         session['username'] = username
-        session.permanent = True
+        session.permanent = rememberme
         print('    Successful!')
 
     return redirect('/')
