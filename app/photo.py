@@ -12,6 +12,8 @@ from urllib.parse import unquote_plus
 def photo_upload_handler():
    
     photo_file = request.files['file']
+    # Should change the filename, store the original name to sql
+    # This is for both security and business logic consideration
     filename = photo_file.filename
     photo_file.save(os.path.join(directory.get_user_photos_dir_path(), filename))
 
@@ -23,30 +25,33 @@ def photo_upload_handler():
 
 
 # #Just use this for now, my friend
-# # it crashes on my computer
+# #It crashes on my computer
 # def get_thumbnail_for_image(image_file):
 #     image = Image.open(image_file)
 #     image.thumbnail(current_app.config["THUMBNAIL_SIZE"], Image.ANTIALIAS)
 #     return image
 
 
-@webapp.route('/api/thumbnail_display', methods=['POST'])
-def display_thumbnails():
+def get_thumbnails():
+    '''
+    (user_thumbnails_dir_rel, [thumbnail_file])
+    '''
+    user_thumbnails_dir = directory.get_user_photos_dir_path()
+    user_thumbnails_dir_rel = directory.get_user_photos_dir_path(False)
 
-    all_user_thumbnails = os.listdir(directory.get_user_photos_dir_path())
-
-    return render_template('thumbnail_display.html', \
-    thumbnails = all_user_thumbnails, \
-    root_path = directory.get_user_photos_dir_path(False))
+    # TODO: Also display the original file name
+    return (user_thumbnails_dir_rel, [f for f in os.listdir(user_thumbnails_dir) if os.path.isfile(os.path.join(user_thumbnails_dir, f))])
 
 
-@webapp.route('/api/photo_display', methods=['GET'])
-def display_photo():
-
-    return render_template('display_photo.html', \
-    photo_name = unquote_plus(request.args.get('file_name')), \
-    root_path = directory.get_user_photos_dir_path(False))
-
+@webapp.route('/api/photo_display', methods=['POST'])
+def display_photo_handler():
+    # TODO: Also display the original file name
+    if account.account_is_logged_in():
+        photo_file = request.form.get('photo_file')
+        return render_template(
+            'display_photo.html', photo_file=photo_file, photo_dir_path=directory.get_user_photos_dir_path(False))
+    else:
+        return render_template('empty_go_home.html', title='Error', message='Please try again!')
 
 # Mock database for photos
 # {file_id: (original_filename, user)}

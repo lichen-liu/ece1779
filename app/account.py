@@ -17,12 +17,15 @@ def account_actions_handler():
     rememberme = (request.form.get('rememberme') == 'True')
 
     if account_action_type == 'login':
-        return account_login(username, password, rememberme)
-    elif account_action_type == 'register':
-        return account_register(username, password, rememberme)
+        err_msg = account_login(username, password, rememberme)
     else:
-        # No other actions are supported yet
-        assert(False)
+        assert(account_action_type == 'register')
+        err_msg = account_register(username, password, rememberme)
+
+    if err_msg:
+        return main.main_guest_welcome(username, password, err_msg)
+    else:
+        return redirect('/')
 
 
 @webapp.route('/api/register', methods=['POST'])
@@ -32,33 +35,52 @@ def account_register_handler():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    return account_register(username, password)
+    err_msg = account_register(username, password)
+
+    if err_msg:
+        return main.main_guest_welcome(username, password, err_msg)
+    else:
+        return redirect('/')
 
 
 @webapp.route('/api/logout', methods=['GET'])
 # Web handler for logout
 def account_logout_handler():
-    if account_is_logged_in():
-        account_logout()
+    account_logout()
     return redirect('/')
 
 
+def account_is_logged_in():
+    return session.get('username') is not None
+
+
+def account_get_logged_in_user():
+    assert(account_is_logged_in())
+    return session['username']
+
+
 def account_register(username, password, rememberme=False):
+    '''
+    if successful, None; else error message
+    '''
     print('Registering: u=' + username + ' p=' + password)
+
+    if account_is_logged_in():
+        account_logout()
     
     # Validate input (format)
     if not username:
-        return main.main_guest_welcome(username, password, 'Error! Username is not valid!')
+        return 'Error! Username is not valid!'
     if not password:
-        return main.main_guest_welcome(username, password, 'Error! Password is not valid!')
-    
+        return 'Error! Password is not valid!'
+
     # Validate input (business)
     if username in accounts:
-        return main.main_guest_welcome(username, password, 'Error! ' + username + ' is already registered!')
+        return 'Error! ' + username + ' is already registered!'
     
     USERNAME_MAX_LENGTH = 100
     if len(username) > USERNAME_MAX_LENGTH:
-        return main.main_guest_welcome(username, password, 'Error! "' + username + '" exceeds ' + str(USERNAME_MAX_LENGTH) + ' characters!')
+        return 'Error! "' + username + '" exceeds ' + str(USERNAME_MAX_LENGTH) + ' characters!'
 
     # Register the user (business)
     salt = random.random()
@@ -72,45 +94,36 @@ def account_register(username, password, rememberme=False):
     return login_result
 
 
-def account_is_logged_in():
-    return session.get('username') is not None
-
-
-def account_get_logged_in_user():
-    assert(account_is_logged_in())
-    return session['username']
-
-
 def account_login(username, password, rememberme=False):
-    if not account_is_logged_in():
-        print('Login: u=' + username + ' p=' + password + ' rememberme=' + str(rememberme))
+    '''
+    if successful, None; else error message
+    '''
+    if account_is_logged_in():
+        account_logout()
 
-        # Validate input (format)
-        if not username:
-            return main.main_guest_welcome(username, password, 'Error! Username is not valid!')
-        if not password:
-            return main.main_guest_welcome(username, password, 'Error! Password is not valid!')
+    print('Login: u=' + username + ' p=' + password + ' rememberme=' + str(rememberme))
 
-        # Validate input (business)
-        if accounts.get(username) is None or not account_verify_password(username, password):
-            return main.main_guest_welcome(username, password, 'Error! Username or Password is not correct!')
+    # Validate input (business)
+    if accounts.get(username) is None or not account_verify_password(username, password):
+        return 'Error! Username or Password is not correct!'
 
-        # Create a session (business)
-        assert(not account_is_logged_in())
-        session['username'] = username
-        session.permanent = rememberme
-        print('    Successful!')
-
-    return redirect('/')
+    # Create a session (business)
+    assert(not account_is_logged_in())
+    session['username'] = username
+    session.permanent = rememberme
+    print('    Successful!')
 
 
 def account_logout():
-    # Clear the session (business)
-    username = account_get_logged_in_user()
-    print('Logout: u=' + username)
-    session.pop('username')
-    session.clear()
-    print('    Successful!')
+    if account_is_logged_in():
+        # Clear the session (business)
+        username = account_get_logged_in_user()
+        print('Logout: u=' + username)
+        session.pop('username')
+        session.clear()
+        print('    Successful!')
+    else:
+        print('Already logged out!')
 
 
 def account_verify_password(username, password):

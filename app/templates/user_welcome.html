@@ -3,7 +3,7 @@
 
     Welcome {{username}}
 
-    <form action="/api/logout" method="GET">
+    <form action="/api/logout" method="POST">
         <input type="submit" value="Logout" onclick="return confirm('{{username}}, Do you really want to log out?')">
     </form>
 
@@ -21,8 +21,28 @@
         </p>
     </form>
 
-    <form action="/api/thumbnail_display" method="POST">
-        <button type="submit">thumbnail display test</button>
-     </form>
+
+    {% for thumbnail_row in thumbnails | batch(3, '') %}
+    <div class="row">
+        {% for thumbnail in thumbnail_row %}
+        {% if (thumbnail != '') %}
+        <div style="
+ border: 2px solid grey;
+ margin: 0 auto;
+ text-align: center;
+ padding: 3px;
+ display:inline-block;">
+
+            <form action='/api/photo_display' method="POST" width="200">
+                <input type="image" src="{{ url_for('static', filename = thumbnail_dir_path + '/' + thumbnail) }}" value={{thumbnail}} width=200>
+                <input type="hidden" name="photo_file" value={{thumbnail|replace(' ','%20')}} />
+            </form> 
+        </div>
+        {% endif %}
+        {% endfor %}
+        
+    </div>
+    {% endfor %} 
+
 
 {% endblock %}
