@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class=page>
+        <img src="{{ url_for('static', filename = root_path + '/' + photo_name) }}"/>
+    </div>
+{% endblock %}

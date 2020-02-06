@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+            {% for thumbnail_row in thumbnails | batch(3, '') %}
+            <div class="row">
+                {% for thumbnail in thumbnail_row %}
+                {% if (thumbnail != '') %}
+                <div style="
+         border: 2px solid grey;
+         margin: 0 auto;
+         text-align: center;
+         padding: 3px;
+         display:inline-block;">
+        
+                    <form action='/api/photo_display' method="GET" width="200">
+                        <input type="image" src="{{ url_for('static', filename = root_path + '/' + thumbnail) }}" value={{thumbnail}}>
+                        <input type="hidden" name="file_name" value={{thumbnail|replace(' ','%20')}} />
+                    </form> 
+                </div>
+                {% endif %}
+                {% endfor %}
+                
+            </div>
+            {% endfor %} 
+{% endblock %}
+
+
