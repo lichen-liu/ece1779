@@ -61,7 +61,7 @@ def account_get_logged_in_user():
 
 def account_register(username, password, rememberme=False):
     '''
-    if successful, None; else error message
+    if successful, None; else, error message
     '''
     print('Registering: u=' + username + ' p=' + password)
 
@@ -96,7 +96,7 @@ def account_register(username, password, rememberme=False):
 
 def account_login(username, password, rememberme=False):
     '''
-    if successful, None; else error message
+    if successful, None; else, error message
     '''
     if account_is_logged_in():
         account_logout()
