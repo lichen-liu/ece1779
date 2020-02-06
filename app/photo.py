@@ -6,6 +6,7 @@ from PIL import Image
 from app import webapp, path, account
 from urllib.parse import unquote_plus
 
+
 @webapp.route('/api/upload', methods=['POST'])
 def photo_upload_handler():
    
@@ -17,12 +18,14 @@ def photo_upload_handler():
     thumbnail.save(os.path.join(path.get_user_thumbnail_directory_path(), filename))
    
     return redirect('/')
-     #return render_template('user_welcome.html',title='Photo Upload Successfully', username=account.account_get_logged_in_user())
+    #return render_template('user_welcome.html',title='Photo Upload Successfully', username=account.account_get_logged_in_user())
 
+#Just use this for now, my friend
 def get_thumbnail_for_image(image_file):
     image = Image.open(image_file)
     image.thumbnail(current_app.config["THUMBNAIL_SIZE"], Image.ANTIALIAS)
     return image
+
 
 @webapp.route('/api/thumbnail_display', methods=['POST'])
 def display_thumbnails():
