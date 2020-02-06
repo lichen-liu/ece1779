@@ -4,13 +4,21 @@ from flask import (redirect, render_template, request, url_for, current_app)
 #The handour says you CAN user MaxxMagic, I think it means we can use anything we want
 # they will run loadtester, we better stick with the handout to avoid risks 
 #from PIL import Image
-from app import webapp, directory, account
+from app import webapp, directory, account, main
 from urllib.parse import unquote_plus
 
 
 @webapp.route('/api/upload', methods=['POST'])
 def photo_upload_handler():
-   
+   # Get requests
+   # NOT TESTED YET!
+    username = request.form.get('username')
+    password = request.form.get('password')
+    if username is not None or password is not None:
+        err_msg = account.account_login(username, password)
+        if err_msg:
+            return main.main_guest_welcome(username, password, err_msg)
+
     photo_file = request.files['file']
     # Should change the filename, store the original name to sql
     # This is for both security and business logic consideration

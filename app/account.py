@@ -32,6 +32,7 @@ def account_actions_handler():
 # API handler for account register
 def account_register_handler():
     # Get requests
+    # NOT TESTED YET!
     username = request.form.get('username')
     password = request.form.get('password')
 
@@ -43,7 +44,7 @@ def account_register_handler():
         return redirect('/')
 
 
-@webapp.route('/api/logout', methods=['GET'])
+@webapp.route('/api/logout', methods=['POST'])
 # Web handler for logout
 def account_logout_handler():
     account_logout()
