@@ -35,6 +35,13 @@ def get_user_thumbnails_dir_path(absolute=True):
         return get_user_dir_path(absolute) + '/' + 'thumbnails'
 
 
+def get_user_rectangles_dir_path(absolute=True):
+    if absolute:
+        return os.path.join(get_user_dir_path(absolute), 'rectangles')
+    else:
+        return get_user_dir_path(absolute) + '/' + 'rectangles'
+
+
 def create_static_dir_if_necessary():
     if not os.path.exists(get_static_dir_path()):
         os.mkdir(get_static_dir_path())
@@ -60,9 +67,15 @@ def create_user_thumbnails_dir_if_necessary():
         os.mkdir(get_user_thumbnails_dir_path())
 
 
+def create_user_rectangles_dir_if_necessary():
+    if not os.path.exists(get_user_rectangles_dir_path()):
+        os.mkdir(get_user_rectangles_dir_path())
+
+
 def create_directory_if_necessary():
     create_static_dir_if_necessary()
     create_root_dir_if_necessary()
     create_user_dir_if_necessary()
     create_user_photos_dir_if_necessary()
     create_user_thumbnails_dir_if_necessary()
+    create_user_rectangles_dir_if_necessary()
