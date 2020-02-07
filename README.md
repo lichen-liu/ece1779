@@ -14,6 +14,12 @@ cd app
 $env:FLASK_APP = "main.py"
 python -m flask run
 ```
+For Mac:
+```
+cd app
+export FLASK_APP = "main.py"
+python -m flask run
+```
 
 ## 2.0 Notes
 When committing the code, double check to make sure no OS/IDE-dependent temporary files are included!
