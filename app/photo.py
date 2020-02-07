@@ -1,23 +1,36 @@
 
 import os
-from flask import (redirect, render_template, request, url_for, current_app)
+from flask import (redirect, render_template, request, url_for, current_app, abort)
 #The handour says you CAN user MaxxMagic, I think it means we can use anything we want
 # they will run loadtester, we better stick with the handout to avoid risks 
 #from PIL import Image
-from app import webapp, directory, account, main
-from urllib.parse import unquote_plus
+from app import webapp, directory, account, main, utility
 
 
 @webapp.route('/api/upload', methods=['POST'])
 def photo_upload_handler():
    # Get requests
    # NOT TESTED YET!
+    is_from_api = False
     username = request.form.get('username')
     password = request.form.get('password')
     if username is not None or password is not None:
         err_msg = account.account_login(username, password)
         if err_msg:
-            return main.main_guest_welcome(username, password, err_msg)
+            abort(401)
+        else:
+            is_from_api = True
+
+    # Check file size
+    cl = request.content_length
+    MAX_FILE_SIZE = 5 * 1024 * 1024
+    if cl is not None and cl > MAX_FILE_SIZE:
+        if is_from_api:
+            abort(413)
+        else:
+            return main.main(
+                user_welcome_args=main.UserWelcomeArgs(
+                    error_message='Error! File too large (' + utility.convert_bytes(cl) + '). It must be smaller than ' + utility.convert_bytes(MAX_FILE_SIZE) + '.'))
 
     photo_file = request.files['file']
     # Should change the filename, store the original name to sql

@@ -2,7 +2,7 @@ import hashlib
 import random
 import struct
 
-from flask import g, redirect, render_template, request, session, url_for
+from flask import g, redirect, render_template, request, session, url_for, abort
 
 from app import main, webapp
 
@@ -23,7 +23,7 @@ def account_actions_handler():
         err_msg = account_register(username, password, rememberme)
 
     if err_msg:
-        return main.main_guest_welcome(username, password, err_msg)
+        return main.main(guest_welcome_args=main.GuestWelcomeArgs(username=username, password=password, error_message=err_msg))
     else:
         return redirect('/')
 
@@ -39,7 +39,7 @@ def account_register_handler():
     err_msg = account_register(username, password)
 
     if err_msg:
-        return main.main_guest_welcome(username, password, err_msg)
+        abort(406)
     else:
         return redirect('/')
 
