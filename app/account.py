@@ -84,7 +84,7 @@ def account_register(username, password, rememberme=False):
         return 'Error! "' + username + '" exceeds ' + str(USERNAME_MAX_LENGTH) + ' characters!'
 
     # Register the user (business)
-    salt = random.random()
+    salt = bytes(random.getrandbits(8) for _ in range(4))
     encrypted_password = account_hash_password(password, salt)
     accounts[username] = (encrypted_password, salt)
     print('    Successful!')
@@ -135,18 +135,18 @@ def account_verify_password(username, password):
 def account_hash_password(password, salt):
     '''
     password must be a str type
-    salt must be a float type
-    encrypted_password is bytes type
+    salt must be a 4-byte bytes type
+    encrypted_password is a 32-byte bytes type
     '''
 
     password_salt_bytearray = bytearray()
     password_salt_bytearray.extend(str(password).encode())
-    password_salt_bytearray.extend(struct.pack('f', float(salt)))
+    password_salt_bytearray.extend(salt)
 
     encrypted_password = hashlib.sha256(password_salt_bytearray).digest()
     return encrypted_password
 
 
 # Mock database for accounts (Encrypted Text)
-# {username:(account_hash_password(password+salt):bytes, salt:float)}
+# {username:(account_hash_password(password+salt):32 bytes, salt:4 bytes)}
 accounts = dict()
