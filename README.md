@@ -20,14 +20,16 @@ cd app
 export FLASK_APP = "main.py"
 python -m flask run --host=0.0.0.0
 ```
-AWS IP:
+
+## 2.0 AWS IP:
 
 [http://52.207.56.96:5000/](http://52.207.56.96:5000/)
 
-## 2.0 Notes
+
+## 3.0 Notes
 When committing the code, double check to make sure no OS/IDE-dependent temporary files are included!
 
-## 3.0 Notes Copied from the Original Course Demo Project
+## 4.0 Notes Copied from the Original Course Demo Project
 ```
 All lecture and tutorial examples require the following in order to work:
     - Python 3.5 (or better)
