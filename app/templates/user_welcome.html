@@ -35,6 +35,7 @@
 
             <form action='/api/photo_display' method="POST" width="200">
                 <input type="image" src="{{ url_for('static', filename = thumbnail_dir_path + '/' + thumbnail) }}" value={{thumbnail}} width=200>
+                <!--Need to encode space as %20-->
                 <input type="hidden" name="photo_file" value={{thumbnail|replace(' ','%20')}} />
             </form> 
         </div>

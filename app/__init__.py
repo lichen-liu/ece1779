@@ -7,7 +7,7 @@ from flask import Flask
 
 webapp = Flask(__name__)
 webapp.config['SECRET_KEY'] = 'NIDEMAMAMASHANGJIUYAOBAOZHALE'
-webapp.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes = 1)
+webapp.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes = 100)
 webapp.config['SESSION_REFRESH_EACH_REQUEST'] = True
 webapp.config['THUMBNAIL_SIZE'] = (120,120)
 

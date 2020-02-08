@@ -8,7 +8,7 @@ from app import account, webapp, directory, photo
 def main_handler():
     if account.account_is_logged_in():
         # Not a good practice to do it here
-        directory.create_directory_if_necessary()
+        directory.create_user_directory_if_necessary()
         return main_user_welcome()
     else:
         return main_guest_welcome()
@@ -21,6 +21,8 @@ def main_guest_welcome(username=None, password=None, error_message=None, title='
 
 def main_user_welcome(title='Hello! NI BA ZHA LE!'):
     thumbnail_dir_path, thumbnails = photo.get_thumbnails()
+    print(thumbnail_dir_path)
+    print(thumbnails)
     return render_template(
         'user_welcome.html',title=title,username=account.account_get_logged_in_user(),
         thumbnails=thumbnails, thumbnail_dir_path=thumbnail_dir_path)

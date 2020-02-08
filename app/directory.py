@@ -3,7 +3,7 @@ from app import account
 
 
 def get_static_dir_path():
-    return os.path.join(os.getcwd(), 'static')
+    return os.path.join(os.getcwd(), 'app/static')
 
 
 def get_root_dir_path(absolute=True):
@@ -59,10 +59,11 @@ def create_user_thumbnails_dir_if_necessary():
     if not os.path.exists(get_user_thumbnails_dir_path()):
         os.mkdir(get_user_thumbnails_dir_path())
 
-
-def create_directory_if_necessary():
+def create_static_and_data_directory_if_necessary():
     create_static_dir_if_necessary()
     create_root_dir_if_necessary()
+
+def create_user_directory_if_necessary():
     create_user_dir_if_necessary()
     create_user_photos_dir_if_necessary()
     create_user_thumbnails_dir_if_necessary()
