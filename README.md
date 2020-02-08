@@ -1,19 +1,36 @@
 # ece1779_a1
 http://www.cs.toronto.edu/~delara/courses/ece1779/projects/ECE1779-a1.pdf
 
-## 1.0 Setup
-Use latest python: Python 3.8.1
 
-For Windows (Powershell):
+## 1.0 Setup
+
+
+### 1.1 Flask
+Use: Python 3.8.1
 ```
 python -m venv venv
 venv\Scripts\activate
 pip install Flask
+```
 
+
+### 1.2 MySQL
+Use: MySQL Community Server 8.0.19
+```
+https://dev.mysql.com/downloads/mysql/
+"Developer Default"
+```
+
+
+## 2.0 To Run
+
+For Windows (Powershell)
+```
 cd app
 $env:FLASK_APP = "main.py"
 python -m flask run
 ```
+
 For Mac:
 ```
 cd app
@@ -21,15 +38,17 @@ export FLASK_APP = "main.py"
 python -m flask run --host=0.0.0.0
 ```
 
-## 2.0 AWS IP:
+
+## 3.0 AWS IP:
 
 [http://52.207.56.96:5000/](http://52.207.56.96:5000/)
 
 
-## 3.0 Notes
+## 4.0 Notes
 When committing the code, double check to make sure no OS/IDE-dependent temporary files are included!
 
-## 4.0 Notes Copied from the Original Course Demo Project
+
+## 5.0 Notes Copied from the Original Course Demo Project
 ```
 All lecture and tutorial examples require the following in order to work:
     - Python 3.5 (or better)
