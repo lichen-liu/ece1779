@@ -1,18 +1,110 @@
 {% extends "base.html" %}
 {% block content %}
-
-    <form action="/api/account_actions" method="POST">
-        Username:
-        <input type="text" name="username" value={{username if username}}>
-        <br>
-        Password:
-        <input type="text" name="password" value={{password if password}}>
-        <br>
-        <input type="checkbox" name="rememberme" value="True">Remember Me</input>
-        <button type="submit" name="action" value="login">Login</button>
-        <button type="submit" name="action" value="register">Register</button>
-    </form>
-
+    <div class="base">
+        <div class="holderCommon holder1">
+            <img class="title_icon" src="../static/icons/title_icon2.png"></img>
+            <font class="title" size="6">Accurate.</font>
+        </div>
+        <div class="holderCommon holder2">
+                <img class="title_icon" src="../static/icons/title_icon.png"></img>
+                <font class="title" size="6">Intelligent.</font>
+            </div>
+            <div class="holderCommon holder3">
+                    <img class="title_icon" src="../static/icons/title_icon3.png"></img>
+                    <font class="title" size="6">Massive Store.</font>
+                </div>
+            <form class="holderCommon form" action="/api/account_actions" method="POST"> 
+                <img class="login_icon" src="../static/icons/login_icon.png"></img>
+                <br>
+                <div class="input">
+                    <input placeholder="Username" type="text" name="username" value={{username if username}}>
+                    <br>
+                    <input placeholder="Password" type="text" name="password" value={{password if password}}>
+                    <br>
+                    <input type="checkbox" name="rememberme" value="True">Remember Me</input>
+                    <br>
+                    <button type="submit" name="action" value="login">Login</button>
+                    <button type="submit" name="action" value="register">Register</button>
+                </div>
+            </form>
+    </div>
+    <div class="filler"></div>
     <p style="color:red">{{error_message if error_message}}</p>
+
+    <style>
+    .base {
+            height: 300px;
+            position: relative;
+            background:#A9A9A9;
+            background-repeat: no-repeat;
+            }
+    .title_icon {
+        position: absolute;
+        height:80px;
+        width:80px;
+        left: 50%;
+        top: 10%;
+        -ms-transform: translate(-50%, 0%);
+        transform: translate(-50%, 0%);
+    }
+    .login_icon {
+        position:absolute;
+        top: 10%;
+        height:60px;
+        width:60px;
+        -ms-transform: translate(-50%, 0%);
+        transform: translate(-50%, 0%);
+    }
+    .title {
+        position: absolute;
+        left: 50%;
+        top: 60%;
+        -ms-transform: translate(-50%, 0%);
+        transform: translate(-50%, 0%);
+    }
+    .holderCommon {
+        position: absolute;
+        top: 80%;
+        height: 220px;
+        width:190px;
+        -ms-transform: translate(-50%, 0%);
+        transform: translate(-50%, 0%);
+        background: white;
+        text-align: center
+    }
+    .holder1 {
+        box-shadow: 5px 5px 5px #D3D3D3;
+        left: 25%;
+    }
+    .holder2 {
+        box-shadow: 5px 5px 5px #D3D3D3;
+        left: 50%;
+    }
+    .holder3 {
+        box-shadow: 5px 5px 5px #D3D3D3;
+        left: 75%;
+    }
+    .form {
+        top: 5%;
+        left: 50%;
+        height: 220px;
+        width:190px;
+        background: #A9A9A9;
+        text-align: center
+    }
+    .input {
+        width: 190px;
+        height: 220px;
+        position: absolute;
+        top: 40%;
+    }
+    .filler {
+        height: 200px;
+        position: relative;
+        background:#FAFAFA;
+        background-repeat: no-repeat;
+        z-index: -1;
+    }
+    </style>
 
 {% endblock %}

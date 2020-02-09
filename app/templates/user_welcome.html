@@ -22,17 +22,12 @@
     </form>
     <p style="color:red">{{error_message if error_message}}</p>
 
-
+    <div class="gallery">
     {% for thumbnail_row in thumbnails | batch(3, '') %}
     <div class="row">
         {% for thumbnail in thumbnail_row %}
         {% if (thumbnail != '') %}
-        <div style="
- border: 2px solid grey;
- margin: 0 auto;
- text-align: center;
- padding: 3px;
- display:inline-block;">
+        <div class="photo">
 
             <form action='/api/photo_display' method="POST" width="200">
                 <input type="image" src="{{ url_for('static', filename = thumbnail_dir_path + '/' + thumbnail) }}" value={{thumbnail}} width=200>
@@ -45,6 +40,28 @@
         
     </div>
     {% endfor %} 
+    </div>
+
+<style>
+    .photo {
+        border: 2px solid grey;
+        margin: 0 auto;
+        text-align: center;
+        padding: 3px;
+        display:inline-block;
+    }
+</style>   
+<style>
+    .gallery {
+        border: 1px solid;
+        border-radius: 10px 10px 10px 10px;
+        box-shadow: 0 0 15px rgba(50, 50, 50, 0.7) inset;
+        height: auto;
+        width: auto;
+        margin-top: 20px;
+        padding: 15px;
+    }
+</style>
 
 
 {% endblock %}
