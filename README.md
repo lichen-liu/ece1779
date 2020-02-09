@@ -105,4 +105,12 @@ Perform these steps to run the examples:
 
       For some platforms you may need to edit the first line of this file to reflect the correct path to the
       python installation in the virtual environment.  The provided file works for Linux and OS X.
+
+13) Download the trained yolo3 weights and labels from this website given in the handout:
+
+      https://www.pyimagesearch.com/2018/11/12/yolo-object-detection-with-opencv/
+
+      Then move the weights, config and label files to the app/static/yolo/. directory
+
+      If the 'yolo' directory does not exist on you local environment under the static directory, you can manually create it or just start the application as if will check and create the yolo directory for you
 ```
