@@ -53,5 +53,5 @@ def detect_objects(cv_img, target_confidence = 0.5, target_threshold = 0.3):
     return boxes, descriptions
 
 def load_labels():
-    labels_path = os.path.join(directory.get_yolo_directory(),"coco.names")
+    labels_path = os.path.join(directory.get_yolo_dir_path(),"coco.names")
     return open(labels_path).read().strip().split("\n")

@@ -10,6 +10,7 @@ from app import webapp, directory, account, main, utility, yolo
 #Url utility imports
 from urllib.parse import unquote_plus
 
+
 @webapp.route('/api/upload', methods=['POST'])
 def photo_upload_handler():
     error_message = validate_user_and_input_format(request)
@@ -17,6 +18,7 @@ def photo_upload_handler():
         return main.main(user_welcome_args=main.UserWelcomeArgs(error_message=error_message))
     process_and_save_image(request)
     return redirect('/')
+
 
 def validate_user_and_input_format(request):
     # Get requests
@@ -30,6 +32,7 @@ def validate_user_and_input_format(request):
             abort(401)
         else:
             is_from_api = True
+
     content_length = request.content_length
     if content_length is not None and content_length > current_app.config['MAXIMUM_IMAGE_SIZE']:
         if is_from_api:
@@ -37,10 +40,12 @@ def validate_user_and_input_format(request):
         else:
             return 'Error! File too large (' + utility.convert_bytes(content_length) + \
             '). It must be smaller than ' + utility.convert_bytes(current_app.config['MAXIMUM_IMAGE_SIZE']) + '.'
-    if 'file' not in request.files or request.files['file'].filename == '':
+
+    if request.files.get['file'] is None or request.files['file'].filename == '':
         return 'No file was uploaded'
     if is_extension_allowed(request.files['file'].filename) is not True:
         return 'File extension is not allowed'
+
 
 def process_and_save_image(request):
     image = request.files['file']
@@ -58,27 +63,34 @@ def process_and_save_image(request):
     thumbnail_path = os.path.join(directory.get_user_thumbnails_dir_path(), file_name)
     save_cv_img(thumbnail, thumbnail_path)
 
+
 def is_extension_allowed(file_name):
     return '.' in file_name and file_name.rsplit('.',1)[1].lower() in current_app.config['ALLOWED_IMAGE_EXTENSION']
+
 
 def draw_rectangles_on_photo(photo_bytes):
     cv_img = decode_bytes_to_cv_image(photo_bytes)
     boxes, descriptions = yolo.detect_objects(cv_img)
     return yolo.draw_rectangles(cv_img, boxes, descriptions)
 
+
 def decode_bytes_to_cv_image(photo_bytes):
     numpy_img = numpy.fromstring(photo_bytes, numpy.uint8)
     return cv2.imdecode(numpy_img, cv2.IMREAD_COLOR)
    
+
 def generate_thumbnail_for_cv_img(cv_img):
     return cv2.resize(cv_img,current_app.config["THUMBNAIL_SIZE"])
+
 
 def save_bytes_img(photo_bytes, path):
     f = open(path, 'wb')
     f.write(photo_bytes)
 
+
 def save_cv_img(photo_bytes, path):
     cv2.imwrite(path, photo_bytes)
+
 
 @webapp.route('/api/photo_display', methods=['POST'])
 def display_photo_handler():
@@ -92,6 +104,7 @@ def display_photo_handler():
     else:
         return render_template('empty_go_home.html', title='Error', message='Please try again!')
 
+
 def get_thumbnails():
     '''
     (user_thumbnails_dir_rel, [thumbnail_file])
@@ -101,6 +114,7 @@ def get_thumbnails():
 
     # TODO: Also display the original file name
     return (user_thumbnails_dir_rel, [f for f in os.listdir(user_thumbnails_dir) if os.path.isfile(os.path.join(user_thumbnails_dir, f))])
+
 
 # Mock database for photos
 # {file_id: (original_filename, user)}
