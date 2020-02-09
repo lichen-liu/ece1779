@@ -20,6 +20,7 @@
             <input type="submit" value="Submit">
         </p>
     </form>
+    <p style="color:red">{{error_message if error_message}}</p>
 
 
     {% for thumbnail_row in thumbnails | batch(3, '') %}
