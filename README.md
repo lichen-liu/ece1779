@@ -22,6 +22,16 @@ https://dev.mysql.com/downloads/mysql/
 ```
 
 
+### 1.3 OpenCV YOLO3
+Download the trained yolo3 weights and labels from this website given in the handout:
+```
+https://www.pyimagesearch.com/2018/11/12/yolo-object-detection-with-opencv/
+```
+
+Then move the weights, config and label files to the app/static/yolo/. directory.
+If the 'yolo' directory does not exist on you local environment under the static directory, you can manually create it or just start the application as if will check and create the yolo directory for you
+
+
 ## 2.0 To Run
 
 For Windows (Powershell)
@@ -49,6 +59,7 @@ When committing the code, double check to make sure no OS/IDE-dependent temporar
 
 
 ## 5.0 Notes Copied from the Original Course Demo Project
+*DON'T PUT THINGS HERE!*
 ```
 All lecture and tutorial examples require the following in order to work:
     - Python 3.5 (or better)
