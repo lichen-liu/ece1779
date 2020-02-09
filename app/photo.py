@@ -41,7 +41,7 @@ def validate_user_and_input_format(request):
             return 'Error! File too large (' + utility.convert_bytes(content_length) + \
             '). It must be smaller than ' + utility.convert_bytes(current_app.config['MAXIMUM_IMAGE_SIZE']) + '.'
 
-    if request.files.get['file'] is None or request.files['file'].filename == '':
+    if request.files['file'] is None or request.files['file'].filename == '':
         return 'No file was uploaded'
     if is_extension_allowed(request.files['file'].filename) is not True:
         return 'File extension is not allowed'
