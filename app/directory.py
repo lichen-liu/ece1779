@@ -40,12 +40,8 @@ def get_user_rectangles_dir_path(absolute=True):
     else:
         return get_user_dir_path(absolute) + '/' + 'rectangles'
 
-<<<<<<< HEAD
 def get_yolo_directory():
         return os.path.join(get_static_dir_path(),'yolo')
-
-=======
->>>>>>> 4270268e3b065c773e96fea4cd9ca21dd93b5e48
 
 def create_static_dir_if_necessary():
     if not os.path.exists(get_static_dir_path()):
@@ -77,7 +73,7 @@ def create_user_rectangles_dir_if_necessary():
         os.mkdir(get_user_rectangles_dir_path())
 
 def create_yolo_dir_if_not_exist():
-    if not os.path.exists(get_yolo_directory())
+    if not os.path.exists(get_yolo_directory()):
         os.mkdir(get_yolo_directory())
 
 #Thinking abour calling this function before user login
