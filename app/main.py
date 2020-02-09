@@ -22,7 +22,6 @@ class UserWelcomeArgs:
         self.error_message=error_message
         self.title = title
 
-
 def main(guest_welcome_args=GuestWelcomeArgs(), user_welcome_args=UserWelcomeArgs()):
     if account.account_is_logged_in():
         # Not a good practice to do it here
@@ -40,10 +39,4 @@ def main_guest_welcome(args):
 def main_user_welcome(args):
     thumbnail_dir_path, thumbnails = photo.get_thumbnails()
     return render_template(
-        'user_welcome.html',title=args.title,username=account.account_get_logged_in_user(),
-        error_message=args.error_message,
-        thumbnails=thumbnails, thumbnail_dir_path=thumbnail_dir_path)
-
-if __name__ == "__main__":
-        create_shared_if_necessary()
-        
+        'user_welcome.html',title=args.title,username=account.account_get_logged_in_user(), error_message=args.error_message, thumbnails=thumbnails, thumbnail_dir_path=thumbnail_dir_path)
