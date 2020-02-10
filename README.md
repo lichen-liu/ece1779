@@ -6,7 +6,7 @@ http://www.cs.toronto.edu/~delara/courses/ece1779/projects/ECE1779-a1.pdf
 
 
 ### 1.1 Flask
-Use: Python 3.8.1
+Use: Python 3.7.3
 ```
 python -m venv venv
 venv\Scripts\activate
@@ -23,6 +23,11 @@ https://dev.mysql.com/downloads/mysql/
 
 
 ### 1.3 OpenCV YOLO3
+```
+pip install opencv-python
+pip install cvlib
+pip install tensorflow
+```
 Download the trained yolo3 weights and labels from this website given in the handout:
 ```
 https://www.pyimagesearch.com/2018/11/12/yolo-object-detection-with-opencv/
