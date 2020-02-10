@@ -33,4 +33,4 @@ def combine_files(src_files, dst_file):
         for src_file in src_files:
             with open(src_file, 'rb') as fin:
                 fout.write(fin.read())
-
+    print(str(len(src_files)) + ' files were combined into ' + dst_file + '.')
