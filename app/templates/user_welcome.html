@@ -1,66 +1,107 @@
 {% extends "base.html" %}
 {% block content %}
+    <div class="divider">
+        <div class="input_section">
+            Welcome {{username}}
 
-    Welcome {{username}}
+            <form class="logout_section" action="/api/logout" method="POST">
+                <input type="submit" value="Logout" onclick="return confirm('{{username}}, Do you really want to log out?')">
+            </form>
 
-    <form action="/api/logout" method="POST">
-        <input type="submit" value="Logout" onclick="return confirm('{{username}}, Do you really want to log out?')">
-    </form>
+            Upload your favorate photo here
 
-    Upload your favorate photo here
-
-    <form action="/api/upload" method="POST" enctype="multipart/form-data">
-        <dl>
-            <p>
-                <!-- Should filter for only image files -->
-                <input type="file" name="file" autocomplete="off" required>
-            </p>
-        </dl>
-        <p>
-            <input type="submit" value="Submit">
-        </p>
-    </form>
-    <p style="color:red">{{error_message if error_message}}</p>
-
-    <div class="gallery">
-    {% for thumbnail_row in thumbnails | batch(3, '') %}
-    <div class="row">
-        {% for thumbnail in thumbnail_row %}
-        {% if (thumbnail != '') %}
-        <div class="photo">
-
-            <form action='/api/photo_display' method="POST" width="200">
-                <input type="image" src="{{ url_for('static', filename = thumbnail_dir_path + '/' + thumbnail) }}" value={{thumbnail}} width=200>
-                <!--Need to encode space as %20-->
-                <input type="hidden" name="photo_file" value={{thumbnail|replace(' ','%20')}} />
-            </form> 
+            <form class="upload_section" action="/api/upload" method="POST" enctype="multipart/form-data">
+                <dl>
+                    <p>
+                        <!-- Should filter for only image files -->
+                        <input type="file" name="file" autocomplete="off" required>
+                    </p>
+                </dl>
+                <p>
+                    <input type="submit" value="Submit">
+                </p>
+            </form>
+            <p style="color:red">{{error_message if error_message}}</p>
         </div>
-        {% endif %}
-        {% endfor %}
-        
+
+    <div class="gallery_section">
+        {% for thumbnail_row in thumbnails | batch(3, '') %}
+        <div class="row">
+            {% for thumbnail in thumbnail_row %}
+            {% if (thumbnail != '') %}
+            <div class="image_container">
+                <div class="title">{{thumbnail}}</div>
+                <div class="image">
+                    <form action='/api/photo_display' method="POST" width="200">
+                        <input type="image" src="{{ url_for('static', filename = thumbnail_dir_path + '/' + thumbnail) }}" value={{thumbnail}} width=200>
+                        <!--Need to encode space as %20-->
+                        <input type="hidden" name="photo_file" value={{thumbnail|replace(' ','%20')}} />
+                    </form> 
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}  
+        </div>
+        {% endfor %} 
     </div>
-    {% endfor %} 
-    </div>
+</div>
 
 <style>
-    .photo {
-        border: 2px solid grey;
-        margin: 0 auto;
-        text-align: center;
-        padding: 3px;
-        display:inline-block;
+    .divider {
+        position: absolute;
+        height: 100%;
+        width: 100%;
     }
-</style>   
-<style>
-    .gallery {
+
+    .input_section {
+        float: left;
+        width: 40%;
+        height: 100%;
+    }
+
+    .logout_section {
+        position: relative;
+        height: 50%;
+    }
+
+    .upload_section {
+        position: relative;
+        height: 50%;
+    }
+
+    .gallery_section {
+        float: left;
         border: 1px solid;
         border-radius: 10px 10px 10px 10px;
         box-shadow: 0 0 15px rgba(50, 50, 50, 0.7) inset;
-        height: auto;
-        width: auto;
+        height: 100%;
+        width: 50%;
         margin-top: 20px;
         padding: 15px;
+        overflow: scroll;
     }
+
+    .image_container {
+        float: left;
+        left: 1%;
+        width: 33%;
+        height: 100%;
+        overflow: scroll;
+    }
+
+    .title {
+        float: top;
+        height: 10%;
+    }
+
+    .image {
+        float: top;
+        height: 90%;
+        width: 100%;
+        border: 1px solid grey;
+        box-sizing: border-box;
+    }
+
 </style>
 
 
