@@ -13,6 +13,7 @@ def get_root_dir_path(absolute=True):
     else:
         return root_dir_name
 
+
 def get_user_dir_path(absolute=True):
     if absolute:
         return os.path.join(get_root_dir_path(absolute), account.account_get_logged_in_user())
@@ -40,8 +41,13 @@ def get_user_rectangles_dir_path(absolute=True):
     else:
         return get_user_dir_path(absolute) + '/' + 'rectangles'
 
-def get_yolo_directory():
-        return os.path.join(get_static_dir_path(),'yolo')
+
+def get_yolo_dir_path(absolute=True):
+    if absolute:
+        return os.path.join(get_static_dir_path(), 'yolo')
+    else:
+        return get_static_dir_path() + '/' + 'yolo'
+
 
 def create_static_dir_if_necessary():
     if not os.path.exists(get_static_dir_path()):
@@ -72,18 +78,21 @@ def create_user_rectangles_dir_if_necessary():
     if not os.path.exists(get_user_rectangles_dir_path()):
         os.mkdir(get_user_rectangles_dir_path())
 
-def create_yolo_dir_if_not_exist():
-    if not os.path.exists(get_yolo_directory()):
-        os.mkdir(get_yolo_directory())
+
+def create_yolo_dir_if_necessary():
+    if not os.path.exists(get_yolo_dir_path()):
+        os.mkdir(get_yolo_dir_path())
+
 
 #Thinking abour calling this function before user login
 def create_shared_if_necessary():
     create_static_dir_if_necessary()
     create_root_dir_if_necessary()
 
+
 def create_user_directory_if_necessary():
     create_static_dir_if_necessary()
-    create_yolo_dir_if_not_exist()
+    create_yolo_dir_if_necessary()
     create_root_dir_if_necessary()
     create_user_dir_if_necessary()
     create_user_photos_dir_if_necessary()

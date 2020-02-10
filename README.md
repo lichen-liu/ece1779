@@ -6,7 +6,7 @@ http://www.cs.toronto.edu/~delara/courses/ece1779/projects/ECE1779-a1.pdf
 
 
 ### 1.1 Flask
-Use: Python 3.8.1
+Use: Python 3.7.3
 ```
 python -m venv venv
 venv\Scripts\activate
@@ -20,6 +20,22 @@ Use: MySQL Community Server 8.0.19
 https://dev.mysql.com/downloads/mysql/
 "Developer Default"
 ```
+
+
+### 1.3 OpenCV YOLO3
+```
+pip install opencv-python
+pip install cvlib
+pip install tensorflow
+```
+Download the trained yolo3 weights and labels from this website given in the handout:
+```
+https://www.pyimagesearch.com/2018/11/12/yolo-object-detection-with-opencv/
+https://pjreddie.com/darknet/yolo/
+```
+
+Then move the weights, config and label files to the app/static/yolo/. directory.
+If the 'yolo' directory does not exist on you local environment under the static directory, you can manually create it or just start the application as if will check and create the yolo directory for you
 
 
 ## 2.0 To Run
@@ -49,6 +65,7 @@ When committing the code, double check to make sure no OS/IDE-dependent temporar
 
 
 ## 5.0 Notes Copied from the Original Course Demo Project
+*DON'T PUT THINGS HERE!*
 ```
 All lecture and tutorial examples require the following in order to work:
     - Python 3.5 (or better)
