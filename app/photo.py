@@ -100,7 +100,8 @@ def display_photo_handler():
         #Escape html encoding using unquote_plus
         return render_template(
             'display_photo.html', photo_file=unquote_plus(photo_file), \
-             photo_dir_path=directory.get_user_photos_dir_path(False))
+             processed_photo_dir = directory.get_user_rectangles_dir_path(False), \
+             original_photo_dir = directory.get_user_photos_dir_path(False))
     else:
         return render_template('empty_go_home.html', title='Error', message='Please try again!')
 
