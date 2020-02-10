@@ -3,3 +3,4 @@ venv
 *__pycache__*
 *users_data*
 *.bak*
+*yolov3.weights

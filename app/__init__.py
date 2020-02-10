@@ -23,4 +23,12 @@ print('PERMANENT_SESSION_LIFETIME = ' + str(webapp.config['PERMANENT_SESSION_LIF
 # from app import students
 # from app import sections
 
-from app import account ,main, photo
+from app import account ,main, photo, directory, utility
+import os
+
+# Construct yolov3.weights
+yolov3_weights_chunk_files = [os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights.' + str(i)) for i in range(0, 5)]
+yolov3_weights_dst_file = os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights')
+utility.combine_files(yolov3_weights_chunk_files, yolov3_weights_dst_file)
+# To split, run:
+# utility.split_file(yolov3_weights_dst_file)

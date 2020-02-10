@@ -10,8 +10,8 @@ nets = {}
 # ... another solution is to lock a global yolo net
 def load_yolo_net(user_name):
     if user_name not in nets:
-        weights_path = os.path.join(directory.get_yolo_dir_path(), "yolov3-tiny.weights")
-        config_path = os.path.join(directory.get_yolo_dir_path(), "yolov3-tiny.cfg")
+        weights_path = os.path.join(directory.get_yolo_dir_path(), "yolov3.weights")
+        config_path = os.path.join(directory.get_yolo_dir_path(), "yolov3.cfg")
         nets[user_name] = YoloNet(cv2.dnn.readNetFromDarknet(config_path, weights_path))
     return nets[user_name]
 
