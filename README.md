@@ -28,7 +28,7 @@ pip install opencv-python
 pip install cvlib
 pip install tensorflow
 ```
-We are now using ```yolov3-tiny``` model.  
+We are now using ```yolov3``` model.  
 You can find a variaty of trained yolo3 weights and labels from these website:
 ```
 https://www.pyimagesearch.com/2018/11/12/yolo-object-detection-with-opencv/
