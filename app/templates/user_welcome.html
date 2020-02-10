@@ -25,6 +25,13 @@
         </div>
 
     <div class="gallery_section">
+
+        <div class="background">
+            <font size="11" color>
+                Browse your uploaded images
+            </font>
+        </div>
+
         {% for thumbnail_row in thumbnails | batch(3, '') %}
         <div class="row">
             {% for thumbnail in thumbnail_row %}
@@ -76,14 +83,13 @@
         box-shadow: 0 0 15px rgba(50, 50, 50, 0.7) inset;
         height: 100%;
         width: 50%;
-        margin-top: 20px;
+        margin-top: 10px;
         padding: 15px;
         overflow: scroll;
     }
 
     .image_container {
         float: left;
-        left: 1%;
         width: 33%;
         height: 100%;
         overflow: scroll;
@@ -98,9 +104,22 @@
         float: top;
         height: 90%;
         width: 100%;
-        border: 1px solid grey;
-        box-sizing: border-box;
     }
+
+    .row {
+        position: relative;
+    }
+
+    .background {
+   position: absolute;
+   top: 50%;
+   left: 42%;
+   bottom: 0;
+   right: 0;
+   z-index: -1;
+   overflow: hidden;
+   color:grey;
+}
 
 </style>
 
