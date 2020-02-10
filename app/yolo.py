@@ -3,7 +3,9 @@ import cv2
 import os
 from app import directory, account, yolo_net
 
+
 nets = {}
+
 
 def draw_rectangles(cv_img, boxes, descriptions):
     assert(len(boxes) == len(descriptions))
@@ -13,6 +15,7 @@ def draw_rectangles(cv_img, boxes, descriptions):
         cv2.rectangle(cv_img, (x, y), (x + w, y + h), [0,0,0], 2)
         cv2.putText(cv_img, description, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, [0,0,0], 2)
     return cv_img
+
 
 def detect_objects(cv_img, target_confidence = 0.5, target_threshold = 0.3):
 
@@ -51,6 +54,7 @@ def detect_objects(cv_img, target_confidence = 0.5, target_threshold = 0.3):
     boxes = [boxes[i] for i in idxs]
     descriptions = ["{}: {:.4f}".format(labels[class_ids[i]], confidences[i]) for i in idxs]
     return boxes, descriptions
+
 
 def load_labels():
     labels_path = os.path.join(directory.get_yolo_dir_path(),"coco.names")

@@ -1,5 +1,7 @@
 from flask import g, redirect, render_template, request, url_for
-from app import account, webapp, directory, photo
+from app import account, webapp, directory, photo, utility
+import os
+
 
 @webapp.route('/',methods=['GET', 'POST'])
 @webapp.route('/index',methods=['GET', 'POST'])
@@ -22,6 +24,7 @@ class UserWelcomeArgs:
         self.error_message=error_message
         self.title = title
 
+
 def main(guest_welcome_args=GuestWelcomeArgs(), user_welcome_args=UserWelcomeArgs()):
     if account.account_is_logged_in():
         # Not a good practice to do it here
@@ -40,3 +43,12 @@ def main_user_welcome(args):
     thumbnail_dir_path, thumbnails = photo.get_thumbnails()
     return render_template(
         'user_welcome.html',title=args.title,username=account.account_get_logged_in_user(), error_message=args.error_message, thumbnails=thumbnails, thumbnail_dir_path=thumbnail_dir_path)
+
+
+def init():
+    # Construct yolov3.weights
+    yolov3_weights_chunk_files = [os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights.' + str(i)) for i in range(0, 5)]
+    yolov3_weights_dst_file = os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights')
+    utility.combine_files(yolov3_weights_chunk_files, yolov3_weights_dst_file)
+    # To split, run:
+    # utility.split_file(yolov3_weights_dst_file)

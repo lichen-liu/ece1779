@@ -1,7 +1,11 @@
 import os
 import cv2
 from app import directory
+
+
 nets = {}
+
+
 # Unfortunately net created by cv2.dnn is not thread safe, thus EACH user...
 # https://answers.opencv.org/question/205222/is-dnn-supports-threading/
 # ... will need a seperate yolo net object instantiated and persist in the memory...
@@ -14,6 +18,7 @@ def load_yolo_net(user_name):
         config_path = os.path.join(directory.get_yolo_dir_path(), "yolov3.cfg")
         nets[user_name] = YoloNet(cv2.dnn.readNetFromDarknet(config_path, weights_path))
     return nets[user_name]
+
 
 class YoloNet:
     def __init__(self, net):

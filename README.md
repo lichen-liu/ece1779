@@ -28,12 +28,12 @@ pip install opencv-python
 pip install cvlib
 pip install tensorflow
 ```
-Download the trained yolo3 weights and labels from this website given in the handout:
+We are now using ```yolov3``` model.  
+You can find a variaty of trained yolo3 weights and labels from these website:
 ```
 https://www.pyimagesearch.com/2018/11/12/yolo-object-detection-with-opencv/
 https://pjreddie.com/darknet/yolo/
 ```
-
 Then move the weights, config and label files to the app/static/yolo/. directory.
 If the 'yolo' directory does not exist on you local environment under the static directory, you can manually create it or just start the application as if will check and create the yolo directory for you
 
