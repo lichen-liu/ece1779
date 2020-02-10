@@ -46,9 +46,10 @@ def main_user_welcome(args):
 
 
 def init():
-    # Construct yolov3.weights
-    yolov3_weights_chunk_files = [os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights.' + str(i)) for i in range(0, 5)]
+    # Construct yolov3.weights if necessary
     yolov3_weights_dst_file = os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights')
-    utility.combine_files(yolov3_weights_chunk_files, yolov3_weights_dst_file)
+    if not os.path.exists(yolov3_weights_dst_file):
+        yolov3_weights_chunk_files = [os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights.' + str(i)) for i in range(0, 5)]
+        utility.combine_files(yolov3_weights_chunk_files, yolov3_weights_dst_file)
     # To split, run:
     # utility.split_file(yolov3_weights_dst_file)
