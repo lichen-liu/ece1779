@@ -20,6 +20,10 @@ Use: MySQL Community Server 8.0.19
 https://dev.mysql.com/downloads/mysql/
 "Developer Default"
 ```
+Install Python mysql connector
+```
+pip install mysql-connector-python
+```
 
 
 ### 1.3 OpenCV YOLO3
