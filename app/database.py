@@ -92,4 +92,4 @@ print('res = ' + repr(create_new_account('yonghu1', b'12345678901234567890123456
 print('res = ' + repr(create_new_account('yonghu2', b'12345678901234567890123456789012', b'abcd')))
 print('res = ' + repr(create_new_account('yonghu3', b'12345678901234567890123456789012', b'abcd')))
 print('res = ' + repr(create_new_account('yonghu4', b'12345678901234567890123456789012', b'abcd')))
-print('get = ' + repr(get_account_credential('yonghu5')))
+print('get = ' + repr(get_account_credential('yonghu4')))
