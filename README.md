@@ -24,9 +24,11 @@ Install Python mysql connector
 ```
 pip install mysql-connector-python
 ```
-MySQL setup script
+Start MySQL Server
 ```
-/app/schema.sql
+1. Open MySQL Workbench
+2. Conncet to an instance
+3. File - Run SQL Script(/app/schema.sql)
 ```
 
 

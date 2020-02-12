@@ -26,9 +26,8 @@ CREATE TABLE IF NOT EXISTS `ece1779`.`account` (
   `password_hash` CHAR(64) NOT NULL,
   `salt` CHAR(8) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE)
-ENGINE = InnoDB;
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC));
 
 
 -- -----------------------------------------------------
@@ -41,8 +40,8 @@ CREATE TABLE IF NOT EXISTS `ece1779`.`photo` (
   `account_id` INT NOT NULL,
   `name` TEXT NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  INDEX `fk_photo_account_idx` (`account_id` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `fk_photo_account_idx` (`account_id` ASC),
   CONSTRAINT `fk_photo_account`
     FOREIGN KEY (`account_id`)
     REFERENCES `ece1779`.`account` (`id`)
