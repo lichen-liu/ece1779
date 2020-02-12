@@ -30,7 +30,7 @@ def extract_boxes_and_descriptions_for_images(layer_outputs, cv_imgs):
     #OpenCV is stupid
     #Single image and multiple images gives different structure
     for index in range(len(cv_imgs)):
-        boxes, descriptions = extract_boxes_and_descriptions_for_image_from_all_outputs_layers(layer_outputs, index, cv_imgs[index], True)
+        boxes, descriptions = extract_boxes_and_descriptions_for_image_from_all_outputs_layers(layer_outputs, index, cv_imgs[index], len(cv_imgs) == 1)
 
         boxes_for_all_images.append(boxes)
         descriptions_for_all_images.append(descriptions)
