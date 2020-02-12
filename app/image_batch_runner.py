@@ -19,7 +19,6 @@ class BatchRunner():
     def run_batch(self):
         while(True):
             tasks = self.try_get_batch(self._batch_size)
-            print("lennnnnnnn",len(tasks))
             images = []
             for task in tasks:
                 images.append(bt_helper.load_cv_img(task.source_dir))
@@ -32,7 +31,6 @@ class BatchRunner():
 
                 bt_helper.save_cv_img(rectangled_image, task.rectangled_dest_dir)
                 bt_helper.save_cv_img(thumbnail, task.thumbnail_dest_dir)
-            time.sleep(20)
             
     def run(self):
         if not self._started:
