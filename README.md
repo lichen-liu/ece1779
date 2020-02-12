@@ -24,6 +24,10 @@ Install Python mysql connector
 ```
 pip install mysql-connector-python
 ```
+MySQL setup script
+```
+/app/schema.sql
+```
 
 
 ### 1.3 OpenCV YOLO3
@@ -43,7 +47,6 @@ If the 'yolo' directory does not exist on you local environment under the static
 
 
 ## 2.0 To Run
-
 For Windows (Powershell)
 ```
 cd app
@@ -59,12 +62,20 @@ python -m flask run --host=0.0.0.0
 ```
 
 
-## 3.0 AWS IP:
+## 3.0 Clean Up
+```
+cd app
+python server_helper.py
+```
+
+
+## 4.0 AWS IP:
 
 ~~[http://52.207.56.96:5000/](http://52.207.56.96:5000/)~~
 
 [http://3.231.61.127:5000/](http://3.231.61.127:5000/)
 
 
-## 4.0 Notes
-When committing the code, double check to make sure no OS/IDE-dependent temporary files are included!
+## 5.0 Notes
+1. When committing the code, double check to make sure no OS/IDE-dependent temporary files are included!
+2. Launch the server inside /app directory!

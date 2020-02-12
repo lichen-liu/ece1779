@@ -1,6 +1,6 @@
 .vscode
 venv
 *__pycache__*
-*users_data*
+*data*
 *.bak*
 *yolov3.weights

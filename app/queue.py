@@ -2,10 +2,10 @@ import threading
 from contextlib import contextmanager
 
 class Task:
-    def __init__(self, source_dir, thumbnail_dest_dir, rectangled_dest_dir):
-        self.source_dir = source_dir
-        self.thumbnail_dest_dir = thumbnail_dest_dir
-        self.rectangled_dest_dir = rectangled_dest_dir
+    def __init__(self, source_path, thumbnail_dest_path, rectangled_dest_path):
+        self.source_path = source_path
+        self.thumbnail_dest_path = thumbnail_dest_path
+        self.rectangled_dest_path = rectangled_dest_path
 
 class Queue:
     def __init__(self, capacity):
@@ -53,17 +53,14 @@ class Queue:
             needed = needed - 1
         return tasks
 
-capacity = 100
-queue = Queue(capacity)
+
+CAPACITY = 100
+
+
+def init_queue():
+    global l_queue
+    l_queue = Queue(CAPACITY)
+
+
 def get_queue():     
-    return queue
-
-
-
-    
-   
-    
-    
-    
-   
-  
+    return l_queue

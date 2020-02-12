@@ -63,7 +63,7 @@ def extract_boxes_and_descriptions_for_image_from_all_outputs_layers(layer_outpu
         
     labels = load_labels()
     boxes = [boxes[i] for i in idxs]
-    descriptions = ["{}: {:.4f}".format(labels[class_ids[i]], confidences[i]) for i in idxs]
+    descriptions = ['{}: {:.4f}'.format(labels[class_ids[i]], confidences[i]) for i in idxs]
     return boxes, descriptions
 
 
@@ -82,7 +82,7 @@ def get_detections_from_a_layer(layer_output_for_image, shape_adjustments, targe
             confidence = scores[class_id]
 
             if confidence > target_confidence:
-                (center_x, center_y, width, height) = (detection[0:end_index_of_box_shape] * shape_adjustments).astype("int")
+                (center_x, center_y, width, height) = (detection[0:end_index_of_box_shape] * shape_adjustments).astype('int')
                 x = int(center_x - (width / 2))
                 y = int(center_y - (height / 2))
 
@@ -94,8 +94,8 @@ def get_detections_from_a_layer(layer_output_for_image, shape_adjustments, targe
 
 
 def load_labels():
-    labels_path = os.path.join(directory.get_yolo_dir_path(),"coco.names")
-    return open(labels_path).read().strip().split("\n")
+    labels_path = os.path.join(directory.get_yolo_dir_path(),'coco.names')
+    return open(labels_path).read().strip().split('\n')
 
 
 def generate_thumbnail_for_cv_img(cv_img):

@@ -1,6 +1,6 @@
 import os
 
-def convert_bytes(num):
+def convert_bytes_to_human_readable(num):
     """
     this function will convert bytes to MB.... GB... etc
     From: https://stackoverflow.com/questions/12523586/python-format-size-application-converting-b-to-kb-mb-gb-tb
@@ -9,9 +9,16 @@ def convert_bytes(num):
 
     for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
         if num < step_unit:
-            return "%3.1f %s" % (num, x)
+            return '%3.1f %s' % (num, x)
         num /= step_unit
 
+
+def get_file_extension(file_name):
+    '''
+    Return extension of a file, such as '.txt'
+    '''
+    _, file_extension = os.path.splitext(file_name)
+    return file_extension
 
 def split_file(src_file):
     CHUNK_SIZE = 50 * 1024 * 1024

@@ -155,6 +155,34 @@ def get_account_photo(cnx, account_id):
 
 
 @database_operation
+def get_photo(cnx, photo_id):
+    '''
+    Return (user_id, photo_name) if successful; otherwise None
+    '''
+    result = None
+    try:
+        cursor = cnx.cursor()
+
+        # Check whether the username has already been registered
+        get_sql = """
+        SELECT account_id, name
+        FROM photo
+        WHERE id = %s;
+        """
+        get_val = (photo_id,)
+        cursor.execute(get_sql, get_val)
+        get_results = cursor.fetchall()
+        if get_results:
+            result = get_results[0]
+    except mysql.connector.Error as err:
+        print(err)
+    except Exception as e:
+        print('Unexpected exception: ' + str(e))
+    finally:
+        return result
+
+
+@database_operation
 def delete_account_table(cnx):
     try:
         cnx.start_transaction()
@@ -245,8 +273,19 @@ def print_database():
     print(get_photo_table())
     print()
 
+
+
+
+
+
+
+
+
+
 # print_database()
+# print('before delete_database')
 # delete_database()
+# print('after delete_database')
 # print_database()
 
 

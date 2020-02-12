@@ -26,8 +26,6 @@ class UserWelcomeArgs:
 
 def main(guest_welcome_args=GuestWelcomeArgs(), user_welcome_args=UserWelcomeArgs()):
     if account.account_is_logged_in():
-        # Not a good practice to do it here
-        directory.create_user_directory_if_necessary()
         return main_user_welcome(user_welcome_args)
     else:
         return main_guest_welcome(guest_welcome_args)
@@ -39,22 +37,29 @@ def main_guest_welcome(args):
 
 
 def main_user_welcome(args):
-    thumbnail_dir_path, thumbnails = photo.get_thumbnails()
     return render_template(
-        'user_welcome.html',title=args.title,username=account.account_get_logged_in_username(), error_message=args.error_message, thumbnails=thumbnails, thumbnail_dir_path=thumbnail_dir_path)
+        'user_welcome.html',title=args.title,username=account.account_get_logged_in_username(), error_message=args.error_message, 
+        thumbnails=photo.get_thumbnails(), thumbnail_dir_path=directory.get_thumbnails_dir_path(False))
 
 
 def init():
-    directory.create_yolo_dir_if_necessary()
+    '''
+    All initialization should be done here
+    '''
+    # Initialze directories
+    directory.create_directories_if_necessary()
+
     # Construct yolov3.weights if necessary
     yolov3_weights_dst_file = os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights')
     if not os.path.exists(yolov3_weights_dst_file):
         yolov3_weights_chunk_files = [os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights.' + str(i)) for i in range(0, 5)]
         utility.combine_files(yolov3_weights_chunk_files, yolov3_weights_dst_file)
-
     # To split, run:
     # utility.split_file(yolov3_weights_dst_file)
 
-    image_batch_runner.init_batch_runner()
-    batch_runner = image_batch_runner.get_batch_runner()
-    batch_runner.run()
+    if webapp.config.get('USE_IMAGE_BATCH_RUNNER'):
+        # Run the batch runner
+        queue.init_queue()
+        image_batch_runner.init_batch_runner()
+        batch_runner = image_batch_runner.get_batch_runner()
+        batch_runner.run()

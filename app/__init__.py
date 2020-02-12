@@ -10,7 +10,8 @@ webapp.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes = 100)
 webapp.config['SESSION_REFRESH_EACH_REQUEST'] = True
 webapp.config['THUMBNAIL_SIZE'] = (120,120)
 webapp.config['MAXIMUM_IMAGE_SIZE'] = 5 * 1024 * 1024
-webapp.config['ALLOWED_IMAGE_EXTENSION'] = set(['png', 'jpg', 'jpeg', 'gif'])
+webapp.config['ALLOWED_IMAGE_EXTENSION'] = set(['.png', '.jpg', '.jpeg', '.gif'])
+webapp.config['USE_IMAGE_BATCH_RUNNER'] = False
 
 
 print('SECRET_KEY = ' + str(webapp.config['SECRET_KEY']))

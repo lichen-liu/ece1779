@@ -22,7 +22,7 @@ class BatchRunner():
             tasks = self.try_get_batch(self._batch_size)
             images = []
             for task in tasks:
-                images.append(bt_helper.load_cv_img(task.source_dir))
+                images.append(bt_helper.load_cv_img(task.source_path))
 
             boxes_for_all_images, descriptions_for_all_images = bt_helper.detect_objects_on_images(images, self._net)
             for boxes, descriptions, image, task in zip(boxes_for_all_images, descriptions_for_all_images, images, tasks):
@@ -30,12 +30,12 @@ class BatchRunner():
                 rectangled_image = bt_helper.draw_rectangles(image, boxes, descriptions)
                 thumbnail = bt_helper.generate_thumbnail_for_cv_img(rectangled_image)
 
-                bt_helper.save_cv_img(rectangled_image, task.rectangled_dest_dir)
-                bt_helper.save_cv_img(thumbnail, task.thumbnail_dest_dir)
+                bt_helper.save_cv_img(rectangled_image, task.rectangled_dest_path)
+                bt_helper.save_cv_img(thumbnail, task.thumbnail_dest_path)
             
     def run(self):
         if not self._started:
-            batch_thread = threading.Thread(target=self.run_batch)
+            batch_thread = threading.Thread(target=self.run_batch, daemon=True)
             batch_thread.start()
             self._started = True
 
