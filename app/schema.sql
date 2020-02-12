@@ -37,9 +37,9 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `ece1779`.`photo` ;
 
 CREATE TABLE IF NOT EXISTS `ece1779`.`photo` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `account_id` INT NOT NULL,
-  `name` VARCHAR(100) NOT NULL,
+  `name` TEXT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   INDEX `fk_photo_account_idx` (`account_id` ASC) VISIBLE,
