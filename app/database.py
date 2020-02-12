@@ -24,6 +24,8 @@ def database_operation(func):
 @database_operation
 def create_new_account(cnx, username, password_hash, salt):
     '''
+    salt must be a char[8]
+    password_hash must be a char[64]
     Return error_message if errored; otherwise None
     '''
     error_message = None
@@ -152,25 +154,116 @@ def get_account_photo(cnx, account_id):
         return result
 
 
+@database_operation
+def delete_account_table(cnx):
+    try:
+        cnx.start_transaction()
+        cursor = cnx.cursor()
 
-def test_account():
-    # Testing
-    print('res = ' + repr(create_new_account('yonghu0', b'12345678901234567890123456789012', b'abcd')))
-    print('res = ' + repr(create_new_account('yonghu1', b'12345678901234567890123456789012', b'abcd')))
-    print('res = ' + repr(create_new_account('yonghu2', b'12345678901234567890123456789012', b'abcd')))
-    print('res = ' + repr(create_new_account('yonghu3', b'12345678901234567890123456789012', b'abcd')))
-    print('res = ' + repr(create_new_account('yonghu4', b'12345678901234567890123456789012', b'abcd')))
-    print('get = ' + repr(get_account_credential('yonghu4')))
-
-def test_photo():
-    # Testing
-    print('res = ' + repr(create_new_photo(2, 'xiaojiejie.jpg')))
-    print('res = ' + repr(create_new_photo(5, 'dajiejie.jpg')))
-    print('res = ' + repr(create_new_photo(6, 'dajiji.jpg')))
-    print('get = ' + repr(get_account_photo(2)))
-    print('get = ' + repr(get_account_photo(5)))
-    print('get = ' + repr(get_account_photo(6)))
+        # Remove all accounts from table account
+        delete_sql = """
+        DELETE
+        FROM account
+        WHERE id <> '-1';
+        """
+        cursor.execute(delete_sql)
+        cnx.commit()
+    except mysql.connector.Error as err:
+        print(err)
+        cnx.rollback()
+    except Exception as e:
+        print('Unexpected exception: ' + str(e))
 
 
-# test_account()
-# test_photo()
+@database_operation
+def get_account_table(cnx):
+    try:
+        cursor = cnx.cursor()
+
+        # Remove all accounts from table account
+        get_sql = """
+        SELECT *
+        FROM account;
+        """
+        cursor.execute(get_sql)
+        return cursor.fetchall()
+    except mysql.connector.Error as err:
+        print(err)
+    except Exception as e:
+        print('Unexpected exception: ' + str(e))
+
+
+@database_operation
+def delete_photo_table(cnx):
+    try:
+        cnx.start_transaction()
+        cursor = cnx.cursor()
+
+        # Remove all photos from table photo
+        delete_sql = """
+        DELETE
+        FROM photo
+        WHERE id <> '-1';
+        """
+        cursor.execute(delete_sql)
+        cnx.commit()
+    except mysql.connector.Error as err:
+        print(err)
+        cnx.rollback()
+    except Exception as e:
+        print('Unexpected exception: ' + str(e))
+
+
+@database_operation
+def get_photo_table(cnx):
+    try:
+        cursor = cnx.cursor()
+
+        # Remove all accounts from table account
+        get_sql = """
+        SELECT *
+        FROM photo;
+        """
+        cursor.execute(get_sql)
+        return cursor.fetchall()
+    except mysql.connector.Error as err:
+        print(err)
+    except Exception as e:
+        print('Unexpected exception: ' + str(e))
+
+
+def delete_database():
+    delete_photo_table()
+    delete_account_table()
+
+def print_database():
+    print('ACCOUNT TABLE')
+    print(get_account_table())
+    print()
+
+    print('PHOTO TABLE')
+    print(get_photo_table())
+    print()
+
+print_database()
+# delete_database()
+# print_database()
+
+
+# def test_account():
+#     # Testing
+#     print('res = ' + repr(create_new_account('yonghu0', b'12345678901234567890123456789012', b'abcd')))
+#     print('res = ' + repr(create_new_account('yonghu1', b'12345678901234567890123456789012', b'abcd')))
+#     print('res = ' + repr(create_new_account('yonghu2', b'12345678901234567890123456789012', b'abcd')))
+#     print('res = ' + repr(create_new_account('yonghu3', b'12345678901234567890123456789012', b'abcd')))
+#     print('res = ' + repr(create_new_account('yonghu4', b'12345678901234567890123456789012', b'abcd')))
+#     print('get = ' + repr(get_account_credential('yonghu4')))
+
+# def test_photo():
+#     # Testing
+#     print('res = ' + repr(create_new_photo(2, 'xiaojiejie.jpg')))
+#     print('res = ' + repr(create_new_photo(5, 'dajiejie.jpg')))
+#     print('res = ' + repr(create_new_photo(6, 'dajiji.jpg')))
+#     print('get = ' + repr(get_account_photo(2)))
+#     print('get = ' + repr(get_account_photo(5)))
+#     print('get = ' + repr(get_account_photo(6)))

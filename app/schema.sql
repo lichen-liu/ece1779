@@ -23,8 +23,8 @@ DROP TABLE IF EXISTS `ece1779`.`account` ;
 CREATE TABLE IF NOT EXISTS `ece1779`.`account` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(100) NOT NULL,
-  `password_hash` BINARY(32) NOT NULL,
-  `salt` BINARY(4) NOT NULL,
+  `password_hash` CHAR(64) NOT NULL,
+  `salt` CHAR(8) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE)

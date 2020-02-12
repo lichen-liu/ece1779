@@ -4,7 +4,7 @@ import struct
 
 from flask import g, redirect, render_template, request, session, url_for, abort
 
-from app import main, webapp
+from app import main, webapp, database
 
 
 @webapp.route('/api/account_actions', methods=['POST'])
@@ -52,12 +52,17 @@ def account_logout_handler():
 
 
 def account_is_logged_in():
-    return session.get('username') is not None
+    return session.get('username') is not None and session.get('userid') is not None
 
 
-def account_get_logged_in_user():
+def account_get_logged_in_username():
     assert(account_is_logged_in())
     return session['username']
+
+
+def account_get_logged_in_userid():
+    assert(account_is_logged_in())
+    return session['userid']
 
 
 def account_register(username, password, rememberme=False):
@@ -74,19 +79,17 @@ def account_register(username, password, rememberme=False):
         return 'Error! Username is not valid!'
     if not password:
         return 'Error! Password is not valid!'
-
-    # Validate input (business)
-    if username in accounts:
-        return 'Error! ' + username + ' is already registered!'
     
     USERNAME_MAX_LENGTH = 100
     if len(username) > USERNAME_MAX_LENGTH:
         return 'Error! "' + username + '" exceeds ' + str(USERNAME_MAX_LENGTH) + ' characters!'
 
     # Register the user (business)
-    salt = bytes(random.getrandbits(8) for _ in range(4))
+    salt = bytes(random.getrandbits(8) for _ in range(4)).hex()
     encrypted_password = account_hash_password(password, salt)
-    accounts[username] = (encrypted_password, salt)
+    error_message = database.create_new_account(username, encrypted_password, salt)
+    if error_message:
+        return error_message
     print('    Successful!')
 
     # Login the user (business)
@@ -105,12 +108,14 @@ def account_login(username, password, rememberme=False):
     print('Login: u=' + username + ' p=' + password + ' rememberme=' + str(rememberme))
 
     # Validate input (business)
-    if accounts.get(username) is None or not account_verify_password(username, password):
+    userid = account_verify_password(username, password)
+    if userid is None:
         return 'Error! Username or Password is not correct!'
 
     # Create a session (business)
     assert(not account_is_logged_in())
     session['username'] = username
+    session['userid'] = userid
     session.permanent = rememberme
     print('    Successful!')
 
@@ -118,7 +123,7 @@ def account_login(username, password, rememberme=False):
 def account_logout():
     if account_is_logged_in():
         # Clear the session (business)
-        username = account_get_logged_in_user()
+        username = account_get_logged_in_username()
         print('Logout: u=' + username)
         session.pop('username')
         session.clear()
@@ -128,25 +133,27 @@ def account_logout():
 
 
 def account_verify_password(username, password):
-    encrypted_password, salt = accounts[username]
-    return account_hash_password(password, salt) == encrypted_password
+    '''
+    Return userid if successful; otherwise None
+    '''
+    result = database.get_account_credential(username)
+    if result:
+        account_id, encrypted_password, salt = result
+        if account_hash_password(password, salt) == encrypted_password:
+            return account_id
+    return None
 
 
 def account_hash_password(password, salt):
     '''
     password must be a str type
-    salt must be a 4-byte bytes type
-    encrypted_password is a 32-byte bytes type
+    salt must be a char[8]
+    encrypted_password is a char[64]
     '''
 
     password_salt_bytearray = bytearray()
     password_salt_bytearray.extend(str(password).encode())
-    password_salt_bytearray.extend(salt)
+    password_salt_bytearray.extend(bytes.fromhex(salt))
 
-    encrypted_password = hashlib.sha256(password_salt_bytearray).digest()
+    encrypted_password = hashlib.sha256(password_salt_bytearray).hexdigest()
     return encrypted_password
-
-
-# Mock database for accounts (Encrypted Text)
-# {username:(account_hash_password(password+salt):32 bytes, salt:4 bytes)}
-accounts = dict()

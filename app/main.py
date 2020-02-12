@@ -43,7 +43,7 @@ def main_guest_welcome(args):
 def main_user_welcome(args):
     thumbnail_dir_path, thumbnails = photo.get_thumbnails()
     return render_template(
-        'user_welcome.html',title=args.title,username=account.account_get_logged_in_user(), error_message=args.error_message, thumbnails=thumbnails, thumbnail_dir_path=thumbnail_dir_path)
+        'user_welcome.html',title=args.title,username=account.account_get_logged_in_username(), error_message=args.error_message, thumbnails=thumbnails, thumbnail_dir_path=thumbnail_dir_path)
 
 
 def init():

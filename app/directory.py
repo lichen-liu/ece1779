@@ -16,9 +16,9 @@ def get_root_dir_path(absolute=True):
 
 def get_user_dir_path(absolute=True):
     if absolute:
-        return os.path.join(get_root_dir_path(absolute), account.account_get_logged_in_user())
+        return os.path.join(get_root_dir_path(absolute), account.account_get_logged_in_username())
     else:
-        return get_root_dir_path(absolute) + '/' + account.account_get_logged_in_user()
+        return get_root_dir_path(absolute) + '/' + account.account_get_logged_in_username()
 
 
 def get_user_photos_dir_path(absolute=True):
