@@ -1,13 +1,14 @@
 from flask import g, redirect, render_template, request, url_for
-from app import account, webapp, directory, photo, utility
+from app import account, webapp, directory, photo, utility, queue, image_batch_runner
 import os
-
 
 @webapp.route('/',methods=['GET', 'POST'])
 @webapp.route('/index',methods=['GET', 'POST'])
 @webapp.route('/main',methods=['GET', 'POST'])
 # Display an HTML page with links
 def main_handler():
+    batch_runner = image_batch_runner.get_batch_runner()
+    batch_runner.run()
     return main()
 
 
