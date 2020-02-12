@@ -9,13 +9,12 @@ def draw_rectangles(cv_img, boxes, descriptions):
     for box, description in zip(boxes, descriptions):
         (x,y) = (box[0],box[1])
         (w,h) = (box[2],box[3])
-        cv2.rectangle(cv_img, (x, y), (x + w, y + h), [0,0,0], 2)
+        cv2.rectangle(cv_img, (x, y), (x + w, y + h), [0,0,0], 4)
         cv2.putText(cv_img, description, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, [0,0,0], 2)
     return cv_img
 
 
-def detect_objects_on_images(cv_imgs):
-    net = yolo_net.load_yolo_net()
+def detect_objects_on_images(cv_imgs, net):
     layer_outputs_for_images = net.pass_forward(cv_imgs)    
     boxes_for_all_images, descriptions_for_all_images = extract_boxes_and_descriptions_for_images(layer_outputs_for_images, \
     cv_imgs)

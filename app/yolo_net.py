@@ -19,10 +19,9 @@ class YoloNet:
         self._net.setInput(blob)
         return self._net.forward(self._output_layers)
 
-weights_path = os.path.join(directory.get_yolo_dir_path(), "yolov3.weights")
-config_path = os.path.join(directory.get_yolo_dir_path(), "yolov3.cfg")
-net = YoloNet(cv2.dnn.readNetFromDarknet(config_path, weights_path))
-
-def load_yolo_net():
-    return net
+def new_yolo_net():
+    weights_path = os.path.join(directory.get_yolo_dir_path(), "yolov3.weights")
+    config_path = os.path.join(directory.get_yolo_dir_path(), "yolov3.cfg")
+    new_net = YoloNet(cv2.dnn.readNetFromDarknet(config_path, weights_path))
+    return new_net
     

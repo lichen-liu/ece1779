@@ -1,12 +1,13 @@
-from app import batch_task_helper, queue, directory
+from app import batch_task_helper, queue, directory, yolo_net
 from app import batch_task_helper as bt_helper
 import os, time
 import threading
 class BatchRunner():
-    def __init__(self,queue, batch_size):
+    def __init__(self, queue, batch_size):
         self._queue = queue
         self._batch_size = batch_size
         self._started = False
+        self._net = yolo_net.new_yolo_net()
     
     def try_get_batch(self, batch_size):
         with self._queue.acquire_lock(use_timeout = False) as acquired:
@@ -23,7 +24,7 @@ class BatchRunner():
             for task in tasks:
                 images.append(bt_helper.load_cv_img(task.source_dir))
 
-            boxes_for_all_images, descriptions_for_all_images = bt_helper.detect_objects_on_images(images)
+            boxes_for_all_images, descriptions_for_all_images = bt_helper.detect_objects_on_images(images, self._net)
             for boxes, descriptions, image, task in zip(boxes_for_all_images, descriptions_for_all_images, images, tasks):
 
                 rectangled_image = bt_helper.draw_rectangles(image, boxes, descriptions)
