@@ -6,7 +6,7 @@ import cvlib as cv
 from cvlib.object_detection import draw_bbox
 #Flask imports
 from flask import (redirect, render_template, request, url_for, current_app, abort)
-from app import webapp, directory, account, main, utility, yolo
+from app import webapp, directory, account, main, utility, queue
 #Url utility imports
 from urllib.parse import unquote_plus
 
@@ -16,9 +16,12 @@ def photo_upload_handler():
     error_message = validate_user_and_input_format(request)
     if error_message is not None:
         return main.main(user_welcome_args=main.UserWelcomeArgs(error_message=error_message))
-    process_and_save_image(request)
-    return redirect('/')
 
+    error_message = try_enqueue_task(request)
+    if error_message is not None:
+        return main.main(user_welcome_args=main.UserWelcomeArgs(error_message=error_message))
+        
+    return redirect('/')
 
 def validate_user_and_input_format(request):
     # Get requests
@@ -47,49 +50,38 @@ def validate_user_and_input_format(request):
         return 'File extension is not allowed'
 
 
-def process_and_save_image(request):
+def try_enqueue_task(request):
     image = request.files['file']
     file_name = image.filename
     photo_bytes = image.read()
+    task_queue = queue.get_queue()
 
-    origin_photo_path = os.path.join(directory.get_user_photos_dir_path(), file_name)
-    save_bytes_img(photo_bytes, origin_photo_path)
+    with task_queue.acquire_lock() as acquired:
+        if(acquired):
+            succeeded = task_queue.add(prepare_task(file_name))
+            if(succeeded):
+                origin_photo_path = os.path.join(directory.get_user_photos_dir_path(), file_name)
+                save_bytes_img(photo_bytes, origin_photo_path)
+            else:
+                return "Server are handling too many requests, please try again later"
+        else:
+            return "Server are overloaded, please try again later"
 
-    rectangled_photo = draw_rectangles_on_photo(photo_bytes)
-    rectangled_photo_path = os.path.join(directory.get_user_rectangles_dir_path(), file_name)
-    save_cv_img(rectangled_photo, rectangled_photo_path)
 
-    thumbnail = generate_thumbnail_for_cv_img(rectangled_photo)
-    thumbnail_path = os.path.join(directory.get_user_thumbnails_dir_path(), file_name)
-    save_cv_img(thumbnail, thumbnail_path)
+def prepare_task(file_name):
+     source_dir = directory.get_user_photos_dir_path() + '/' + file_name
+     thumbnail_dest_dir = directory.get_user_thumbnails_dir_path() + '/' + file_name
+     rectangled_dest_dir = directory.get_user_rectangles_dir_path() + '/' + file_name
+     return queue.Task(source_dir, thumbnail_dest_dir, rectangled_dest_dir)
 
 
 def is_extension_allowed(file_name):
     return '.' in file_name and file_name.rsplit('.',1)[1].lower() in current_app.config['ALLOWED_IMAGE_EXTENSION']
-
-
-def draw_rectangles_on_photo(photo_bytes):
-    cv_img = decode_bytes_to_cv_image(photo_bytes)
-    boxes, descriptions = yolo.detect_objects(cv_img)
-    return yolo.draw_rectangles(cv_img, boxes, descriptions)
-
-
-def decode_bytes_to_cv_image(photo_bytes):
-    numpy_img = numpy.fromstring(photo_bytes, numpy.uint8)
-    return cv2.imdecode(numpy_img, cv2.IMREAD_COLOR)
    
-
-def generate_thumbnail_for_cv_img(cv_img):
-    return cv2.resize(cv_img,current_app.config["THUMBNAIL_SIZE"])
-
 
 def save_bytes_img(photo_bytes, path):
     f = open(path, 'wb')
     f.write(photo_bytes)
-
-
-def save_cv_img(photo_bytes, path):
-    cv2.imwrite(path, photo_bytes)
 
 
 @webapp.route('/api/photo_display', methods=['POST'])
@@ -104,7 +96,6 @@ def display_photo_handler():
              original_photo_dir = directory.get_user_photos_dir_path(False))
     else:
         return render_template('empty_go_home.html', title='Error', message='Please try again!')
-
 
 def get_thumbnails():
     '''
