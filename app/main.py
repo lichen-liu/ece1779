@@ -7,8 +7,6 @@ import os
 @webapp.route('/main',methods=['GET', 'POST'])
 # Display an HTML page with links
 def main_handler():
-    batch_runner = image_batch_runner.get_batch_runner()
-    batch_runner.run()
     return main()
 
 
@@ -47,10 +45,16 @@ def main_user_welcome(args):
 
 
 def init():
+    directory.create_yolo_dir_if_necessary()
     # Construct yolov3.weights if necessary
     yolov3_weights_dst_file = os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights')
     if not os.path.exists(yolov3_weights_dst_file):
         yolov3_weights_chunk_files = [os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights.' + str(i)) for i in range(0, 5)]
         utility.combine_files(yolov3_weights_chunk_files, yolov3_weights_dst_file)
+
     # To split, run:
     # utility.split_file(yolov3_weights_dst_file)
+
+    image_batch_runner.init_batch_runner()
+    batch_runner = image_batch_runner.get_batch_runner()
+    batch_runner.run()

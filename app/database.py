@@ -245,7 +245,7 @@ def print_database():
     print(get_photo_table())
     print()
 
-print_database()
+# print_database()
 # delete_database()
 # print_database()
 

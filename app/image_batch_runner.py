@@ -39,10 +39,14 @@ class BatchRunner():
             batch_thread.start()
             self._started = True
 
-batch_runner = BatchRunner(queue.get_queue(),5)
+
+l_batch_runner = None
+
+
+def init_batch_runner():
+    global l_batch_runner
+    l_batch_runner = BatchRunner(queue.get_queue(),5)
+
+
 def get_batch_runner():
-    return batch_runner
-
-
-
-
+    return l_batch_runner

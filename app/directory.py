@@ -6,6 +6,10 @@ def get_static_dir_path():
     return os.path.join(os.getcwd(), 'static')
 
 
+def get_yolo_dir_path():
+        return os.path.join(os.getcwd(), 'yolo')
+
+
 def get_root_dir_path(absolute=True):
     root_dir_name = 'users_data'
     if absolute:
@@ -40,13 +44,6 @@ def get_user_rectangles_dir_path(absolute=True):
         return os.path.join(get_user_dir_path(absolute), 'rectangles')
     else:
         return get_user_dir_path(absolute) + '/' + 'rectangles'
-
-
-def get_yolo_dir_path(absolute=True):
-    if absolute:
-        return os.path.join(get_static_dir_path(), 'yolo')
-    else:
-        return get_static_dir_path() + '/' + 'yolo'
 
 
 def create_static_dir_if_necessary():
