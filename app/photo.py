@@ -1,10 +1,8 @@
 import os
 import cv2, numpy
 import cvlib as cv
-from cvlib.object_detection import draw_bbox
-from flask import (redirect, render_template, request, url_for, current_app, abort, jsonify)
+from flask import redirect, render_template, request, current_app, abort, jsonify
 from app import webapp, directory, account, main, utility, queue, batch_task_helper, yolo_net, database
-from urllib.parse import unquote_plus
 
 
 @webapp.route('/api/upload', methods=['POST'])
@@ -155,7 +153,6 @@ def display_photo_handler():
             _, photo_name = result
             saved_photo_file = photo_id_str + utility.get_file_extension(photo_name)
 
-            #Escape html encoding using unquote_plus
             return render_template(
                 'display_photo.html', photo_file=saved_photo_file,
                 processed_photo_dir = directory.get_rectangles_dir_path(False),

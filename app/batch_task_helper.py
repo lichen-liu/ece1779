@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import os
-from app import directory, account, yolo_net
+from app import directory
 
 
 def draw_rectangles(cv_img, boxes, descriptions):

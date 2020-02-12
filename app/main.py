@@ -1,6 +1,7 @@
-from flask import g, redirect, render_template, request, url_for
+from flask import render_template
 from app import account, webapp, directory, photo, utility, queue, image_batch_runner
 import os
+
 
 @webapp.route('/',methods=['GET', 'POST'])
 @webapp.route('/index',methods=['GET', 'POST'])

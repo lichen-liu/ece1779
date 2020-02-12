@@ -1,8 +1,7 @@
 import hashlib
 import random
-import struct
 
-from flask import g, redirect, render_template, request, session, url_for, abort
+from flask import redirect, request, session, abort
 
 from app import main, webapp, database
 

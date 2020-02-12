@@ -1,6 +1,6 @@
-from app import batch_task_helper, queue, directory, yolo_net
+from app import batch_task_helper, queue, yolo_net
 from app import batch_task_helper as bt_helper
-import os, time
+import time
 import threading
 class BatchRunner():
     def __init__(self, queue, batch_size):
