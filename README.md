@@ -16,10 +16,9 @@ pip install Flask
 
 ### 1.2 MySQL
 Use: MySQL Community Server 8.0.19
-```
-https://dev.mysql.com/downloads/mysql/
-"Developer Default"
-```
+- https://dev.mysql.com/downloads/mysql/
+- "Developer Default"
+  
 Install Python mysql connector
 ```
 pip install mysql-connector-python
@@ -40,10 +39,9 @@ pip install tensorflow
 ```
 We are now using ```yolov3``` model.  
 You can find a variaty of trained yolo3 weights and labels from these website:
-```
-https://www.pyimagesearch.com/2018/11/12/yolo-object-detection-with-opencv/
-https://pjreddie.com/darknet/yolo/
-```
+1. https://www.pyimagesearch.com/2018/11/12/yolo-object-detection-with-opencv/
+2. https://pjreddie.com/darknet/yolo/
+  
 Then move the weights, config and label files to the app/static/yolo/. directory.
 If the 'yolo' directory does not exist on you local environment under the static directory, you can manually create it or just start the application as if will check and create the yolo directory for you
 
@@ -81,4 +79,4 @@ python server_helper.py --help
 
 ## 5.0 Notes
 1. When committing the code, double check to make sure no OS/IDE-dependent temporary files are included!
-2. Launch the server inside /app directory!
+2. If you want to modify sql database, notify DASHEN first!
