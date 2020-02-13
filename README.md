@@ -79,9 +79,9 @@ python server_helper.py --help
 
 ## 5.0 Testing:
 
-### 5.1 gen.py
-[http://www.cs.toronto.edu/~delara/courses/ece1779/projects/a1/gen.py](gen.py)
-This script tests /api/upload POST.  
+### 5.1 gen.py (/api/upload POST)
+[http://www.cs.toronto.edu/~delara/courses/ece1779/projects/a1/gen.py](gen.py)  
+
 To set up
 ```
 pip install aiofiles
