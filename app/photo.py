@@ -7,9 +7,19 @@ from app import webapp, directory, account, main, utility, queue, batch_task_hel
 
 @webapp.route('/api/upload', methods=['POST'])
 def photo_upload_handler():
+    is_from_api = False
+    username = request.form.get('username')
+    password = request.form.get('password')
+    if username is not None or password is not None:
+        is_from_api = True
+    print('is_from_api=' + str(is_from_api))
+
     error_message = validate_user_and_input_format(request)
     if error_message is not None:
-        return main.main(user_welcome_args=main.UserWelcomeArgs(error_message=error_message))
+        if is_from_api:
+            return error_message
+        else:
+            return main.main(user_welcome_args=main.UserWelcomeArgs(error_message=error_message))
 
     if webapp.config.get('USE_IMAGE_BATCH_RUNNER'):
         # Batch processing version
@@ -18,30 +28,30 @@ def photo_upload_handler():
         # Per-request version
         error_message = process_and_save_image(request)
     if error_message is not None:
-        return main.main(user_welcome_args=main.UserWelcomeArgs(error_message=error_message))
+        if is_from_api:
+            return error_message
+        else:
+            return main.main(user_welcome_args=main.UserWelcomeArgs(error_message=error_message))
 
-    return redirect('/')
+    if is_from_api:
+        return '/api/upload successful!'
+    else:
+        return redirect('/')
 
 
 def validate_user_and_input_format(request):
     # Get requests
     # NOT TESTED YET!
-    is_from_api = False
     username = request.form.get('username')
     password = request.form.get('password')
     if username is not None or password is not None:
         err_msg = account.account_login(username, password)
         if err_msg:
-            abort(401)
-        else:
-            is_from_api = True
+            return err_msg
 
     content_length = request.content_length
     if content_length is not None and content_length > current_app.config['MAXIMUM_IMAGE_SIZE']:
-        if is_from_api:
-            abort(413)
-        else:
-            return 'Error! File too large (' + utility.convert_bytes_to_human_readable(content_length) + \
+        return 'Error! File too large (' + utility.convert_bytes_to_human_readable(content_length) + \
             '). It must be smaller than ' + utility.convert_bytes_to_human_readable(current_app.config['MAXIMUM_IMAGE_SIZE']) + '.'
 
     if request.files.get('file') is None or request.files['file'].filename == '':

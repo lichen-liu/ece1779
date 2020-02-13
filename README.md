@@ -77,6 +77,22 @@ python server_helper.py --help
 [http://3.231.61.127:5000/](http://3.231.61.127:5000/)
 
 
-## 5.0 Notes
+## 5.0 Testing:
+
+### 5.1 gen.py
+[http://www.cs.toronto.edu/~delara/courses/ece1779/projects/a1/gen.py](gen.py)
+This script tests /api/upload POST.  
+To set up
+```
+pip install aiofiles
+pip install aiohttp
+```
+To run
+```
+python .\gen.py http://127.0.0.1:5000/api/upload user password 0.5 "C:\Users\liuli\Desktop\t"
+```
+
+
+## 6.0 Notes
 1. When committing the code, double check to make sure no OS/IDE-dependent temporary files are included!
 2. If you want to modify sql database, notify DASHEN first!
