@@ -28,7 +28,7 @@ def delete_all():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--delete_data', help='Delete all user data (database and filesystem)', action='store_true')
-    parser.add_argument('--delete_all', help='Delete all user data and accounts (database and filesystem', action='store_true')
+    parser.add_argument('--delete_all', help='Delete all user data and accounts (database and filesystem)', action='store_true')
     parser.add_argument('--account_table', help='Print the Account table from the database', action='store_true')
     parser.add_argument('--photo_table', help='Print the Photo table from the database', action='store_true')
     parser.add_argument('--storage_info', help='Print the ' + directory.get_root_dir_path(False) + ' directory size', action='store_true')
