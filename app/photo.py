@@ -154,7 +154,8 @@ def display_photo_handler():
             saved_photo_file = photo_id_str + utility.get_file_extension(photo_name)
 
             return render_template(
-                'display_photo.html', photo_file=saved_photo_file,
+                'display_photo.html', saved_photo_file=saved_photo_file,
+                photo_name = photo_name,
                 processed_photo_dir = directory.get_rectangles_dir_path(False),
                 original_photo_dir = directory.get_photos_dir_path(False))
 
