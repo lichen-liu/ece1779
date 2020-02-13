@@ -27,9 +27,11 @@
                 <img class="login_icon" src="../static/icons/login_icon.png"></img>
                 <br>
                 <div class="input">
-                    <input placeholder="Username" type="text" name="username" value={{username if username}}>
+                    <input placeholder="Username" type="text" id="username_login" name="username" value={{username if username}}>
                     <br>
-                    <input type="password" placeholder="Password" type="text" name="password" value={{password if password}}>
+                    <input type="password" placeholder="Password" type="text" id="password_login" name="password" value={{password if password}}>
+                    <br>
+                    <input type="checkbox" id="toggle_password_login" onclick="togglePassword('password_login')">Show Password</input>
                     <br>
                     <input type="checkbox" name="rememberme" value="True">Remember Me</input>
                     <br>
@@ -42,11 +44,13 @@
                 <img class="login_icon" src="../static/icons/login_icon.png"></img>
                 <br>
                 <div class="input">
-                    <input placeholder="Choose your username" type="text" id="username_pick" name="username" value={{username if username}}>
+                    <input placeholder="Choose your username" type="text" id="username_pick" name="username">
                     <br>
-                    <input type="password" id="password_pick" placeholder="Pick a password" type="text" name="password" value={{password if password}}>
+                    <input type="password" id="password_pick" placeholder="Pick a password" type="text" name="password">
                     <br>
-                    <input type="password" id="password_repeat" placeholder="Type your password again" type="text" name="password_validate" value={{password if password}}>
+                    <input type="checkbox" id="toggle_password_pick" onclick="togglePassword('password_pick');togglePassword('password_repeat');">Show Password</input>
+                    <br>
+                    <input type="password" id="password_repeat" placeholder="Type your password again" type="text" name="password_validate">
                     <br>
                     <button type="submit" name="action" value="register">Confirm</button>
                     <button type="button" onclick="closeForm()">Cancel</button>
@@ -73,10 +77,25 @@
 
         function openForm() {
             document.getElementById("register_user").style.display = "block";
+            document.getElementById("password_pick").value = document.getElementById("password_login").value;
+            document.getElementById("username_pick").value = document.getElementById("username_login").value;
+            document.getElementById("password_repeat").value = "";
         }
 
         function closeForm() {
             document.getElementById("register_user").style.display = "none";
+            document.getElementById("password_login").value = document.getElementById("password_pick").value;
+            document.getElementById("username_login").value = document.getElementById("username_pick").value;
+            document.getElementById("password_repeat").value = "";
+        }
+
+        function togglePassword(id) {
+            var ele = document.getElementById(id);
+            if (ele.type === "password") {
+                ele.type = "text";
+            } else {
+                ele.type = "password";
+            }
         }
 
         function validateInput() {
@@ -111,6 +130,7 @@
                 var message = document.getElementById("modalMessage");
                 message.innerHTML = "Passwords do not match, please try again"
                 modal.style.display = "block";
+                document.getElementById("password_repeat").value = "";
                 return false;
              }
         }
