@@ -1,12 +1,15 @@
 import os
+import pathlib
 
 
 def get_static_dir_path():
-    return os.path.join(os.getcwd(), 'static')
+    #return os.path.join(pathlib.Path().absolute(), 'static')
+    return os.path.join(pathlib.Path(__file__).parent.absolute(), 'static')
 
 
 def get_yolo_dir_path():
-        return os.path.join(os.getcwd(), 'yolo')
+    #return os.path.join(pathlib.Path().absolute(), 'yolo')
+    return os.path.join(pathlib.Path(__file__).parent.absolute(), 'yolo')
 
 
 def get_root_dir_path(absolute=True):
