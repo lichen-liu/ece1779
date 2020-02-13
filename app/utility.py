@@ -1,5 +1,15 @@
 import os
 
+
+def get_dir_size(start_path):
+    total_size = 0
+    for path, _, files in os.walk(start_path):
+        for f in files:
+            fp = os.path.join(path, f)
+            total_size += os.path.getsize(fp)
+    return total_size
+
+
 def convert_bytes_to_human_readable(num):
     """
     this function will convert bytes to MB.... GB... etc
@@ -19,6 +29,7 @@ def get_file_extension(file_name):
     '''
     _, file_extension = os.path.splitext(file_name)
     return file_extension
+
 
 def split_file(src_file):
     CHUNK_SIZE = 50 * 1024 * 1024
