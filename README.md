@@ -64,10 +64,11 @@ python -m flask run --host=0.0.0.0
 ```
 
 
-## 3.0 Clean Up
+## 3.0 Helper Utilities
+Use the script to manage filesystem and database
 ```
 cd app
-python server_helper.py
+python server_helper.py --help
 ```
 
 
