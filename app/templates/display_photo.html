@@ -4,14 +4,16 @@
         <input type="submit" value="Home">
     </form>
 
+    <p>{{ photo_name }}</p>
+
     <div class="image_row">
         <div class="image_container">
             <div class="title">Original Image</div>
-            <img class="image" title={{photo_file}} src="{{ url_for('static', filename = original_photo_dir + '/' + photo_file) }}"/>
+            <img class="image" title={{photo_name}} src="{{ url_for('static', filename = original_photo_dir + '/' + saved_photo_file) }}"/>
         </div>
         <div class="image_container">
             <div class="title">Processed Image</div>
-            <img class="image" title={{photo_file}} src="{{ url_for('static', filename = processed_photo_dir + '/' + photo_file) }}"/>
+            <img class="image" title={{photo_name}} src="{{ url_for('static', filename = processed_photo_dir + '/' + saved_photo_file) }}"/>
         </div>
     </div>
 
