@@ -70,14 +70,15 @@ python server_helper.py --help
 ```
 
 
-## 4.0 AWS IP:
+## 4.0 AWS IP
 
 ~~[http://52.207.56.96:5000/](http://52.207.56.96:5000/)~~
 
 [http://3.231.61.127:5000/](http://3.231.61.127:5000/)
 
 
-## 5.0 Testing:
+## 5.0 Testing
+
 
 ### 5.1 gen.py (/api/upload POST)
 [http://www.cs.toronto.edu/~delara/courses/ece1779/projects/a1/gen.py](gen.py)
