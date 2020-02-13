@@ -60,7 +60,10 @@ cd app
 export FLASK_APP = "main.py"
 python -m flask run --host=0.0.0.0
 ```
-
+With gunicorn:
+```
+gunicorn --bind 0.0.0.0:5000 --workers=1 run:webapp
+```
 
 ## 3.0 Helper Utilities
 Use the script to manage filesystem and database
