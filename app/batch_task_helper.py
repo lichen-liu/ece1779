@@ -98,8 +98,22 @@ def load_labels():
     return open(labels_path).read().strip().split('\n')
 
 
-def generate_thumbnail_for_cv_img(cv_img):
-    return cv2.resize(cv_img,(120,120))
+def generate_thumbnail_for_cv_img(image, matching_size = 120, inter = cv2.INTER_AREA):
+    dim = None
+    large_side = None
+
+    (h, w) = image.shape[:2]
+    if h > w :
+        large_side = h
+    else:
+        large_side = w
+    
+    ratio = 120 / float(large_side)
+    print(ratio)
+    dim = (int(w * ratio), int(h * ratio))
+
+    resized = cv2.resize(image, dim, interpolation = inter)
+    return cv2.copyMakeBorder(resized, 0, matching_size - dim[1], 0, matching_size - dim[0], cv2.BORDER_CONSTANT, value=[199, 199, 199]) 
 
 
 def load_cv_img(path):
