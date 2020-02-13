@@ -1,6 +1,5 @@
 from flask import render_template
-from app import account, webapp, directory, photo, utility, queue, image_batch_runner
-import os
+from app import account, webapp, directory, photo
 
 
 @webapp.route('/',methods=['GET', 'POST'])
@@ -41,26 +40,3 @@ def main_user_welcome(args):
     return render_template(
         'user_welcome.html',title=args.title,username=account.account_get_logged_in_username(), error_message=args.error_message, 
         thumbnails=photo.get_thumbnails(), thumbnail_dir_path=directory.get_thumbnails_dir_path(False))
-
-
-def init():
-    '''
-    All initialization should be done here
-    '''
-    # Initialze directories
-    directory.create_directories_if_necessary()
-
-    # Construct yolov3.weights if necessary
-    yolov3_weights_dst_file = os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights')
-    if not os.path.exists(yolov3_weights_dst_file):
-        yolov3_weights_chunk_files = [os.path.join(directory.get_yolo_dir_path(), 'yolov3.weights.' + str(i)) for i in range(0, 5)]
-        utility.combine_files(yolov3_weights_chunk_files, yolov3_weights_dst_file)
-    # To split, run:
-    # utility.split_file(yolov3_weights_dst_file)
-
-    if webapp.config.get('USE_IMAGE_BATCH_RUNNER'):
-        # Run the batch runner
-        queue.init_queue()
-        image_batch_runner.init_batch_runner()
-        batch_runner = image_batch_runner.get_batch_runner()
-        batch_runner.run()

@@ -1,24 +1,8 @@
-
-from datetime import timedelta
-
 from flask import Flask
-
-
 webapp = Flask(__name__)
-webapp.config['SECRET_KEY'] = 'NIDEMAMAMASHANGJIUYAOBAOZHALE'
-webapp.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes = 100)
-webapp.config['SESSION_REFRESH_EACH_REQUEST'] = True
-webapp.config['THUMBNAIL_SIZE'] = (120,120)
-webapp.config['MAXIMUM_IMAGE_SIZE'] = 5 * 1024 * 1024
-webapp.config['ALLOWED_IMAGE_EXTENSION'] = set(['.png', '.jpg', '.jpeg', '.gif'])
-webapp.config['USE_IMAGE_BATCH_RUNNER'] = True
 
+from app import config
+webapp.config.from_object('config.Config')
 
-print('SECRET_KEY = ' + str(webapp.config['SECRET_KEY']))
-print('PERMANENT_SESSION_LIFETIME = ' + str(webapp.config['PERMANENT_SESSION_LIFETIME']))
-
-
-from app import account, main, photo
-
-
-main.init()
+from app import initialize
+initialize.init()

@@ -1,4 +1,10 @@
-# db_config = {'user': 'ece1779', 
-#              'password': 'secret',
-#              'host': '127.0.0.1',
-#              'database': 'ece1779'}
+from datetime import timedelta
+
+class Config(object):
+    SECRET_KEY = 'NIDEMAMAMASHANGJIUYAOBAOZHALE'
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes = 100)
+    SESSION_REFRESH_EACH_REQUEST = True
+    THUMBNAIL_SIZE = (120,120)
+    MAXIMUM_IMAGE_SIZE = 5 * 1024 * 1024
+    ALLOWED_IMAGE_EXTENSION = set(['.png', '.jpg', '.jpeg', '.gif'])
+    USE_IMAGE_BATCH_RUNNER = True
