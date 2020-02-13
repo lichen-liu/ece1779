@@ -109,11 +109,14 @@ def generate_thumbnail_for_cv_img(image, matching_size = 120, inter = cv2.INTER_
         large_side = w
     
     ratio = matching_size / float(large_side)
-    print(ratio)
+    print('ratio=' + str(ratio))
     dim = (int(w * ratio), int(h * ratio))
 
     resized = cv2.resize(image, dim, interpolation = inter)
-    return cv2.copyMakeBorder(resized, 0, matching_size - dim[1], 0, matching_size - dim[0], cv2.BORDER_CONSTANT, value=[199, 199, 199]) 
+
+    vertical_border = (matching_size - dim[1]) // 2
+    horizonta_border = (matching_size - dim[0]) // 2
+    return cv2.copyMakeBorder(resized, vertical_border, vertical_border, horizonta_border, horizonta_border, cv2.BORDER_CONSTANT, value=[255, 255, 255]) 
 
 
 def load_cv_img(path):
