@@ -7,7 +7,8 @@ def database_operation(func):
     def inner(*args, **kwargs):
         error_message = None
         try:
-            cnx = mysql.connector.connect(user='flask_server', password='password', host='127.0.0.1', database='ece1779')
+            cnx = mysql.connector.connect(
+                user='flask_server', password='password', host='127.0.0.1', database='ece1779')
             if cnx:
                 error_message = func(cnx, *args, **kwargs)
         except mysql.connector.Error as err:

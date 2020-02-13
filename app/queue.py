@@ -1,11 +1,13 @@
 import threading
 from contextlib import contextmanager
 
+
 class Task:
     def __init__(self, source_path, thumbnail_dest_path, rectangled_dest_path):
         self.source_path = source_path
         self.thumbnail_dest_path = thumbnail_dest_path
         self.rectangled_dest_path = rectangled_dest_path
+
 
 class Queue:
     def __init__(self, capacity):
@@ -20,17 +22,18 @@ class Queue:
 
     def is_full(self):
         return len(self._queue) >= self._capacity
-    
+
     def wait_task(self):
-        self._task_wait_condition.wait() 
+        self._task_wait_condition.wait()
 
     def notify_waiters(self):
         self._task_wait_condition.notifyAll()
-    
+
     @contextmanager
-    def acquire_lock(self, use_timeout = True):
+    def acquire_lock(self, use_timeout=True):
         if use_timeout:
-            result = self._lock.acquire(blocking=True, timeout=self._lock_timeout)
+            result = self._lock.acquire(
+                blocking=True, timeout=self._lock_timeout)
         else:
             result = self._lock.acquire(blocking=True)
         yield result
@@ -40,13 +43,13 @@ class Queue:
     def add(self, task):
         if(self.is_full()):
             return False
-        self._queue.insert(0,task)
+        self._queue.insert(0, task)
         self.notify_waiters()
         return True
-            
+
     # The Consumer (batch_handler) will keep waiting to ...
     # ... get a task, if there is no test, the consumer sleeps on the condition
-    def pop(self, needed = 1):
+    def pop(self, needed=1):
         tasks = []
         while(needed > 0 and self.has_task()):
             tasks.append(self._queue.pop())
@@ -62,5 +65,5 @@ def init_queue():
     l_queue = Queue(CAPACITY)
 
 
-def get_queue():     
+def get_queue():
     return l_queue

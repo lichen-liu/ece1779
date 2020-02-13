@@ -72,13 +72,13 @@ def account_register(username, password, rememberme=False):
 
     if account_is_logged_in():
         account_logout()
-    
+
     # Validate input (format)
     if not username:
         return 'Error! Username is not valid!'
     if not password:
         return 'Error! Password is not valid!'
-    
+
     USERNAME_MAX_LENGTH = 100
     if len(username) > USERNAME_MAX_LENGTH:
         return 'Error! "' + username + '" exceeds ' + str(USERNAME_MAX_LENGTH) + ' characters!'
@@ -86,7 +86,8 @@ def account_register(username, password, rememberme=False):
     # Register the user (business)
     salt = bytes(random.getrandbits(8) for _ in range(4)).hex()
     encrypted_password = account_hash_password(password, salt)
-    error_message = database.create_new_account(username, encrypted_password, salt)
+    error_message = database.create_new_account(
+        username, encrypted_password, salt)
     if error_message:
         return error_message
     print('    Successful!')
@@ -104,7 +105,8 @@ def account_login(username, password, rememberme=False):
     if account_is_logged_in():
         account_logout()
 
-    print('Login: u=' + username + ' p=' + password + ' rememberme=' + str(rememberme))
+    print('Login: u=' + username + ' p=' +
+          password + ' rememberme=' + str(rememberme))
 
     # Validate input (business)
     userid = account_verify_password(username, password)

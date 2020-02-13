@@ -1,5 +1,6 @@
 import os
-import cv2, numpy
+import cv2
+import numpy
 import cvlib as cv
 from flask import redirect, render_template, request, current_app, abort, jsonify
 from app import webapp, directory, account, main, utility, queue, batch_task_helper, yolo_net, database
@@ -52,7 +53,9 @@ def validate_user_and_input_format(request):
     content_length = request.content_length
     if content_length is not None and content_length > current_app.config['MAXIMUM_IMAGE_SIZE']:
         return 'Error! File too large (' + utility.convert_bytes_to_human_readable(content_length) + \
-            '). It must be smaller than ' + utility.convert_bytes_to_human_readable(current_app.config['MAXIMUM_IMAGE_SIZE']) + '.'
+            '). It must be smaller than ' + \
+            utility.convert_bytes_to_human_readable(
+                current_app.config['MAXIMUM_IMAGE_SIZE']) + '.'
 
     if request.files.get('file') is None or request.files['file'].filename == '':
         return 'No file was uploaded'
@@ -66,22 +69,27 @@ def process_and_save_image(request):
     photo_bytes = image.read()
 
     # Register the photo in database
-    photo_id = database.create_new_photo(account.account_get_logged_in_userid(), file_name)
+    photo_id = database.create_new_photo(
+        account.account_get_logged_in_userid(), file_name)
     if photo_id:
         # Get the new filename
         saved_file_name = str(photo_id) + utility.get_file_extension(file_name)
 
         # Save the original photo
-        origin_photo_path = os.path.join(directory.get_photos_dir_path(), saved_file_name)
+        origin_photo_path = os.path.join(
+            directory.get_photos_dir_path(), saved_file_name)
         save_bytes_img(photo_bytes, origin_photo_path)
 
         # Save the rectanged photo
         rectangled_photo = draw_rectangles_on_photo(photo_bytes)
-        rectangled_photo_path = os.path.join(directory.get_rectangles_dir_path(), saved_file_name)
+        rectangled_photo_path = os.path.join(
+            directory.get_rectangles_dir_path(), saved_file_name)
         batch_task_helper.save_cv_img(rectangled_photo, rectangled_photo_path)
 
-        thumbnail = batch_task_helper.generate_thumbnail_for_cv_img(rectangled_photo)
-        thumbnail_path = os.path.join(directory.get_thumbnails_dir_path(), saved_file_name)
+        thumbnail = batch_task_helper.generate_thumbnail_for_cv_img(
+            rectangled_photo)
+        thumbnail_path = os.path.join(
+            directory.get_thumbnails_dir_path(), saved_file_name)
         batch_task_helper.save_cv_img(thumbnail, thumbnail_path)
     else:
         return 'Server has encountered a problem with database when storing the photo'
@@ -90,9 +98,10 @@ def process_and_save_image(request):
 def draw_rectangles_on_photo(photo_bytes):
     cv_img = decode_bytes_to_cv_image(photo_bytes)
     cv_img_list = []
-    cv_img_list.append(cv_img) 
+    cv_img_list.append(cv_img)
     net = yolo_net.new_yolo_net()
-    boxes, descriptions = batch_task_helper.detect_objects_on_images(cv_img_list, net)
+    boxes, descriptions = batch_task_helper.detect_objects_on_images(
+        cv_img_list, net)
     return batch_task_helper.draw_rectangles(cv_img, boxes[0], descriptions[0])
 
 
@@ -111,17 +120,21 @@ def try_enqueue_task(request):
         if(acquired):
             if not task_queue.is_full():
                 # Register the photo in database
-                photo_id = database.create_new_photo(account.account_get_logged_in_userid(), file_name)
+                photo_id = database.create_new_photo(
+                    account.account_get_logged_in_userid(), file_name)
                 if photo_id:
                     # Get the new filename
-                    saved_file_name = str(photo_id) + utility.get_file_extension(file_name)
+                    saved_file_name = str(photo_id) + \
+                        utility.get_file_extension(file_name)
 
                     # Add to the task queue
-                    is_successful = task_queue.add(prepare_task(saved_file_name))
+                    is_successful = task_queue.add(
+                        prepare_task(saved_file_name))
                     assert is_successful
 
                     # Save the original photo
-                    origin_photo_path = os.path.join(directory.get_photos_dir_path(), saved_file_name)
+                    origin_photo_path = os.path.join(
+                        directory.get_photos_dir_path(), saved_file_name)
                     save_bytes_img(photo_bytes, origin_photo_path)
                 else:
                     return 'Server has encountered a problem with database when storing the photo'
@@ -132,10 +145,12 @@ def try_enqueue_task(request):
 
 
 def prepare_task(file_name):
-     source_path = os.path.join(directory.get_photos_dir_path(), file_name)
-     thumbnail_dest_path = os.path.join(directory.get_thumbnails_dir_path(), file_name)
-     rectangled_dest_path = os.path.join(directory.get_rectangles_dir_path(), file_name)
-     return queue.Task(source_path, thumbnail_dest_path, rectangled_dest_path)
+    source_path = os.path.join(directory.get_photos_dir_path(), file_name)
+    thumbnail_dest_path = os.path.join(
+        directory.get_thumbnails_dir_path(), file_name)
+    rectangled_dest_path = os.path.join(
+        directory.get_rectangles_dir_path(), file_name)
+    return queue.Task(source_path, thumbnail_dest_path, rectangled_dest_path)
 
 
 def is_extension_allowed(file_name):
@@ -157,13 +172,14 @@ def display_photo_handler():
         result = database.get_photo(int(photo_id_str))
         if result:
             _, photo_name = result
-            saved_photo_file = photo_id_str + utility.get_file_extension(photo_name)
+            saved_photo_file = photo_id_str + \
+                utility.get_file_extension(photo_name)
 
             return render_template(
                 'display_photo.html', saved_photo_file=saved_photo_file,
-                photo_name = photo_name,
-                processed_photo_dir = directory.get_rectangles_dir_path(False),
-                original_photo_dir = directory.get_photos_dir_path(False))
+                photo_name=photo_name,
+                processed_photo_dir=directory.get_rectangles_dir_path(False),
+                original_photo_dir=directory.get_photos_dir_path(False))
 
     return render_template('empty_go_home.html', title='Error', message='Please try again!')
 

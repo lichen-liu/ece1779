@@ -2,9 +2,9 @@ from flask import render_template
 from app import account, webapp, directory, photo
 
 
-@webapp.route('/',methods=['GET', 'POST'])
-@webapp.route('/index',methods=['GET', 'POST'])
-@webapp.route('/main',methods=['GET', 'POST'])
+@webapp.route('/', methods=['GET', 'POST'])
+@webapp.route('/index', methods=['GET', 'POST'])
+@webapp.route('/main', methods=['GET', 'POST'])
 # Display an HTML page with links
 def main_handler():
     return main()
@@ -19,8 +19,8 @@ class GuestWelcomeArgs:
 
 
 class UserWelcomeArgs:
-    def __init__(self, error_message=None, title = 'Hello! NI BA ZHA LE!'):
-        self.error_message=error_message
+    def __init__(self, error_message=None, title='Hello! NI BA ZHA LE!'):
+        self.error_message = error_message
         self.title = title
 
 
@@ -33,10 +33,10 @@ def main(guest_welcome_args=GuestWelcomeArgs(), user_welcome_args=UserWelcomeArg
 
 def main_guest_welcome(args):
     return render_template(
-        'guest_welcome.html',title=args.title, username=args.username, password=args.password, error_message=args.error_message)
+        'guest_welcome.html', title=args.title, username=args.username, password=args.password, error_message=args.error_message)
 
 
 def main_user_welcome(args):
     return render_template(
-        'user_welcome.html',title=args.title,username=account.account_get_logged_in_username(), error_message=args.error_message, 
+        'user_welcome.html', title=args.title, username=account.account_get_logged_in_username(), error_message=args.error_message,
         thumbnails=photo.get_thumbnails(), thumbnail_dir_path=directory.get_thumbnails_dir_path(False))
