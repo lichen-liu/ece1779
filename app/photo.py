@@ -70,7 +70,7 @@ def process_and_save_image(request):
         rectangled_photo_path = os.path.join(directory.get_rectangles_dir_path(), saved_file_name)
         batch_task_helper.save_cv_img(rectangled_photo, rectangled_photo_path)
 
-        thumbnail = generate_thumbnail_for_cv_img(rectangled_photo)
+        thumbnail = batch_task_helper.generate_thumbnail_for_cv_img(rectangled_photo)
         thumbnail_path = os.path.join(directory.get_thumbnails_dir_path(), saved_file_name)
         batch_task_helper.save_cv_img(thumbnail, thumbnail_path)
     else:
@@ -89,10 +89,6 @@ def draw_rectangles_on_photo(photo_bytes):
 def decode_bytes_to_cv_image(photo_bytes):
     numpy_img = numpy.fromstring(photo_bytes, numpy.uint8)
     return cv2.imdecode(numpy_img, cv2.IMREAD_COLOR)
-
-
-def generate_thumbnail_for_cv_img(cv_img):
-    return cv2.resize(cv_img,current_app.config['THUMBNAIL_SIZE'])
 
 
 def try_enqueue_task(request):
