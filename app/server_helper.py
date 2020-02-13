@@ -37,9 +37,11 @@ if __name__ == '__main__':
     
     if args.delete_data:
         delete_data()
+        print()
 
     if args.delete_all:
         delete_all()
+        print()
 
     if args.account_table:
         print('ACCOUNT TABLE:')
@@ -59,3 +61,4 @@ if __name__ == '__main__':
         root_dir_path = directory.get_root_dir_path(True)
         size_str = utility.convert_bytes_to_human_readable(utility.get_dir_size(root_dir_path))
         print(root_dir_path + '  -----  ' + size_str)
+        print()
