@@ -108,7 +108,7 @@ def generate_thumbnail_for_cv_img(image, matching_size = 120, inter = cv2.INTER_
     else:
         large_side = w
     
-    ratio = 120 / float(large_side)
+    ratio = matching_size / float(large_side)
     print(ratio)
     dim = (int(w * ratio), int(h * ratio))
 
