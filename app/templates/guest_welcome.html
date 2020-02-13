@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
+
+
+    <div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Passwords do not match, please try again</p>
+    </div>
+
+</div>
+
     <div class="base">
         <div class="holderCommon holder1">
             <img class="title_icon" src="../static/icons/title_icon2.png"></img>
@@ -19,18 +29,64 @@
                 <div class="input">
                     <input placeholder="Username" type="text" name="username" value={{username if username}}>
                     <br>
-                    <input placeholder="Password" type="text" name="password" value={{password if password}}>
+                    <input type="password" placeholder="Password" type="text" name="password" value={{password if password}}>
                     <br>
                     <input type="checkbox" name="rememberme" value="True">Remember Me</input>
                     <br>
                     <button type="submit" name="action" value="login">Login</button>
-                    <button type="submit" name="action" value="register">Register</button>
+                    <button type="button" onclick="openForm()">Register</button>
+                </div>
+            </form>
+
+            <form class="holderCommon register_form" id="register_user" action="/api/account_actions" onsubmit="return validateInput()" method="POST" display="none"> 
+                <img class="login_icon" src="../static/icons/login_icon.png"></img>
+                <br>
+                <div class="input">
+                    <input placeholder="Choose your username" type="text" name="username" value={{username if username}}>
+                    <br>
+                    <input type="password" id="password_pick" placeholder="Pick a password" type="text" name="password" value={{password if password}}>
+                    <br>
+                    <input type="password" id="password_repeat" placeholder="Type your password again" type="text" name="password_validate" value={{password if password}}>
+                    <br>
+                    <button type="submit" name="action" value="register">Confirm</button>
+                    <button type="button" onclick="closeForm()">Cancel</button>
                 </div>
             </form>
     </div>
     <div class="filler"></div>
     <p style="color:red">{{error_message if error_message}}</p>
 
+    <script>     
+
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("close")[0];
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }    
+
+        function openForm() {
+            document.getElementById("register_user").style.display = "block";
+        }
+
+        function closeForm() {
+            document.getElementById("register_user").style.display = "none";
+        }
+
+        function validateInput() {
+            var isSame = (document.forms["register_user"]["password_pick"].value == document.forms["register_user"]["password_repeat"].value);
+            if(!isSame){
+                var modal = document.getElementById("myModal");
+                modal.style.display = "block";
+             }
+        }
+    </script>
     <style>
     .base {
             height: 300px;
@@ -92,6 +148,16 @@
         background: #A9A9A9;
         text-align: center
     }
+
+    .register_form {
+        display:none;
+        top: 5%;
+        left: 50%;
+        height: 220px;
+        width:190px;
+        background: #A9A9A9;
+        text-align: center
+    }
     .input {
         width: 190px;
         height: 220px;
@@ -104,6 +170,35 @@
         background:#FAFAFA;
         background-repeat: no-repeat;
         z-index: -1;
+    }
+
+    .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    }
+
+    .close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
     }
     </style>
 

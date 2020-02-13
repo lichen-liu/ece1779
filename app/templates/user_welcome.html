@@ -2,31 +2,31 @@
 {% block content %}
     <div class="divider">
         <div class="input_section">
-            Welcome {{username}}
-
+           
             <form class="logout_section" action="/api/logout" method="POST">
+                Welcome {{username}}
                 <input type="submit" value="Logout" onclick="return confirm('{{username}}, Do you really want to log out?')">
             </form>
 
-            Upload your favorate photo here
-
+           
             <form class="upload_section" action="/api/upload" method="POST" enctype="multipart/form-data">
+                Upload your favorate photo here
                 <dl>
                     <p>
                         <!-- Should filter for only image files -->
                         <input type="file" name="file" autocomplete="off" required>
+                        <input type="submit" value="Submit">
                     </p>
                 </dl>
-                <p>
-                    <input type="submit" value="Submit">
-                </p>
             </form>
+
+            <input type="button" id= "update_button" class="gallery_refresh_button" onclick="location.reload()" value="Hit to refresh">
+            </input>
+
             <p style="color:red">{{error_message if error_message}}</p>
         </div>
 
     <div class="gallery_section">
-
-        <button id= "update_button" class="gallery_refresh_button" onclick="location.reload()">Refresh</button>
 
         <div class = "gallery_display">
             <div class="background">
@@ -35,16 +35,15 @@
                 </font>
             </div>
             <div id = "gallery_updaing_display">
-            {% for thumbnail_row in thumbnails | batch(3, '') %}
+            {% for thumbnail_row in thumbnails | batch(5, '') %}
             <div class="row">
                 {% for thumbnail in thumbnail_row %}
                 {% if (thumbnail != '') %}
                 {% set photo_id_str, file_extension, photo_name = thumbnail %}
                 <div class="image_container">
-                    <div class="title">{{photo_name}}</div>
-                    <div class="image">
+                    <div>
                         <form action='/api/photo_display' method="POST" width="200">
-                            <input type="image" src="{{ url_for('static', filename = thumbnail_dir_path + '/' + photo_id_str + file_extension) }}" value={{photo_name}} width=200>
+                            <input type="image" title={{photo_name}} src="{{ url_for('static', filename = thumbnail_dir_path + '/' + photo_id_str + file_extension) }}" value={{photo_name}} width=200>
                             <!--No need to encode space as %20, photo_id_str = str(int)-->
                             <input type="hidden" name="photo_id" value={{photo_id_str}} />
                         </form> 
@@ -80,30 +79,54 @@
     }
 
     .input_section {
-        float: left;
-        width: 40%;
-        height: 100%;
+        float: top;
+        width: 100%;
+        height: 10%;
     }
 
     .logout_section {
+        float: left;
         position: relative;
-        height: 50%;
+        width: 30%;
+        height: 90%;
+        border: 1px solid;
+        border-radius: 10px 10px 10px 10px;
+        padding: 5px;
+        padding-left: 10px;
     }
 
     .upload_section {
+        float: left;
         position: relative;
-        height: 50%;
+        width: 30%;
+        height: 90%;
+        border: 1px solid;
+        border-radius: 10px 10px 10px 10px; 
+        padding: 5px;
+        padding-left: 10px;
     }
 
-    .gallery_section {
+    .gallery_refresh_button{
         float: left;
+        position: relative;
+        width: 30%;
         height: 100%;
-        width: 60%;
+        border: 1px solid;
+        border-radius: 10px 10px 10px 10px;
+        padding: 5px;
+        padding-left: 10px;
+        box-shadow: 5px 7px #888888;
+   }
+
+    .gallery_section {
+        float: top;
+        height: 80%;
+        width: 93%;
     }
 
     .image_container {
         float: left;
-        width: 33%;
+        width: 20%;
         height: 100%;
         overflow: scroll;
     }
@@ -126,23 +149,13 @@
     .background {
    position: absolute;
    top: 50%;
-   left: 42%;
+   left: 35%;
    bottom: 0;
    right: 0;
    z-index: -1;
    overflow: hidden;
    color:grey;
     }
-
-   .gallery_refresh_button{
-       position: relative;
-       height: 7%;
-       width : 100%;
-       border: 1px solid;
-       background: #07da63;
-       border-radius: 10px 10px 10px 10px;
-       box-shadow: 0 0 15px rgba(50, 50, 50, 0.7) inset;
-   }
 
    .gallery_display{
         border: 1px solid;
