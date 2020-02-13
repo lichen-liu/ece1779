@@ -1,173 +1,176 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="divider">
-        <div class="input_section">
-           
-            <form class="logout_section" action="/api/logout" method="POST">
-                Welcome {{username}}
-                <input type="submit" value="Logout" onclick="return confirm('{{username}}, Do you really want to log out?')">
-            </form>
+<div class="divider">
+    <div class="input_section">
 
-           
-            <form class="upload_section" action="/api/upload" method="POST" enctype="multipart/form-data">
-                Upload your favorate photo here
-                <dl>
-                    <p>
-                        <!-- Should filter for only image files -->
-                        <input type="file" name="file" autocomplete="off" required>
-                        <input type="submit" value="Submit">
-                    </p>
-                </dl>
-            </form>
+        <form class="logout_section" action="/api/logout" method="POST">
+            Welcome {{username}}
+            <input type="submit" value="Logout"
+                onclick="return confirm('{{username}}, Do you really want to log out?')">
+        </form>
 
-            <input type="button" id= "update_button" class="gallery_refresh_button" onclick="location.reload()" value="Hit to refresh">
-            </input>
 
-            <p style="color:red">{{error_message if error_message}}</p>
-        </div>
+        <form class="upload_section" action="/api/upload" method="POST" enctype="multipart/form-data">
+            Upload your favorate photo here
+            <dl>
+                <p>
+                    <!-- Should filter for only image files -->
+                    <input type="file" name="file" autocomplete="off" required>
+                    <input type="submit" value="Submit">
+                </p>
+            </dl>
+        </form>
+
+        <input type="button" id="update_button" class="gallery_refresh_button" onclick="location.reload()"
+            value="Hit to refresh">
+        </input>
+
+        <p style="color:red">{{error_message if error_message}}</p>
+    </div>
 
     <div class="gallery_section">
 
-        <div class = "gallery_display">
+        <div class="gallery_display">
             <div class="background">
                 <font size="11" color>
                     Browse your uploaded images
                 </font>
             </div>
-            <div id = "gallery_updaing_display">
-            {% for thumbnail_row in thumbnails | batch(5, '') %}
-            <div class="row">
-                {% for thumbnail in thumbnail_row %}
-                {% if (thumbnail != '') %}
-                {% set photo_id_str, file_extension, photo_name = thumbnail %}
-                <div class="image_container">
-                    <div>
-                        <form action='/api/photo_display' method="POST" width="200">
-                            <input type="image" title={{photo_name}} src="{{ url_for('static', filename = thumbnail_dir_path + '/' + photo_id_str + file_extension) }}" value={{photo_name}} width=200>
-                            <!--No need to encode space as %20, photo_id_str = str(int)-->
-                            <input type="hidden" name="photo_id" value={{photo_id_str}} />
-                        </form> 
+            <div id="gallery_updaing_display">
+                {% for thumbnail_row in thumbnails | batch(5, '') %}
+                <div class="row">
+                    {% for thumbnail in thumbnail_row %}
+                    {% if (thumbnail != '') %}
+                    {% set photo_id_str, file_extension, photo_name = thumbnail %}
+                    <div class="image_container">
+                        <div>
+                            <form action='/api/photo_display' method="POST" width="200">
+                                <input type="image" title={{photo_name}}
+                                    src="{{ url_for('static', filename = thumbnail_dir_path + '/' + photo_id_str + file_extension) }}"
+                                    value={{photo_name}} width=200>
+                                <!--No need to encode space as %20, photo_id_str = str(int)-->
+                                <input type="hidden" name="photo_id" value={{photo_id_str}} />
+                            </form>
+                        </div>
                     </div>
+                    {% endif %}
+                    {% endfor %}
                 </div>
-                {% endif %}
                 {% endfor %}
             </div>
-            {% endfor %} 
         </div>
     </div>
-</div>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-<script>
-        $(document).on('click','#update_button',function(){
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script>
+        $(document).on('click', '#update_button', function () {
             $.ajax({
                 url: "{{ url_for('render_thumbnail_gallery') }}",
                 type: "POST",
                 dataType: "json",
-                success: function(html_data){
+                success: function (html_data) {
                     console.log(html_data)
                     $('#gallery_updaing_display').append(html_data)
-                    }
-                });
+                }
+            });
         });
-</script>
+    </script>
 
-<style>
-    .divider {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-    }
+    <style>
+        .divider {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+        }
 
-    .input_section {
-        float: top;
-        width: 100%;
-        height: 10%;
-    }
+        .input_section {
+            float: top;
+            width: 100%;
+            height: 10%;
+        }
 
-    .logout_section {
-        float: left;
-        position: relative;
-        width: 30%;
-        height: 90%;
-        border: 1px solid;
-        border-radius: 10px 10px 10px 10px;
-        padding: 5px;
-        padding-left: 10px;
-    }
+        .logout_section {
+            float: left;
+            position: relative;
+            width: 30%;
+            height: 90%;
+            border: 1px solid;
+            border-radius: 10px 10px 10px 10px;
+            padding: 5px;
+            padding-left: 10px;
+        }
 
-    .upload_section {
-        float: left;
-        position: relative;
-        width: 30%;
-        height: 90%;
-        border: 1px solid;
-        border-radius: 10px 10px 10px 10px; 
-        padding: 5px;
-        padding-left: 10px;
-    }
+        .upload_section {
+            float: left;
+            position: relative;
+            width: 30%;
+            height: 90%;
+            border: 1px solid;
+            border-radius: 10px 10px 10px 10px;
+            padding: 5px;
+            padding-left: 10px;
+        }
 
-    .gallery_refresh_button{
-        float: left;
-        position: relative;
-        width: 30%;
-        height: 100%;
-        border: 1px solid;
-        border-radius: 10px 10px 10px 10px;
-        padding: 5px;
-        padding-left: 10px;
-        box-shadow: 5px 7px #888888;
-   }
+        .gallery_refresh_button {
+            float: left;
+            position: relative;
+            width: 30%;
+            height: 100%;
+            border: 1px solid;
+            border-radius: 10px 10px 10px 10px;
+            padding: 5px;
+            padding-left: 10px;
+            box-shadow: 5px 7px #888888;
+        }
 
-    .gallery_section {
-        float: top;
-        height: 80%;
-        width: 93%;
-    }
+        .gallery_section {
+            float: top;
+            height: 80%;
+            width: 93%;
+        }
 
-    .image_container {
-        float: left;
-        width: 20%;
-        height: 100%;
-        overflow: scroll;
-    }
+        .image_container {
+            float: left;
+            width: 20%;
+            height: 100%;
+            overflow: scroll;
+        }
 
-    .title {
-        float: top;
-        height: 10%;
-    }
+        .title {
+            float: top;
+            height: 10%;
+        }
 
-    .image {
-        float: top;
-        height: 90%;
-        width: 100%;
-    }
+        .image {
+            float: top;
+            height: 90%;
+            width: 100%;
+        }
 
-    .row {
-        position: relative;
-    }
+        .row {
+            position: relative;
+        }
 
-    .background {
-   position: absolute;
-   top: 50%;
-   left: 35%;
-   bottom: 0;
-   right: 0;
-   z-index: -1;
-   overflow: hidden;
-   color:grey;
-    }
+        .background {
+            position: absolute;
+            top: 50%;
+            left: 35%;
+            bottom: 0;
+            right: 0;
+            z-index: -1;
+            overflow: hidden;
+            color: grey;
+        }
 
-   .gallery_display{
-        border: 1px solid;
-        border-radius: 10px 10px 10px 10px;
-        box-shadow: 0 0 15px rgba(50, 50, 50, 0.7) inset;
-        height: 90%;
-        margin-top: 10px;
-        padding: 15px;
-        overflow: scroll;
-   }
+        .gallery_display {
+            border: 1px solid;
+            border-radius: 10px 10px 10px 10px;
+            box-shadow: 0 0 15px rgba(50, 50, 50, 0.7) inset;
+            height: 90%;
+            margin-top: 10px;
+            padding: 15px;
+            overflow: scroll;
+        }
+    </style>
 
-</style>
 
-
-{% endblock %}
+    {% endblock %}

@@ -1,52 +1,59 @@
 {% extends "base.html" %}
 {% block content %}
-    <form class="form" action="/" method="POST">
-        <input type="submit" value="Home">
-    </form>
+<form class="form" action="/" method="POST">
+    <input type="submit" value="Home">
+</form>
 
-    <p>{{ photo_name }}</p>
+<p>{{ photo_name }}</p>
 
-    <div class="image_row">
-        <div class="image_container">
-            <div class="title">Original Image</div>
-            <img class="image" title={{photo_name}} src="{{ url_for('static', filename = original_photo_dir + '/' + saved_photo_file) }}"/>
-        </div>
-        <div class="image_container">
-            <div class="title">Processed Image</div>
-            <img class="image" title={{photo_name}} src="{{ url_for('static', filename = processed_photo_dir + '/' + saved_photo_file) }}"/>
-        </div>
+<div class="image_row">
+    <div class="image_container">
+        <div class="title">Original Image</div>
+        <img class="image" title={{photo_name}}
+            src="{{ url_for('static', filename = original_photo_dir + '/' + saved_photo_file) }}" />
     </div>
+    <div class="image_container">
+        <div class="title">Processed Image</div>
+        <img class="image" title={{photo_name}}
+            src="{{ url_for('static', filename = processed_photo_dir + '/' + saved_photo_file) }}" />
+    </div>
+</div>
 
-   
+
 <style>
-        .image_row {
-            position: relative;
-            width: 100%;
-        }
-        .image_container {
-            float: left;
-            width: 40%;
-            height: 90%;
-            margin-left: 1%;
-        }
-        .title {
-            float: top;
-            height: 10%;
-        }
-        .image {
-            float: top;
-            height: 90%;
-            width: 100%;
-            border: 2px solid grey;
-        }
-        .image_container:after {
+    .image_row {
+        position: relative;
+        width: 100%;
+    }
+
+    .image_container {
+        float: left;
+        width: 40%;
+        height: 90%;
+        margin-left: 1%;
+    }
+
+    .title {
+        float: top;
+        height: 10%;
+    }
+
+    .image {
+        float: top;
+        height: 90%;
+        width: 100%;
+        border: 2px solid grey;
+    }
+
+    .image_container:after {
         content: "";
         display: table;
         clear: both;
-        }
-        .form {
-            position: relative;
-            bottom: 10%;
-        }
-    </style>
+    }
+
+    .form {
+        position: relative;
+        bottom: 10%;
+    }
+</style>
 {% endblock %}

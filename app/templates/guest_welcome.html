@@ -2,163 +2,172 @@
 {% block content %}
 
 
-    <div id="myModal" class="modal">
-    <div  class="modal-content">
+<div id="myModal" class="modal">
+    <div class="modal-content">
         <span class="close">&times;</span>
         <div id="modalMessage">Passwords do not match, please try again</div>
     </div>
 
 </div>
 
-    <div class="base">
-        <div class="holderCommon holder1">
-            <img class="title_icon" src="../static/icons/title_icon2.png"></img>
-            <font class="title" size="6">Accurate.</font>
-        </div>
-        <div class="holderCommon holder2">
-                <img class="title_icon" src="../static/icons/title_icon.png"></img>
-                <font class="title" size="6">Intelligent.</font>
-            </div>
-            <div class="holderCommon holder3">
-                    <img class="title_icon" src="../static/icons/title_icon3.png"></img>
-                    <font class="title" size="6">Massive Store.</font>
-                </div>
-            <form class="holderCommon form" action="/api/account_actions" method="POST"> 
-                <img class="login_icon" src="../static/icons/login_icon.png"></img>
-                <br>
-                <div class="input">
-                    <input placeholder="Username" type="text" id="username_login" name="username" value={{username if username}}>
-                    <br>
-                    <input type="password" placeholder="Password" type="text" id="password_login" name="password" value={{password if password}}>
-                    <br>
-                    <input type="checkbox" id="toggle_password_login" onclick="togglePassword('password_login')">Show Password</input>
-                    <br>
-                    <input type="checkbox" name="rememberme" value="True">Remember Me</input>
-                    <br>
-                    <button type="submit" name="action" value="login">Login</button>
-                    <button type="button" onclick="openForm()">Register</button>
-                </div>
-            </form>
-
-            <form class="holderCommon register_form" id="register_user" action="/api/account_actions" onsubmit="return validateInput()" method="POST" display="none"> 
-                <img class="login_icon" src="../static/icons/login_icon.png"></img>
-                <br>
-                <div class="input">
-                    <input placeholder="Choose your username" type="text" id="username_pick" name="username">
-                    <br>
-                    <input type="password" id="password_pick" placeholder="Pick a password" type="text" name="password">
-                    <br>
-                    <input type="checkbox" id="toggle_password_pick" onclick="togglePassword('password_pick');togglePassword('password_repeat');">Show Password</input>
-                    <br>
-                    <input type="password" id="password_repeat" placeholder="Type your password again" type="text" name="password_validate">
-                    <br>
-                    <button type="submit" name="action" value="register">Confirm</button>
-                    <button type="button" onclick="closeForm()">Cancel</button>
-                </div>
-            </form>
+<div class="base">
+    <div class="holderCommon holder1">
+        <img class="title_icon" src="../static/icons/title_icon2.png"></img>
+        <font class="title" size="6">Accurate.</font>
     </div>
-    <div class="filler"></div>
-    <p style="color:red">{{error_message if error_message}}</p>
+    <div class="holderCommon holder2">
+        <img class="title_icon" src="../static/icons/title_icon.png"></img>
+        <font class="title" size="6">Intelligent.</font>
+    </div>
+    <div class="holderCommon holder3">
+        <img class="title_icon" src="../static/icons/title_icon3.png"></img>
+        <font class="title" size="6">Massive Store.</font>
+    </div>
+    <form class="holderCommon form" action="/api/account_actions" method="POST">
+        <img class="login_icon" src="../static/icons/login_icon.png"></img>
+        <br>
+        <div class="input">
+            <input placeholder="Username" type="text" id="username_login" name="username"
+                value={{username if username}}>
+            <br>
+            <input type="password" placeholder="Password" type="text" id="password_login" name="password"
+                value={{password if password}}>
+            <br>
+            <input type="checkbox" id="toggle_password_login" onclick="togglePassword('password_login')">Show
+            Password</input>
+            <br>
+            <input type="checkbox" name="rememberme" value="True">Remember Me</input>
+            <br>
+            <button type="submit" name="action" value="login">Login</button>
+            <button type="button" onclick="openForm()">Register</button>
+        </div>
+    </form>
 
-    <script>     
+    <form class="holderCommon register_form" id="register_user" action="/api/account_actions"
+        onsubmit="return validateInput()" method="POST" display="none">
+        <img class="login_icon" src="../static/icons/login_icon.png"></img>
+        <br>
+        <div class="input">
+            <input placeholder="Choose your username" type="text" id="username_pick" name="username">
+            <br>
+            <input type="password" id="password_pick" placeholder="Pick a password" type="text" name="password">
+            <br>
+            <input type="checkbox" id="toggle_password_pick"
+                onclick="togglePassword('password_pick');togglePassword('password_repeat');">Show Password</input>
+            <br>
+            <input type="password" id="password_repeat" placeholder="Type your password again" type="text"
+                name="password_validate">
+            <br>
+            <button type="submit" name="action" value="register">Confirm</button>
+            <button type="button" onclick="closeForm()">Cancel</button>
+        </div>
+    </form>
+</div>
+<div class="filler"></div>
+<p style="color:red">{{error_message if error_message}}</p>
 
-        var modal = document.getElementById("myModal");
-        var span = document.getElementsByClassName("close")[0];
+<script>
 
-        span.onclick = function() {
+    var modal = document.getElementById("myModal");
+    var span = document.getElementsByClassName("close")[0];
+
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
             modal.style.display = "none";
         }
+    }
 
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }    
+    function openForm() {
+        document.getElementById("register_user").style.display = "block";
+        document.getElementById("password_pick").value = document.getElementById("password_login").value;
+        document.getElementById("username_pick").value = document.getElementById("username_login").value;
+        document.getElementById("password_repeat").value = "";
+    }
 
-        function openForm() {
-            document.getElementById("register_user").style.display = "block";
-            document.getElementById("password_pick").value = document.getElementById("password_login").value;
-            document.getElementById("username_pick").value = document.getElementById("username_login").value;
+    function closeForm() {
+        document.getElementById("register_user").style.display = "none";
+        document.getElementById("password_login").value = document.getElementById("password_pick").value;
+        document.getElementById("username_login").value = document.getElementById("username_pick").value;
+        document.getElementById("password_repeat").value = "";
+    }
+
+    function togglePassword(id) {
+        var ele = document.getElementById(id);
+        if (ele.type === "password") {
+            ele.type = "text";
+        } else {
+            ele.type = "password";
+        }
+    }
+
+    function validateInput() {
+        usernamePick = document.forms["register_user"]["username_pick"].value
+        if (usernamePick == "") {
+            var modal = document.getElementById("myModal");
+            var message = document.getElementById("modalMessage");
+            message.innerHTML = "You did not pick a username"
+            modal.style.display = "block";
+            return false;
+        }
+
+        passwordPick = document.forms["register_user"]["password_pick"].value
+        if (passwordPick == "") {
+            var modal = document.getElementById("myModal");
+            var message = document.getElementById("modalMessage");
+            message.innerHTML = "You did not pick a password"
+            modal.style.display = "block";
+            return false;
+        }
+
+        passwordRepeat = document.forms["register_user"]["password_repeat"].value
+        if (passwordRepeat == "") {
+            var modal = document.getElementById("myModal");
+            var message = document.getElementById("modalMessage");
+            message.innerHTML = "Please type your password again"
+            modal.style.display = "block";
+            return false;
+        }
+        if (!(passwordPick == passwordRepeat)) {
+            var modal = document.getElementById("myModal");
+            var message = document.getElementById("modalMessage");
+            message.innerHTML = "Passwords do not match, please try again"
+            modal.style.display = "block";
             document.getElementById("password_repeat").value = "";
+            return false;
         }
-
-        function closeForm() {
-            document.getElementById("register_user").style.display = "none";
-            document.getElementById("password_login").value = document.getElementById("password_pick").value;
-            document.getElementById("username_login").value = document.getElementById("username_pick").value;
-            document.getElementById("password_repeat").value = "";
-        }
-
-        function togglePassword(id) {
-            var ele = document.getElementById(id);
-            if (ele.type === "password") {
-                ele.type = "text";
-            } else {
-                ele.type = "password";
-            }
-        }
-
-        function validateInput() {
-            usernamePick = document.forms["register_user"]["username_pick"].value
-            if(usernamePick == ""){
-                var modal = document.getElementById("myModal");
-                var message = document.getElementById("modalMessage");
-                message.innerHTML = "You did not pick a username"
-                modal.style.display = "block";
-                return false;
-            }
-
-            passwordPick = document.forms["register_user"]["password_pick"].value
-            if(passwordPick == ""){
-                var modal = document.getElementById("myModal");
-                var message = document.getElementById("modalMessage");
-                message.innerHTML = "You did not pick a password"
-                modal.style.display = "block";
-                return false;
-            }
-
-            passwordRepeat = document.forms["register_user"]["password_repeat"].value
-            if(passwordRepeat == ""){
-                var modal = document.getElementById("myModal");
-                var message = document.getElementById("modalMessage");
-                message.innerHTML = "Please type your password again"
-                modal.style.display = "block";
-                return false;
-            }
-            if(!(passwordPick == passwordRepeat)){
-                var modal = document.getElementById("myModal");
-                var message = document.getElementById("modalMessage");
-                message.innerHTML = "Passwords do not match, please try again"
-                modal.style.display = "block";
-                document.getElementById("password_repeat").value = "";
-                return false;
-             }
-        }
-    </script>
-    <style>
+    }
+</script>
+<style>
     .base {
-            height: 300px;
-            position: relative;
-            background:#A9A9A9;
-            background-repeat: no-repeat;
-            }
+        height: 300px;
+        position: relative;
+        background: #A9A9A9;
+        background-repeat: no-repeat;
+    }
+
     .title_icon {
         position: absolute;
-        height:80px;
-        width:80px;
+        height: 80px;
+        width: 80px;
         left: 50%;
         top: 10%;
         -ms-transform: translate(-50%, 0%);
         transform: translate(-50%, 0%);
     }
+
     .login_icon {
-        position:absolute;
+        position: absolute;
         top: 10%;
-        height:60px;
-        width:60px;
+        height: 60px;
+        width: 60px;
         -ms-transform: translate(-50%, 0%);
         transform: translate(-50%, 0%);
     }
+
     .title {
         position: absolute;
         left: 50%;
@@ -166,94 +175,110 @@
         -ms-transform: translate(-50%, 0%);
         transform: translate(-50%, 0%);
     }
+
     .holderCommon {
         position: absolute;
         top: 80%;
         height: 220px;
-        width:190px;
+        width: 190px;
         -ms-transform: translate(-50%, 0%);
         transform: translate(-50%, 0%);
         background: white;
         text-align: center
     }
+
     .holder1 {
         box-shadow: 5px 5px 5px #D3D3D3;
         left: 25%;
     }
+
     .holder2 {
         box-shadow: 5px 5px 5px #D3D3D3;
         left: 50%;
     }
+
     .holder3 {
         box-shadow: 5px 5px 5px #D3D3D3;
         left: 75%;
     }
+
     .form {
         top: 5%;
         left: 50%;
         height: 220px;
-        width:190px;
+        width: 190px;
         background: #A9A9A9;
         text-align: center
     }
 
     .register_form {
-        display:none;
+        display: none;
         top: 5%;
         left: 50%;
         height: 220px;
-        width:190px;
+        width: 190px;
         background: #A9A9A9;
         text-align: center
     }
+
     .input {
         width: 190px;
         height: 220px;
         position: absolute;
         top: 40%;
     }
+
     .filler {
         height: 200px;
         position: relative;
-        background:#FAFAFA;
+        background: #FAFAFA;
         background-repeat: no-repeat;
         z-index: -1;
     }
 
     .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        padding-top: 100px;
+        /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
     }
 
     .modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
     }
 
     .close {
-    color: #aaaaaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
     }
 
     .centre {
         position: relative;
-        left:40%;
+        left: 40%;
         top: 40%;
     }
-    </style>
+</style>
 
 {% endblock %}

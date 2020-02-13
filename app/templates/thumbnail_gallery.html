@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-    <body>    
+
+<body>
     {% for thumbnail_row in thumbnails | batch(3, '') %}
     <div class="row">
         {% for thumbnail in thumbnail_row %}
@@ -10,15 +11,18 @@
             <div class="title">{{photo_name}}</div>
             <div class="image">
                 <form action='/api/photo_display' method="POST" width="200">
-                    <input type="image" src="{{ url_for('static', filename = thumbnail_dir_path + '/' + photo_id_str + file_extension) }}" value={{photo_name}} width=200>
+                    <input type="image"
+                        src="{{ url_for('static', filename = thumbnail_dir_path + '/' + photo_id_str + file_extension) }}"
+                        value={{photo_name}} width=200>
                     <!--No need to encode space as %20, photo_id_str = str(int)-->
                     <input type="hidden" name="photo_id" value={{photo_id_str}} />
-                </form> 
+                </form>
             </div>
         </div>
         {% endif %}
         {% endfor %}
     </div>
-    {% endfor %} 
-    </body>
+    {% endfor %}
+</body>
+
 </html>
