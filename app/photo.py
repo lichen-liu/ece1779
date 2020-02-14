@@ -202,7 +202,7 @@ def try_enqueue_ibr_task(request):
     image = request.files['file']
     file_name = image.filename
     photo_bytes = image.read()
-    task_queue = ibr.queue.get_queue()
+    task_queue = ibr_queue.get_queue()
 
     with task_queue.acquire_lock() as acquired:
         if(acquired):
