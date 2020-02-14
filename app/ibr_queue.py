@@ -58,6 +58,7 @@ class IBRQueue:
 
 
 CAPACITY = 100
+l_queue = None
 
 
 def init_queue():
