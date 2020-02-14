@@ -49,18 +49,6 @@ def account_logout_handler():
     account_logout()
     return redirect('/')
 
-@webapp.route('/api/delete_photo', methods=['POST'])
-# Handler to delete photo
-def delete_photo_handler():
-    photo_id = request.form.get('photo_id')
-    delete_photo(photo_id)
-    return redirect('/')
-
-def delete_photo(photo_id):
-    print('Deleting ', photo_id)
-    database.delete_photo(photo_id)
-    return redirect('/')
-
 
 def account_is_logged_in():
     return session.get('username') is not None and session.get('userid') is not None

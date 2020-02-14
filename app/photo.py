@@ -114,6 +114,49 @@ def process_and_save_image(request):
         return 'Server has encountered a problem with database when storing the photo'
 
 
+@webapp.route('/api/delete_photo', methods=['POST'])
+# Handler to delete photo
+def delete_photo_handler():
+    photo_id = request.form.get('photo_id')
+    error_message = delete_photo(photo_id)
+
+    if error_message:
+        return render_template('empty_go_home.html', title='Error', message=error_message)
+    else:
+        return redirect('/')
+
+
+def delete_photo(photo_id):
+    '''
+    Return error_message if errored; otherwise None
+    '''
+    if not account.account_is_logged_in():
+        return 'Please try again!'
+    
+    # Verify session
+    res = database.get_photo(photo_id)
+    if not res:
+        return 'Photo does not exist!'
+    userid, photo_name = res
+    if userid != account.account_get_logged_in_userid():
+        return 'Operation is not allowed!'
+
+    print('Deleting ', photo_id, photo_name)
+    saved_photo_file = str(photo_id) + utility.get_file_extension(photo_name)
+    photo_path = os.path.join(directory.get_photos_dir_path(), saved_photo_file)
+    thumbnail_path = os.path.join(directory.get_thumbnails_dir_path(), saved_photo_file)
+    rectangle_path = os.path.join(directory.get_rectangles_dir_path(), saved_photo_file)
+
+    if os.path.exists(photo_path):
+        os.remove(photo_path)
+    if os.path.exists(thumbnail_path):
+        os.remove(thumbnail_path)
+    if os.path.exists(rectangle_path):
+        os.remove(rectangle_path)
+
+    database.delete_photo(photo_id)
+
+
 def draw_rectangles_on_photo(photo_bytes):
     cv_img = decode_bytes_to_cv_image(photo_bytes)
     cv_img_list = []
@@ -147,7 +190,8 @@ def try_enqueue_ipr_task(request):
         # Add to the task queue
         is_successful = image_pool_runner.send_image_task_to_pool(*prepare_task(saved_file_name))
         if not is_successful:
-            os.remove(origin_photo_path)
+            if os.path.exists(origin_photo_path):
+                os.remove(origin_photo_path)
             database.delete_photo(photo_id)
             return 'Server are handling too many requests, please try again later'
     else:
@@ -196,7 +240,7 @@ def prepare_task(file_name):
 
 def is_extension_allowed(file_name):
     extension = utility.get_file_extension(file_name)
-    return extension and (extension.lower() in current_app.config['ALLOWED_IMAGE_EXTENSION'])
+    return extension and (extension in current_app.config['ALLOWED_IMAGE_EXTENSION'])
 
 
 def save_bytes_img(photo_bytes, path):

@@ -28,7 +28,7 @@ def get_file_extension(file_name):
     Return extension of a file, such as '.txt'
     '''
     _, file_extension = os.path.splitext(file_name)
-    return file_extension
+    return file_extension.lower()
 
 
 def split_file(src_file):
