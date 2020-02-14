@@ -58,10 +58,29 @@ gunicorn --bind 0.0.0.0:5000 --workers=1 run:webapp
 
 
 ## 3.0 To Reset
+
+
+### 3.1 Factory Reset
 1. Delete the entire directory
 2. ```git clone```
 3. Run ```schema.sql```
 4. Run ```run.py``` or ```run_server.py```
+
+
+### 3.2 Reset Big All (Including SQL IDs)
+1. ```python app/server_helper.py --delete_all```
+2. Run ```schema.sql```
+3. Run ```run.py``` or ```run_server.py```
+
+
+### 3.3 Reset Small All
+1. ```python app/server_helper.py --delete_all```
+2. Run ```run.py``` or ```run_server.py```
+
+
+### 3.4 Reset Photos
+1. ```python app/server_helper.py --delete_data```
+2. Run ```run.py``` or ```run_server.py```
 
 
 ## 4.0 Helper Utilities
