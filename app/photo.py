@@ -218,7 +218,7 @@ def display_photo_handler():
 
             return render_template(
                 'display_photo.html', saved_photo_file=saved_photo_file,
-                photo_name=photo_name,
+                photo_name=photo_name, photo_id=int(photo_id_str),
                 processed_photo_dir=directory.get_rectangles_dir_path(False),
                 original_photo_dir=directory.get_photos_dir_path(False))
 
