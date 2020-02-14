@@ -36,6 +36,6 @@ def init():
         batch_runner.run()
     elif image_processing_choice == 2:
         # image_pool_runner version
-        image_pool_runner.init(1, 4096, 5)
+        image_pool_runner.init(4, 4096, 5)
     else:
         assert(False)

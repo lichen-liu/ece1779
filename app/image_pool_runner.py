@@ -39,6 +39,12 @@ def pool_worker_main(queue, batch_size):
             bt_helper.save_cv_img(rectangled_image, rectangled_dest_path)
             bt_helper.save_cv_img(thumbnail, thumbnail_dest_path)
 
+            del rectangled_image
+            del thumbnail
+
+        del images
+        del net
+
 
 def send_image_task_to_pool(source_path, thumbnail_dest_path, rectangled_dest_path):
     try:

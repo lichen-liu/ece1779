@@ -47,23 +47,15 @@ If the 'yolo' directory does not exist on you local environment under the static
 
 
 ## 2.0 To Run
-For Windows (Powershell)
 ```
-cd app
-$env:FLASK_APP = "main.py"
-python -m flask run
+python run.py
 ```
 
-For Mac:
-```
-cd app
-export FLASK_APP = "main.py"
-python -m flask run --host=0.0.0.0
-```
 With gunicorn:
 ```
 gunicorn --bind 0.0.0.0:5000 --workers=1 run:webapp
 ```
+
 
 ## 3.0 Helper Utilities
 Use the script to manage filesystem and database
@@ -93,7 +85,7 @@ pip install aiohttp
 ```
 To run
 ```
-python .\gen.py http://127.0.0.1:5000/api/upload user password 0.5 "C:\Users\liuli\Desktop\t"
+python gen.py http://127.0.0.1:5000/api/upload user password 0.5 "C:\Users\liuli\Desktop\t"
 ```
 
 
