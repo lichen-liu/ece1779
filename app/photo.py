@@ -196,7 +196,7 @@ def prepare_task(file_name):
 
 def is_extension_allowed(file_name):
     extension = utility.get_file_extension(file_name)
-    return extension and (extension.lower() in current_app.config['ALLOWED_IMAGE_EXTENSION'].lower())
+    return extension and (extension.lower() in current_app.config['ALLOWED_IMAGE_EXTENSION'])
 
 
 def save_bytes_img(photo_bytes, path):
