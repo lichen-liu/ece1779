@@ -51,7 +51,8 @@ def send_image_task_to_pool(source_path, thumbnail_dest_path, rectangled_dest_pa
         l_queue.put_nowait((source_path, thumbnail_dest_path, rectangled_dest_path))
     except Queue.Full as _:
         return False
-    except:
+    except Exception as e:
+        print('Unexpected exception: ' + str(e))
         return False
     else:
         return True
@@ -65,8 +66,10 @@ def queue_pop(queue, max_num):
     result.append(queue.get(True))
     try:
         while len(result) < max_num:
-            list.append(queue.get_nowait())
+            result.append(queue.get_nowait())
     except Queue.Empty as _:
         pass
+    except Exception as e:
+        print('Unexpected exception: ' + str(e))
     finally:
         return result
