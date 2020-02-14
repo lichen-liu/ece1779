@@ -1,4 +1,4 @@
-from app import batch_task_helper, queue, yolo_net
+from app import batch_task_helper, ibr_queue, yolo_net
 from app import batch_task_helper as bt_helper
 import time
 import threading
@@ -51,7 +51,7 @@ l_batch_runner = None
 
 def init_batch_runner():
     global l_batch_runner
-    l_batch_runner = BatchRunner(queue.get_queue(), 5)
+    l_batch_runner = BatchRunner(ibr_queue.get_queue(), 5)
 
 
 def get_batch_runner():

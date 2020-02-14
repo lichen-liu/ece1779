@@ -47,25 +47,43 @@ If the 'yolo' directory does not exist on you local environment under the static
 
 
 ## 2.0 To Run
-For Windows (Powershell)
 ```
-cd app
-$env:FLASK_APP = "main.py"
-python -m flask run
+python run.py
 ```
 
-For Mac:
-```
-cd app
-export FLASK_APP = "main.py"
-python -m flask run --host=0.0.0.0
-```
 With gunicorn:
 ```
 gunicorn --bind 0.0.0.0:5000 --workers=1 run:webapp
 ```
 
-## 3.0 Helper Utilities
+
+## 3.0 To Reset
+
+
+### 3.1 Factory Reset
+1. Delete the entire directory
+2. ```git clone```
+3. Run ```schema.sql```
+4. Run ```run.py``` or ```run_server.py```
+
+
+### 3.2 Reset Big All (Including SQL IDs)
+1. ```python app/server_helper.py --delete_all```
+2. Run ```schema.sql```
+3. Run ```run.py``` or ```run_server.py```
+
+
+### 3.3 Reset Small All
+1. ```python app/server_helper.py --delete_all```
+2. Run ```run.py``` or ```run_server.py```
+
+
+### 3.4 Reset Photos
+1. ```python app/server_helper.py --delete_data```
+2. Run ```run.py``` or ```run_server.py```
+
+
+## 4.0 Helper Utilities
 Use the script to manage filesystem and database
 ```
 cd app
@@ -73,14 +91,14 @@ python server_helper.py --help
 ```
 
 
-## 4.0 AWS IP
+## 5.0 AWS IP
 
 ~~[http://52.207.56.96:5000/](http://52.207.56.96:5000/)~~
 
 [http://3.231.61.127:5000/](http://3.231.61.127:5000/)
 
 
-## 5.0 Testing
+## 6.0 Testing
 
 
 ### 5.1 gen.py (/api/upload POST)
@@ -93,10 +111,10 @@ pip install aiohttp
 ```
 To run
 ```
-python .\gen.py http://127.0.0.1:5000/api/upload user password 0.5 "C:\Users\liuli\Desktop\t"
+python gen.py http://127.0.0.1:5000/api/upload user password 0.5 "C:\Users\liuli\Desktop\t"
 ```
 
 
-## 6.0 Notes
+## 7.0 Notes
 1. When committing the code, double check to make sure no OS/IDE-dependent temporary files are included!
 2. If you want to modify sql database, notify DASHEN first!

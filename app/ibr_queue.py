@@ -9,7 +9,7 @@ class Task:
         self.rectangled_dest_path = rectangled_dest_path
 
 
-class Queue:
+class IBRQueue:
     def __init__(self, capacity):
         self._lock = threading.RLock()
         self._task_wait_condition = threading.Condition(self._lock)
@@ -62,7 +62,7 @@ CAPACITY = 100
 
 def init_queue():
     global l_queue
-    l_queue = Queue(CAPACITY)
+    l_queue = IBRQueue(CAPACITY)
 
 
 def get_queue():

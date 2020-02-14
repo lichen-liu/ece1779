@@ -8,4 +8,4 @@ class Config(object):
     THUMBNAIL_SIZE = (120, 120)
     MAXIMUM_IMAGE_SIZE = 20 * 1024 * 1024
     ALLOWED_IMAGE_EXTENSION = set(['.png', '.jpg', '.jpeg', '.gif'])
-    USE_IMAGE_BATCH_RUNNER = False
+    IMAGE_PROCESSING_CHOICE = 2
