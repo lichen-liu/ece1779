@@ -1,9 +1,21 @@
 import os
-import cv2
 import numpy
+import cv2
+
+# Get rid of warning messages
+import sys
+stderr = sys.stderr
+stdout = sys.stdout
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+sys.stderr = open(os.devnull, 'w')
+sys.stdout = open(os.devnull, 'w')
+sys.stdwarn = open(os.devnull, 'w')
 import cvlib as cv
+sys.stderr = stderr
+sys.stdout = stdout
+
 from flask import redirect, render_template, request, current_app, abort, jsonify
-from app import webapp, directory, account, main, utility, queue, batch_task_helper, yolo_net, database
+from app import webapp, directory, account, main, utility, ibr_queue, batch_task_helper, yolo_net, database, image_pool_runner
 
 
 @webapp.route('/api/upload', methods=['POST'])
@@ -22,12 +34,19 @@ def photo_upload_handler():
         else:
             return main.main(user_welcome_args=main.UserWelcomeArgs(error_message=error_message))
 
-    if webapp.config.get('USE_IMAGE_BATCH_RUNNER'):
-        # Batch processing version
-        error_message = try_enqueue_task(request)
-    else:
+    image_processing_choice = webapp.config.get('IMAGE_PROCESSING_CHOICE')
+    if image_processing_choice == 0:
         # Per-request version
         error_message = process_and_save_image(request)
+    elif image_processing_choice == 1:
+        # image_batch_runner version
+        error_message = try_enqueue_ibr_task(request)
+    elif image_processing_choice == 2:
+        # image_pool_runner version
+        error_message = try_enqueue_ipr_task(request)
+    else:
+        assert(False)
+
     if error_message is not None:
         if is_from_api:
             return error_message
@@ -110,11 +129,36 @@ def decode_bytes_to_cv_image(photo_bytes):
     return cv2.imdecode(numpy_img, cv2.IMREAD_COLOR)
 
 
-def try_enqueue_task(request):
+def try_enqueue_ipr_task(request):
     image = request.files['file']
     file_name = image.filename
     photo_bytes = image.read()
-    task_queue = queue.get_queue()
+
+    # Register the photo in database
+    photo_id = database.create_new_photo(account.account_get_logged_in_userid(), file_name)
+    if photo_id:
+        # Get the new filename
+        saved_file_name = str(photo_id) + utility.get_file_extension(file_name)
+
+        # Save the original photo
+        origin_photo_path = os.path.join(directory.get_photos_dir_path(), saved_file_name)
+        save_bytes_img(photo_bytes, origin_photo_path)
+
+        # Add to the task queue
+        is_successful = image_pool_runner.send_image_task_to_pool(*prepare_task(saved_file_name))
+        if not is_successful:
+            os.remove(origin_photo_path)
+            database.delete_photo(photo_id)
+            return 'Server are handling too many requests, please try again later'
+    else:
+        return 'Server has encountered a problem with database when storing the photo'
+
+
+def try_enqueue_ibr_task(request):
+    image = request.files['file']
+    file_name = image.filename
+    photo_bytes = image.read()
+    task_queue = ibr.queue.get_queue()
 
     with task_queue.acquire_lock() as acquired:
         if(acquired):
@@ -128,8 +172,7 @@ def try_enqueue_task(request):
                         utility.get_file_extension(file_name)
 
                     # Add to the task queue
-                    is_successful = task_queue.add(
-                        prepare_task(saved_file_name))
+                    is_successful = task_queue.add(ibr_queue.Task(*prepare_task(saved_file_name)))
                     assert is_successful
 
                     # Save the original photo
@@ -146,11 +189,9 @@ def try_enqueue_task(request):
 
 def prepare_task(file_name):
     source_path = os.path.join(directory.get_photos_dir_path(), file_name)
-    thumbnail_dest_path = os.path.join(
-        directory.get_thumbnails_dir_path(), file_name)
-    rectangled_dest_path = os.path.join(
-        directory.get_rectangles_dir_path(), file_name)
-    return queue.Task(source_path, thumbnail_dest_path, rectangled_dest_path)
+    thumbnail_dest_path = os.path.join(directory.get_thumbnails_dir_path(), file_name)
+    rectangled_dest_path = os.path.join(directory.get_rectangles_dir_path(), file_name)
+    return (source_path, thumbnail_dest_path, rectangled_dest_path)
 
 
 def is_extension_allowed(file_name):
@@ -186,7 +227,7 @@ def display_photo_handler():
 
 @webapp.route('/api/render_thumbnail_gallery', methods=['POST'])
 def render_thumbnail_gallery():
-    print('received')
+    print('Received Refresh')
     return jsonify({'data': render_template('thumbnail_gallery.html', thumbnail_dir_path=directory.get_thumbnails_dir_path(False), thumbnails=get_thumbnails())})
 
 

@@ -184,6 +184,28 @@ def get_photo(cnx, photo_id):
 
 
 @database_operation
+def delete_photo(cnx, photo_id):
+    try:
+        cnx.start_transaction()
+        cursor = cnx.cursor()
+
+        # Remove photo from table photo
+        delete_sql = """
+        DELETE
+        FROM photo
+        WHERE id = %s;
+        """
+        delete_val = (photo_id,)
+        cursor.execute(delete_sql, delete_val)
+        cnx.commit()
+    except mysql.connector.Error as err:
+        print(err)
+        cnx.rollback()
+    except Exception as e:
+        print('Unexpected exception: ' + str(e))
+
+
+@database_operation
 def delete_account_table(cnx):
     try:
         cnx.start_transaction()
