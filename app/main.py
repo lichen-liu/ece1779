@@ -11,7 +11,7 @@ def main_handler():
 
 
 class GuestWelcomeArgs:
-    def __init__(self, username=None, password=None, error_message=None, title='Hello! NI MA ZHA LE!'):
+    def __init__(self, username=None, password=None, error_message=None, title='Wellcome to Image Gallery!'):
         self.username = username
         self.password = password
         self.error_message = error_message
@@ -19,7 +19,7 @@ class GuestWelcomeArgs:
 
 
 class UserWelcomeArgs:
-    def __init__(self, error_message=None, title='Hello! NI BA ZHA LE!'):
+    def __init__(self, error_message=None, title='Wellcome to Image Gallery!'):
         self.error_message = error_message
         self.title = title
 

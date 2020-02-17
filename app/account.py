@@ -68,7 +68,7 @@ def account_register(username, password, rememberme=False):
     '''
     if successful, None; else, error message
     '''
-    print('Registering: u=' + username + ' p=' + password)
+    print('Registering: u=' + username)
 
     if account_is_logged_in():
         account_logout()
@@ -105,8 +105,7 @@ def account_login(username, password, rememberme=False):
     if account_is_logged_in():
         account_logout()
 
-    print('Login: u=' + username + ' p=' +
-          password + ' rememberme=' + str(rememberme))
+    print('Login: u=' + username + ' rememberme=' + str(rememberme))
 
     # Validate input (business)
     userid = account_verify_password(username, password)

@@ -26,5 +26,5 @@ webapp.config.from_object('app.config.Config')
 from app import main
 
 from app import initialize
-def init():
-    initialize.init()
+
+initialize.init()
