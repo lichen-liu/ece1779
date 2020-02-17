@@ -188,7 +188,8 @@ def try_enqueue_ipr_task(request):
     photo_id = database.create_new_photo(account.account_get_logged_in_userid(), file_name)
     if photo_id:
         # Get the new filename
-        saved_file_name = str(photo_id) + utility.get_file_extension(file_name)
+        saved_file_name = 'user_'+ str(account.account_get_logged_in_userid()) +'_' + str(photo_id) + \
+                        utility.get_file_extension(file_name)
 
         # Save the original photo
         origin_photo_path = os.path.join(directory.get_photos_dir_path(), saved_file_name)
@@ -219,9 +220,8 @@ def try_enqueue_ibr_task(request):
                     account.account_get_logged_in_userid(), file_name)
                 if photo_id:
                     # Get the new filename
-                    saved_file_name = str(photo_id) + \
+                    saved_file_name = 'user_'+ str(account.account_get_logged_in_userid()) +'_' + str(photo_id) + \
                         utility.get_file_extension(file_name)
-
                     # Add to the task queue
                     is_successful = task_queue.add(ibr_queue.Task(*prepare_task(saved_file_name)))
                     assert is_successful
