@@ -55,7 +55,10 @@ With gunicorn:
 ```
 gunicorn --bind 0.0.0.0:5000 --workers=1 run:webapp
 ```
-
+On AWS instance:
+```
+bash start.sh
+```
 
 ## 3.0 To Reset
 
