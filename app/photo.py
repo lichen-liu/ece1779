@@ -34,6 +34,13 @@ def photo_upload_handler():
         else:
             return main.main(user_welcome_args=main.UserWelcomeArgs(error_message=error_message))
 
+    if not account.account_is_logged_in():
+        error_message = 'Invalid Operation! You are not logged in!'
+        if is_from_api:
+            return error_message
+        else:
+            return render_template('empty_go_home.html', title='Error', message=error_message)
+
     image_processing_choice = webapp.config.get('IMAGE_PROCESSING_CHOICE')
     if image_processing_choice == 0:
         # Per-request version
