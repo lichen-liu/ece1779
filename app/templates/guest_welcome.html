@@ -5,7 +5,7 @@
 <div id="myModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <div id="modalMessage">Passwords do not match, please try again</div>
+        <font face="Arial" id="modalMessage">Passwords do not match, please try again</div>
     </div>
 
 </div>
@@ -21,7 +21,7 @@
     </div>
     <div class="holderCommon holder3">
         <img class="title_icon" src="../static/icons/title_icon3.png"></img>
-        <font class="title" size="6">Massive Store.</font>
+        <font class="title" size="6">Massive Storage.</font>
     </div>
     <form class="holderCommon form" action="/api/account_actions" method="POST">
         <img class="login_icon" src="../static/icons/login_icon.png"></img>
@@ -52,11 +52,11 @@
             <br>
             <input type="password" id="password_pick" placeholder="Pick a password" type="text" name="password">
             <br>
-            <input type="checkbox" id="toggle_password_pick"
-                onclick="togglePassword('password_pick');togglePassword('password_repeat');">Show Password</input>
-            <br>
             <input type="password" id="password_repeat" placeholder="Type your password again" type="text"
                 name="password_validate">
+            <br>
+            <input type="checkbox" id="toggle_password_pick"
+                onclick="togglePassword('password_pick');togglePassword('password_repeat');">Show Password</input>
             <br>
             <button type="submit" name="action" value="register">Confirm</button>
             <button type="button" onclick="closeForm()">Cancel</button>
@@ -106,9 +106,9 @@
 
     function validateInput() {
         usernamePick = document.forms["register_user"]["username_pick"].value
+        modal = document.getElementById("myModal");
+        message = document.getElementById("modalMessage");
         if (usernamePick == "") {
-            var modal = document.getElementById("myModal");
-            var message = document.getElementById("modalMessage");
             message.innerHTML = "You did not pick a username"
             modal.style.display = "block";
             return false;
@@ -116,8 +116,6 @@
 
         passwordPick = document.forms["register_user"]["password_pick"].value
         if (passwordPick == "") {
-            var modal = document.getElementById("myModal");
-            var message = document.getElementById("modalMessage");
             message.innerHTML = "You did not pick a password"
             modal.style.display = "block";
             return false;
@@ -125,15 +123,11 @@
 
         passwordRepeat = document.forms["register_user"]["password_repeat"].value
         if (passwordRepeat == "") {
-            var modal = document.getElementById("myModal");
-            var message = document.getElementById("modalMessage");
             message.innerHTML = "Please type your password again"
             modal.style.display = "block";
             return false;
         }
         if (!(passwordPick == passwordRepeat)) {
-            var modal = document.getElementById("myModal");
-            var message = document.getElementById("modalMessage");
             message.innerHTML = "Passwords do not match, please try again"
             modal.style.display = "block";
             document.getElementById("password_repeat").value = "";
@@ -142,10 +136,26 @@
     }
 </script>
 <style>
+
+    form input{
+    font-size: 1.1em;
+    background-color: #ffffff;
+    opacity: 0.6;
+    border-radius: 10px 10px 10px 10px;
+    padding: 1px;
+    padding-left: 3px;
+    }
+    form button{
+    font-size: 0.9em;
+    background-color: #ffffff;
+    opacity: 0.6;
+    border-radius: 10px 10px 10px 10px;
+    }
     .base {
         height: 300px;
         position: relative;
         background: #A9A9A9;
+        background-image: url("../static/icons/guest_welcome_background.png");
         background-repeat: no-repeat;
     }
 
@@ -207,7 +217,7 @@
         left: 50%;
         height: 220px;
         width: 190px;
-        background: #A9A9A9;
+        background-color: transparent;
         text-align: center
     }
 
@@ -217,7 +227,6 @@
         left: 50%;
         height: 220px;
         width: 190px;
-        background: #A9A9A9;
         text-align: center
     }
 

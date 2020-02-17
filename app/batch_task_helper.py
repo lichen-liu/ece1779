@@ -116,7 +116,6 @@ def generate_thumbnail_for_cv_img(image, matching_size=120, inter=cv2.INTER_AREA
         large_side = w
 
     ratio = matching_size / float(large_side)
-    print('ratio=' + str(ratio))
     dim = (int(w * ratio), int(h * ratio))
 
     resized = cv2.resize(image, dim, interpolation=inter)
