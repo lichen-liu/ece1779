@@ -23,7 +23,7 @@
         <img class="title_icon" src="../static/icons/title_icon3.png"></img>
         <font class="title" size="6">Massive Storage.</font>
     </div>
-    <form class="holderCommon form" action="/api/account_actions" method="POST">
+    <form class="holderCommon form" id="login_user" action="/api/account_actions" method="POST">
         <img class="login_icon" src="../static/icons/login_icon.png"></img>
         <br>
         <div class="input">
@@ -83,6 +83,7 @@
 
     function openForm() {
         document.getElementById("register_user").style.display = "block";
+        document.getElementById("login_user").style.display = "none";
         document.getElementById("password_pick").value = document.getElementById("password_login").value;
         document.getElementById("username_pick").value = document.getElementById("username_login").value;
         document.getElementById("password_repeat").value = "";
@@ -90,6 +91,7 @@
 
     function closeForm() {
         document.getElementById("register_user").style.display = "none";
+        document.getElementById("login_user").style.display = "block";
         document.getElementById("password_login").value = document.getElementById("password_pick").value;
         document.getElementById("username_login").value = document.getElementById("username_pick").value;
         document.getElementById("password_repeat").value = "";
@@ -227,6 +229,7 @@
         left: 50%;
         height: 220px;
         width: 190px;
+        background-color: transparent;
         text-align: center
     }
 
