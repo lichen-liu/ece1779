@@ -8,7 +8,7 @@
     <input type="submit" name='delete' value="Delete" onclick="return confirm('Do you want to delete {{photo_name}}?') ">
     <input type="hidden" name="photo_id" value={{photo_id}} >
 </form>
-
+<br>
 <p>{{ photo_name }}</p>
 
 <div class="image_row">
@@ -57,6 +57,8 @@
     }
 
     .form {
+        margin-right: 10px;
+        float: left;
         position: relative;
         bottom: 10%;
     }
