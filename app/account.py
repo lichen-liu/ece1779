@@ -40,8 +40,8 @@ def account_register_handler():
     if err_msg:
         abort(406)
     else:
-        return redirect('/')
-
+#        return redirect('/')
+        return "Register {} successful!".format(username)
 
 @webapp.route('/api/logout', methods=['POST'])
 # Web handler for logout
