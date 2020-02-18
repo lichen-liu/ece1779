@@ -7,4 +7,4 @@ class Config(object):
     SESSION_REFRESH_EACH_REQUEST = True
     MAXIMUM_IMAGE_SIZE = 20 * 1024 * 1024
     ALLOWED_IMAGE_EXTENSION = set(['.png', '.jpg', '.jpeg', '.gif']) # Lower case
-    IMAGE_PROCESSING_CHOICE = 1
+    IMAGE_PROCESSING_CHOICE = 0
