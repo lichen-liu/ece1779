@@ -136,7 +136,7 @@ pip install awscli
 pip install boto3
 
 ```
-Then type
+Then type:
 
 ```
 aws configure
@@ -151,5 +151,5 @@ aws_secret_access_key= Your_aws_access_key
 aws_session_token= Your_session_token
 ```
 
-To get the above values (key_id, key, token),and for an AWS educate account, it will be at your  AWS Educate Account page -> Account Details
+To get the above values (key_id, key, token),and for an AWS educate account, it will be at your  AWS Educate Account page -> Account Details.
 Now you are able to use AWS SDKs, user mannual: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/index.html
