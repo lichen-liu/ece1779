@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manager</title>
+</head>
+
+<body>
+    <h1>{{title}}</h2>
+        {% block content %}
+        {% endblock %}
+    </h1>
+    <form action='/api/increase_pool' method="POST" width="200">
+        <input type="submit" value="increase">
+        <submit>
+    </form>
+    <form action='/api/decrease_pool' method="POST" width="200">
+        <input type="submit" value="decrease">
+    </form>
+    <form action='/api/get_cpu_utilization' method="POST" width="200">
+        <input type="submit" value="utilization">
+    </form>
+</body>
+
+<style>
+</style>
+
+</html>
