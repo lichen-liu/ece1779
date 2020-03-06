@@ -15,7 +15,7 @@ sys.stderr = stderr
 sys.stdout = stdout
 
 from flask import redirect, render_template, request, current_app, abort, jsonify
-from app import webapp, directory, account, main, utility, ibr_queue, batch_task_helper, yolo_net, database, image_pool_runner
+from app import webapp, directory, account, main, utility, ibr_queue, image_processing, yolo_net, database, image_pool_runner
 
 
 @webapp.route('/api/upload', methods=['POST'])
@@ -110,13 +110,13 @@ def process_and_save_image(request):
         rectangled_photo = draw_rectangles_on_photo(photo_bytes)
         rectangled_photo_path = os.path.join(
             directory.get_rectangles_dir_path(), saved_file_name)
-        batch_task_helper.save_cv_img(rectangled_photo, rectangled_photo_path)
+        image_processing.save_cv_img(rectangled_photo, rectangled_photo_path)
 
-        thumbnail = batch_task_helper.generate_thumbnail_for_cv_img(
+        thumbnail = image_processing.generate_thumbnail_for_cv_img(
             rectangled_photo)
         thumbnail_path = os.path.join(
             directory.get_thumbnails_dir_path(), saved_file_name)
-        batch_task_helper.save_cv_img(thumbnail, thumbnail_path)
+        image_processing.save_cv_img(thumbnail, thumbnail_path)
     else:
         return 'Server has encountered a problem with database when storing the photo'
 
@@ -169,9 +169,9 @@ def draw_rectangles_on_photo(photo_bytes):
     cv_img_list = []
     cv_img_list.append(cv_img)
     net = yolo_net.new_yolo_net()
-    boxes, descriptions = batch_task_helper.detect_objects_on_images(
+    boxes, descriptions = image_processing.detect_objects_on_images(
         cv_img_list, net)
-    return batch_task_helper.draw_rectangles(cv_img, boxes[0], descriptions[0])
+    return image_processing.draw_rectangles(cv_img, boxes[0], descriptions[0])
 
 
 def decode_bytes_to_cv_image(photo_bytes):

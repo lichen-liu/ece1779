@@ -1,4 +1,4 @@
-from app import batch_task_helper as bt_helper, yolo_net
+from app import image_processing as bt_helper, yolo_net
 import multiprocessing
 from multiprocessing import Queue
 import os
