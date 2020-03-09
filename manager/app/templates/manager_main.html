@@ -101,15 +101,12 @@
 
             <div class= 'control_panel_action_control'>
                 <form action='/api/increase_pool' method="POST" width="200">
-                    <input type="submit" value="increase">
+                    <input class = 'load_balancer_control_button green' type="submit" value="increase">
                     <submit>
                 </form>
                 <form action='/api/decrease_pool' method="POST" width="200">
-                    <input type="submit" value="decrease">
+                    <input class = 'load_balancer_control_button red' type="submit" value="decrease">
                 </form>
-                <form action='/api/get_cpu_utilization' method="POST" width="200">
-                    <input type="submit" value="utilization">
-                </form>  
             </div>  
         </div>
 
@@ -138,7 +135,7 @@
                     <input class="range_input" id = "shrinking_ratio_id" type="range" name="shrinking_ratio" min="0" max="10" step = "0.01" value='{{scaler_default_settings["shrinking_ratio"]}}' oninput="shrinking_ratio_text.value=shrinking_ratio_id.value">
                     <output id="shrinking_ratio_text" name="amount" for="rangeInput">{{scaler_default_settings["shrinking_ratio"]}}</output>
                     <br>
-                    <input type="submit" value="Confirm">
+                    <input class="auto_scaler_submit_button" type="submit" value="Confirm">
                 </form>
         </div>
     
@@ -212,8 +209,8 @@
         background-color:#ffffff;
         float: left;
         position : relative;
-        padding: 3px 3px 3px 3px;
-        height: 98%;
+        padding: 70px 3px 3px 3px;
+        height: 68%;
         width: 40%;
     }
 
@@ -238,6 +235,44 @@
 
     .range_input {
         width : 88%
+    }
+
+    .auto_scaler_submit_button {
+        color: #fff !important;
+        text-transform: uppercase;
+        text-decoration: none;
+        background: #60a3bc;
+        padding: 20px;
+        border-radius: 50px;
+        display: inline-block;
+        border: none;
+        transition: all 0.4s ease 0s;
+        width : 35%;
+        margin-left : 30%;
+    }
+
+
+    .load_balancer_control_button {
+        color: #fff !important;
+        text-transform: uppercase;
+        text-decoration: none;
+        background: #60a3bc;
+        padding: 20px;
+        border-radius: 50px;
+        display: inline-block;
+        border: none;
+        transition: all 0.4s ease 0s;
+        width : 35%;
+        margin-top : 10%;
+
+    }
+
+    .load_balancer_control_button.green {
+        background: #98FB98;
+    }
+
+    .load_balancer_control_button.red {
+        background: #F08080;
     }
 
 
