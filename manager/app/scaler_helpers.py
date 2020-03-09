@@ -30,12 +30,14 @@ class LoadBalancerApis:
         return self._elbv2_client.describe_target_health(TargetGroupArn = target_group_arn)
 
     def register_targets_to_target_group(self, target_group_arn, target_ids):
-        return self._elbv2_client.register_targets(TargetGroupArn = target_group_arn,
-        Targets = target_ids)
+        if len(target_ids) > 0:
+            return self._elbv2_client.register_targets(TargetGroupArn = target_group_arn,
+            Targets = target_ids)
 
     def deregister_targets_from_target_group(self, target_group_arn, target_ids):
-        return self._elbv2_client.deregister_targets(TargetGroupArn = target_group_arn,
-        Targets = target_ids)
+        if len(target_ids) > 0:
+            return self._elbv2_client.deregister_targets(TargetGroupArn = target_group_arn,
+            Targets = target_ids)
 
     def get_average_cpu_utilization(self, dimensions):
         return self._cw_client.get_metric_statistics(
