@@ -15,7 +15,7 @@ sys.stderr = stderr
 sys.stdout = stdout
 
 from flask import redirect, render_template, request, current_app, abort, jsonify
-from app import webapp, directory, account, main, utility, ibr_queue, batch_task_helper, yolo_net, database, image_pool_runner
+from app import webapp, directory, account, main, utility, ibr_queue, image_processing, yolo_net, database, image_pool_runner
 
 
 @webapp.route('/api/upload', methods=['POST'])
@@ -99,7 +99,7 @@ def process_and_save_image(request):
         account.account_get_logged_in_userid(), file_name)
     if photo_id:
         # Get the new filename
-        saved_file_name = 'user_'+ str(account.account_get_logged_in_userid()) +'_'+  str(photo_id) + utility.get_file_extension(file_name)
+        saved_file_name = str(photo_id) + utility.get_file_extension(file_name)
 
         # Save the original photo
         origin_photo_path = os.path.join(
@@ -110,13 +110,13 @@ def process_and_save_image(request):
         rectangled_photo = draw_rectangles_on_photo(photo_bytes)
         rectangled_photo_path = os.path.join(
             directory.get_rectangles_dir_path(), saved_file_name)
-        batch_task_helper.save_cv_img(rectangled_photo, rectangled_photo_path)
+        image_processing.save_cv_img(rectangled_photo, rectangled_photo_path)
 
-        thumbnail = batch_task_helper.generate_thumbnail_for_cv_img(
+        thumbnail = image_processing.generate_thumbnail_for_cv_img(
             rectangled_photo)
         thumbnail_path = os.path.join(
             directory.get_thumbnails_dir_path(), saved_file_name)
-        batch_task_helper.save_cv_img(thumbnail, thumbnail_path)
+        image_processing.save_cv_img(thumbnail, thumbnail_path)
     else:
         return 'Server has encountered a problem with database when storing the photo'
 
@@ -149,7 +149,7 @@ def delete_photo(photo_id):
         return 'Operation is not allowed!'
 
     print('Deleting ', photo_id, photo_name)
-    saved_photo_file = 'user_'+ str(account.account_get_logged_in_userid()) +'_'+ str(photo_id) + utility.get_file_extension(photo_name)
+    saved_photo_file = str(photo_id) + utility.get_file_extension(photo_name)
     photo_path = os.path.join(directory.get_photos_dir_path(), saved_photo_file)
     thumbnail_path = os.path.join(directory.get_thumbnails_dir_path(), saved_photo_file)
     rectangle_path = os.path.join(directory.get_rectangles_dir_path(), saved_photo_file)
@@ -169,9 +169,9 @@ def draw_rectangles_on_photo(photo_bytes):
     cv_img_list = []
     cv_img_list.append(cv_img)
     net = yolo_net.new_yolo_net()
-    boxes, descriptions = batch_task_helper.detect_objects_on_images(
+    boxes, descriptions = image_processing.detect_objects_on_images(
         cv_img_list, net)
-    return batch_task_helper.draw_rectangles(cv_img, boxes[0], descriptions[0])
+    return image_processing.draw_rectangles(cv_img, boxes[0], descriptions[0])
 
 
 def decode_bytes_to_cv_image(photo_bytes):
@@ -188,8 +188,7 @@ def try_enqueue_ipr_task(request):
     photo_id = database.create_new_photo(account.account_get_logged_in_userid(), file_name)
     if photo_id:
         # Get the new filename
-        saved_file_name = 'user_'+ str(account.account_get_logged_in_userid()) +'_' + str(photo_id) + \
-                        utility.get_file_extension(file_name)
+        saved_file_name = str(photo_id) + utility.get_file_extension(file_name)
 
         # Save the original photo
         origin_photo_path = os.path.join(directory.get_photos_dir_path(), saved_file_name)
@@ -220,8 +219,7 @@ def try_enqueue_ibr_task(request):
                     account.account_get_logged_in_userid(), file_name)
                 if photo_id:
                     # Get the new filename
-                    saved_file_name = 'user_'+ str(account.account_get_logged_in_userid()) +'_' + str(photo_id) + \
-                        utility.get_file_extension(file_name)
+                    saved_file_name = str(photo_id) + utility.get_file_extension(file_name)
                     # Add to the task queue
                     is_successful = task_queue.add(ibr_queue.Task(*prepare_task(saved_file_name)))
                     assert is_successful
@@ -264,8 +262,7 @@ def display_photo_handler():
         result = database.get_photo(int(photo_id_str))
         if result:
             _, photo_name = result
-            saved_photo_file = 'user_'+ str(account.account_get_logged_in_userid()) +'_'+ photo_id_str + \
-                utility.get_file_extension(photo_name)
+            saved_photo_file = photo_id_str + utility.get_file_extension(photo_name)
 
             return render_template(
                 'display_photo.html', saved_photo_file=saved_photo_file,
@@ -284,7 +281,7 @@ def render_thumbnail_gallery():
 
 def get_thumbnails():
     '''
-    [(user_id_str, photo_id_str, file_extension, photo_name)]
+    [(photo_id_str, file_extension, photo_name)]
     '''
 
     user_thumbnails_dir = directory.get_thumbnails_dir_path()
@@ -295,8 +292,8 @@ def get_thumbnails():
         for photo_id, photo_name in rows:
             extension = utility.get_file_extension(photo_name)
             photo_id_str = str(photo_id)
-            path = os.path.join(user_thumbnails_dir, 'user_'+ str(account.account_get_logged_in_userid())+'_' + photo_id_str + extension)
+            path = os.path.join(user_thumbnails_dir, photo_id_str + extension)
             if os.path.exists(path):
-                result.append((str(account.account_get_logged_in_userid()), photo_id_str, extension, photo_name))
+                result.append((photo_id_str, extension, photo_name))
 
     return result

@@ -42,12 +42,12 @@
                 <div class="row">
                     {% for thumbnail in thumbnail_row %}
                     {% if (thumbnail != '') %}
-                    {% set user_id_str, photo_id_str, file_extension, photo_name = thumbnail %}
+                    {% set photo_id_str, file_extension, photo_name = thumbnail %}
                     <div class="image_container">
                         <div>
                             <form action='/api/photo_display' method="POST" width="200">
                                 <input type="image" title={{photo_name}}
-                                    src="{{ url_for('static', filename = thumbnail_dir_path + '/' + 'user_' + user_id_str + '_' +photo_id_str + file_extension) }}"
+                                    src="{{ url_for('static', filename = thumbnail_dir_path + '/' + photo_id_str + file_extension) }}"
                                     value={{photo_name}} width=200>
                                 <!--No need to encode space as %20, photo_id_str = str(int)-->
                                 <input type="hidden" name="photo_id" value={{photo_id_str}} />
