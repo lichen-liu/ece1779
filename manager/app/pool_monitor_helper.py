@@ -13,6 +13,15 @@ class PoolMonitoringHelper:
 
         return instances_data_points
 
+    def get_current_cpu_utilization_for_registered_instances(self)
+	
+	instances_current_cpu_utilization = {}
+	for instance_id in slef._pool.get_registered_instances_ids():
+	    instances_current_cpu_utilization[instance_id] = self._api.get_current_cpu_utilization(
+		[{'Name': 'InstanceId', 'Value': instance_id}])['Datapoints'][0]
+	
+	return instances_current_cpu_utilization
+
     def get_http_request_rate_for_registered_instances(self):
     #To be implemented#
             return

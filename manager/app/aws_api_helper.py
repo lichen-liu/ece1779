@@ -52,7 +52,19 @@ class AwsApiHelper:
                     ],
                     Unit='Percent'
                 )
-    
+    def get_current_cpu_utilization(self, dimensions)
+	return  self._cw_client.get_metric_statistics(
+                    Namespace='AWS/EC2',
+                    MetricName='CPUUtilization',
+                    Dimensions=dimensions,
+                    StartTime= datetime.now() - timedelta(seconds=1),
+                    EndTime= datetime.now(),
+                    Period=1,
+                    Statistics=[
+                        'Average',
+                    ],
+                    Unit='Percent'
+                )
 api = AwsApiHelper()
 def get_api():
     return api
