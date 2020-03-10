@@ -1,9 +1,9 @@
-from app import scaler_helpers
-class LoadBalancer:
+from app import aws_api_helper
+class EC2Pool:
     def __init__(self):
         self._default_load_balancer_index = 0
         self._default_target_group_index = 0
-        self._api = scaler_helpers.get_api()
+        self._api = aws_api_helper.get_api()
         self._load_balancer_arn = self.init_default_load_balancer()
         self._target_group_arn = self.init_default_target_group()
     
@@ -22,6 +22,7 @@ class LoadBalancer:
 
     def get_registered_instances_health_status(self):
         targets_status = self._api.get_health_status_on_group_targets(self._target_group_arn)
+        print(targets_status)
         instances_health_status = {}
         for target in targets_status['TargetHealthDescriptions']:
             instances_health_status[target['Target']['Id']] = target['TargetHealth']['State']
@@ -66,6 +67,6 @@ class LoadBalancer:
         response = self._api.deregister_targets_from_target_group(self._target_group_arn, target_ids)
         return response
 
-load_balancer = LoadBalancer()
-def get_load_balancer():
-    return load_balancer
+pool = EC2Pool()
+def get_worker_pool():
+    return pool

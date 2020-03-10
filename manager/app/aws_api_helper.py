@@ -8,7 +8,7 @@ running_ec2_instance_filters = [
         }
 ]
 
-class LoadBalancerApis:
+class AwsApiHelper:
     def __init__(self):
         self._ec2_resource = boto3.resource('ec2')
         self._elbv2_client = boto3.client('elbv2')
@@ -53,6 +53,6 @@ class LoadBalancerApis:
                     Unit='Percent'
                 )
     
-api = LoadBalancerApis()
+api = AwsApiHelper()
 def get_api():
     return api

@@ -26,6 +26,7 @@
                     }]
         }
 
+
         var chart = new Chart(ctx).Line(data, {
             scaleOverride : true,
             scaleSteps : 10,
@@ -101,11 +102,14 @@
 
             <div class= 'control_panel_action_control'>
                 <form action='/api/increase_pool' method="POST" width="200">
-                    <input class = 'load_balancer_control_button green' type="submit" value="increase">
+                    <input class = 'load_balancer_control_button green' type="submit" value="Increase worker pool ">
                     <submit>
                 </form>
                 <form action='/api/decrease_pool' method="POST" width="200">
-                    <input class = 'load_balancer_control_button red' type="submit" value="decrease">
+                    <input class = 'load_balancer_control_button red' type="submit" value="Decrease worker pool">
+                </form>
+                <form action='/api/get_work_count_graph' method="POST" width="200">
+                    <input class = 'load_balancer_control_button purple' type="submit" value="View worker-count graph">
                 </form>
             </div>  
         </div>
@@ -209,7 +213,7 @@
         background-color:#ffffff;
         float: left;
         position : relative;
-        padding: 70px 3px 3px 3px;
+        padding: 36px 3px 3px 3px;
         height: 68%;
         width: 40%;
     }
@@ -247,8 +251,8 @@
         display: inline-block;
         border: none;
         transition: all 0.4s ease 0s;
-        width : 35%;
-        margin-left : 30%;
+        width : 55%;
+        margin-left : 20%;
     }
 
 
@@ -262,7 +266,7 @@
         display: inline-block;
         border: none;
         transition: all 0.4s ease 0s;
-        width : 35%;
+        width : 90%;
         margin-top : 10%;
 
     }
@@ -274,6 +278,11 @@
     .load_balancer_control_button.red {
         background: #F08080;
     }
+
+    .load_balancer_control_button.purple {
+        background: #9932CC;
+    }
+
 
 
 </style>
