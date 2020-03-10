@@ -1,10 +1,24 @@
 # ece1779_a2
 
 
-## 1.0 Setup ##
+## 1.0 Setup
 
 
-### 1.1 Manager App Setup ###
+### 1.1 User App Setup
+Use: Python 3.7.3
+```
+python -m venv venv
+venv\Scripts\activate
+pip install Flask
+pip install mysql-connector-python
+pip install opencv-python
+pip install cvlib
+pip install tensorflow
+pip install boto3
+```
+
+
+### 1.2 Manager App Setup
 Use: Python 3.7.3
 ```
 python -m venv venv
@@ -95,6 +109,7 @@ On AWS instance:
 ```
 bash start.sh
 ```
+
 
 ## 3.0 To Reset
 
