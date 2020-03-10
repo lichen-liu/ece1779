@@ -14,6 +14,7 @@ pip install mysql-connector-python
 pip install opencv-python
 pip install cvlib
 pip install tensorflow
+pip install boto3
 ```
 
 
