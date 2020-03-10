@@ -1,4 +1,4 @@
-from app import image_processing as bt_helper, yolo_net
+from user_app import image_processing as bt_helper, yolo_net
 import multiprocessing
 from multiprocessing import Queue
 import os

@@ -1,5 +1,5 @@
 from flask import render_template, redirect
-from app import webapp, load_balancer, cloud_monitor
+from user_app import webapp, load_balancer, cloud_monitor
 
 @webapp.route('/', methods=['GET','POST'])
 def main_handler():

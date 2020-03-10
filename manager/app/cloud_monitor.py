@@ -1,4 +1,4 @@
-from app import scaler_helpers, load_balancer
+from user_app import scaler_helpers, load_balancer
 class CloudMonitor:
     def __init__(self, pool):
         self._pool = pool

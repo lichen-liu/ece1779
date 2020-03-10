@@ -15,7 +15,7 @@ sys.stderr = stderr
 sys.stdout = stdout
 
 from flask import redirect, render_template, request, current_app, abort, jsonify
-from app import webapp, directory, account, main, utility, ibr_queue, image_processing, yolo_net, database, image_pool_runner
+from user_app import webapp, directory, account, main, utility, ibr_queue, image_processing, yolo_net, database, image_pool_runner
 
 
 @webapp.route('/api/upload', methods=['POST'])

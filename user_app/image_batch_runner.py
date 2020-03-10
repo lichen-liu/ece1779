@@ -1,5 +1,5 @@
-from app import image_processing, ibr_queue, yolo_net
-from app import image_processing as bt_helper
+from user_app import image_processing, ibr_queue, yolo_net
+from user_app import image_processing as bt_helper
 import time
 import threading
 

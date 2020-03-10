@@ -1,6 +1,6 @@
 import os
 import cv2
-from app import directory
+from user_app import directory
 
 # Unfortunately net created by cv2.dnn is not thread safe, thus EACH user...
 # https://answers.opencv.org/question/205222/is-dnn-supports-threading/

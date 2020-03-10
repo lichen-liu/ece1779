@@ -1,4 +1,4 @@
-from app import scaler_helpers
+from user_app import scaler_helpers
 class LoadBalancer:
     def __init__(self):
         self._default_load_balancer_index = 0

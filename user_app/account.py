@@ -3,7 +3,7 @@ import random
 
 from flask import redirect, request, session, abort
 
-from app import main, webapp, database
+from user_app import main, webapp, database
 
 
 @webapp.route('/api/account_actions', methods=['POST'])

@@ -1,6 +1,6 @@
 import os
 
-from app import webapp, directory, utility, ibr_queue, image_batch_runner, image_pool_runner
+from user_app import webapp, directory, utility, ibr_queue, image_batch_runner, image_pool_runner
 
 
 def init():

@@ -1,5 +1,5 @@
 from flask import render_template
-from app import account, webapp, directory, photo
+from user_app import account, webapp, directory, photo
 
 
 @webapp.route('/', methods=['GET', 'POST'])
