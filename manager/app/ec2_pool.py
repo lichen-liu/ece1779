@@ -1,9 +1,9 @@
-from user_app import scaler_helpers
-class LoadBalancer:
+from app import aws_api_helper
+class EC2Pool:
     def __init__(self):
         self._default_load_balancer_index = 0
         self._default_target_group_index = 0
-        self._api = scaler_helpers.get_api()
+        self._api = aws_api_helper.get_api()
         self._load_balancer_arn = self.init_default_load_balancer()
         self._target_group_arn = self.init_default_target_group()
     
@@ -15,16 +15,22 @@ class LoadBalancer:
         target_groups = self._api.get_target_group_on_load_balancer(self._load_balancer_arn)
         return target_groups['TargetGroups'][self._default_target_group_index]['TargetGroupArn']
 
-    def get_associated_tg_arn(self):
-        return self._target_group_arn
     
     def get_all_running_instances_ids(self):
         instances = self._api.get_running_ec2_instance()
         return [ {'Id' : str(instance.id)} for instance in instances]
 
-    def get_registered_instances_ids(self):
+    def get_registered_instances_health_status(self):
         targets_status = self._api.get_health_status_on_group_targets(self._target_group_arn)
-        return { target['Target']['Id'] for target in targets_status['TargetHealthDescriptions'] }
+        print(targets_status)
+        instances_health_status = {}
+        for target in targets_status['TargetHealthDescriptions']:
+            instances_health_status[target['Target']['Id']] = target['TargetHealth']['State']
+
+        return instances_health_status 
+    
+    def get_registered_instances_ids(self):
+        return self.get_registered_instances_health_status().keys()
 
     def get_available_ec2_instance_ids(self):
         all_running_ids = self.get_all_running_instances_ids()
@@ -61,6 +67,6 @@ class LoadBalancer:
         response = self._api.deregister_targets_from_target_group(self._target_group_arn, target_ids)
         return response
 
-load_balancer = LoadBalancer()
-def get_load_balancer():
-    return load_balancer
+pool = EC2Pool()
+def get_worker_pool():
+    return pool

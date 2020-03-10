@@ -2,4 +2,7 @@ from flask import Flask
 
 webapp = Flask(__name__)
 
-from user_app import manager_main
+from app import manager_main, worker_count_monitor
+
+monitor = worker_count_monitor.get_worker_count_monitor()
+monitor.start()
