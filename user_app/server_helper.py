@@ -30,9 +30,9 @@ def delete_all():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--delete_data', help='Delete all user data (database and filesystem)', action='store_true')
+        '--delete_data', help='Delete all user data (database and S3)', action='store_true')
     parser.add_argument(
-        '--delete_all', help='Delete all user data and accounts (database and filesystem)', action='store_true')
+        '--delete_all', help='Delete all user data and accounts (database and S3)', action='store_true')
     parser.add_argument(
         '--account_table', help='Print the Account table from the database', action='store_true')
     parser.add_argument(
