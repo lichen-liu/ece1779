@@ -47,6 +47,19 @@ To get the above values (key_id, key, token),and for an AWS educate account, it 
 Now you are able to use AWS SDKs, user mannual: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/index.html
 
 
+## 2.0 To Run
+
+
+### 2.1 User App (Local)
+To Run:
+```
+python run_user_app_local.py
+```
+To Clean up:
+```
+python user_app/server_helper.py
+```
+
 
 # ece1779_a1
 http://www.cs.toronto.edu/~delara/courses/ece1779/projects/ECE1779-a1.pdf
