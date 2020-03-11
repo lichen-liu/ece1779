@@ -139,6 +139,18 @@
         
         <div class = 'ec2_app_control'>
               <div  class="ec2_app_control_title" style="color:#cccccc">EC2 App Control and Access</div>
+ 		<div class= 'ec2_storage_action_control'>
+                <form action='/api/increase_pool' class = 'load_balancer_control_form' method="POST" width="200">
+                    <input class = 'load_balancer_control_button orange' type="submit" value="Delete All User Images">
+
+                </form>
+                <form action='/api/decrease_pool' class = 'load_balancer_control_form' method="POST" width="200">
+                    <input class = 'load_balancer_control_button gold' type="submit" value="Uninstall Application Database">
+                </form>
+            </div>
+	    <div class='ec2_load_balancer_content'>
+		<textarea class='ec2_load_balancer_dns_name_text' readonly='readonly' rows='4' cols='50' ></textarea>
+	    </div>
         </div>
 
         <div class='auto_scaler_control_panel'>
@@ -329,6 +341,19 @@
         background: #9932CC;
         box-shadow: 2px 5px #8821bb;
     }
+	
+    .load_balancer_control_button.orange {
+        margin-top: 5%;
+	background: #ff7f50;
+        box-shadow: 2px 5px #ee6e40;
+    }
+    
+    .load_balancer_control_button.gold {
+        background: #FFD700;
+        box-shadow: 2px 5px #eec600;
+    }
+
+
 
     .ec2_app_control {
 	position: absolute;
@@ -345,7 +370,31 @@
         width: 50%;
 
     } 
+.ec2_storage_action_control {
+	background-color:#ffffff;
+        float: left;
+        position : relative;
+        padding: 3px 3px 3px 3px;
+        height: 88%;
+        width: 40%;
+
+}
+
+.ec2_load_balancer_content {
+ 	background-color:#ffffff;
+        margin-left: 50%;
+        position : relative;
+        padding: 3px 3px 3px 3px;
+        height: 90%;
+        width: 40%;
+
+}
+
+.ec2_load_balancer_dns_name_text {
+	position: relative;
+	height: 50%;
+	width: 100%;
+}
 
 </style>
-
 </html>
