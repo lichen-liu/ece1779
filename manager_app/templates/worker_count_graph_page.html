@@ -36,6 +36,8 @@
         }
 
         var chart = new Chart(ctx).Line(data, {
+            responsive: false,
+            maintainAspectRatio: false,
             scaleOverride : true,
             scaleSteps : 10,
             scaleStepWidth : 1,
@@ -46,16 +48,24 @@
 
 </script>
 
-<body>
-<canvas id='worker_count_graph' height='550px', width='1255px' class = "graph"></canvas>
+<body onload="GenerateGraph()">
+<canvas id='worker_count_graph' class = "graph"></canvas>
 <script>
-    drawLineChart('worker_count_graph', {{worker_count_by_time | tojson | safe}});
+    var canvas_id = 'worker_count_graph';
+    var data = {{worker_count_by_time | tojson | safe}};
+    function GenerateGraph(){
+        drawLineChart(canvas_id, data)
+    }
 </script>
+
 </body>
 
 <style>
+
 .graph {
     margin-top : 5%;
+    width: 100% !important;
+    height: 10% !important;
 }
 </style>
 

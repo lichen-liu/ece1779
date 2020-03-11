@@ -8,7 +8,6 @@
     function drawLineChart(canvas_id, data_points) {
         var canvas = document.getElementById(canvas_id);
         var ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         var points = [];
         var labels = [];
 
@@ -30,13 +29,18 @@
 
 
         var chart = new Chart(ctx).Line(data, {
-            responsive: true,
+            responsive: false,
             maintainAspectRatio: false,
             scaleOverride : true,
             scaleSteps : 10,
             scaleStepWidth : 10,
             scaleStartValue : 0
         });
+
+        var parent = document.getElementById(canvas_id).parentNode.parentElement;
+
+        //canvas.style["height"] = "30%";
+        //canvas.style["width"] = "100%";
 
     };
 
@@ -58,27 +62,27 @@
     };
 </script>
 
-<body class = 'body'>
+<body class = 'body' onload="GenerateGraph()">
 
     <script type=text/javascript>
     function ChangeStatusDisplayType(event) {
         switch (event.target.value) {
             case "CPU Utilization":
-            for (var id in data_points_for_ids) {
-                if (data_points_for_ids.hasOwnProperty(id)) {           
-                    drawLineChart(id, data_points_for_ids[id]);
-                }
-            }
+            GenerateGraph()
             break;
             case "Http Request Rate":
-            for (var id in data_points_for_ids) {
-                if (data_points_for_ids.hasOwnProperty(id)) {           
-                    drawLineChart(id, data_points_for_ids[id]);
-                }
-            }
+            GenerateGraph()
             break;
         };
     }
+
+    function GenerateGraph(){
+        for (var id in data_points_for_ids) {
+                if (data_points_for_ids.hasOwnProperty(id)) {           
+                    drawLineChart(id, data_points_for_ids[id]);
+                }
+            }
+        }
     </script>
 
         <div id = 'charts' class = 'charts' >
@@ -92,19 +96,19 @@
             <script>
                 var data_points_for_ids = {{instances_data_points | tojson | safe}};
             </script>
+            <div class = "charts_content">
             {% for instance_id in instances_data_points %}
-            <div>
                 <div class = 'instance_canvas_title'>
                     <div style="color:#cccccc">{{instance_id}}</div>
                 </div>
-                <canvas id='{{instance_id}}' class="charts_canvas"></canvas>
-            </div>
+                <canvas id='{{instance_id}}' class='charts_canvas'></canvas>
             <script type=text/javascript>
-                var id = '{{instance_id}}';
-                var data_points_for_id = {{instances_data_points[instance_id] | tojson | safe}};
-                drawLineChart(id, data_points_for_id);
+                //var id = '{{instance_id}}';
+                //var data_points_for_id = {{instances_data_points[instance_id] | tojson | safe}};
+                //drawLineChart(id, data_points_for_id);
             </script>
             {% endfor %}
+            </div>
         </div>
 
         <div id = 'control_panel' class = 'control_panel'>
@@ -155,7 +159,7 @@
                     <br>
                     Shrinking Ratio
                     <br>
-                    <input class="range_input" id = "shrinking_ratio_id" type="range" name="shrinking_ratio" min="0" max="10" step = "0.01" value='{{scaler_default_settings["shrinking_ratio"]}}' oninput="shrinking_ratio_text.value=shrinking_ratio_id.value">
+                    <input class="range_input" id = "shrinking_ratio_id" type="range" name="shrinking_ratio" min="0" max="1" step = "0.01" value='{{scaler_default_settings["shrinking_ratio"]}}' oninput="shrinking_ratio_text.value=shrinking_ratio_id.value">
                     <output id="shrinking_ratio_text" name="amount" for="rangeInput">{{scaler_default_settings["shrinking_ratio"]}}</output>
                     <br>
                     <input class="auto_scaler_submit_button" type="submit" value="Confirm">
@@ -181,13 +185,19 @@
     }
 
     .charts_canvas {
+        margin-top : 2%;
         width: 100% !important;
-        height: 20% !important;
+        height: 30% !important;
     }
 
     .charts_control {
         height: 3%;
         width : 100%;
+    }
+
+    .charts_content {
+        height: 95%;
+        width: 100%;
     }
 
     .charts_control_title {
@@ -278,6 +288,7 @@
         transition: all 0.4s ease 0s;
         width : 55%;
         margin-left : 20%;
+        box-shadow: 2px 5px #5090ab;
     }
 
 
@@ -293,19 +304,22 @@
         transition: all 0.4s ease 0s;
         width : 90%;
         margin-top : 10%;
-
+        box-shadow: 2px 5px #5090ab;
     }
 
     .load_balancer_control_button.green {
         background: #98FB98;
+        box-shadow: 2px 5px #87EA87;
     }
 
     .load_balancer_control_button.red {
         background: #F08080;
+        box-shadow: 2px 5px #E07070;
     }
 
     .load_balancer_control_button.purple {
         background: #9932CC;
+        box-shadow: 2px 5px #8821bb;
     }
 
 
