@@ -1,6 +1,13 @@
 import boto3
 import botocore
 
+'''Note:
+- directory must end with '/', except for the root directory ''
+- directory can have '' as name, as long as it ends with '/'
+- file must have a name. It must not end with '/'
+- file name can be the same as directory. But directory must end with '/', whereas file must not.
+'''
+
 l_s3 = None
 
 BUCKET = 'ece1779'
