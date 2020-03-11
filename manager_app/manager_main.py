@@ -1,4 +1,4 @@
-from flask import render_template, redirect
+from flask import render_template, redirect, request
 from manager_app import webapp, ec2_pool, pool_monitor_helper, worker_count_monitor, auto_scaler
 from datetime import datetime
 
@@ -29,6 +29,10 @@ def decrease_pool_handler(num = 1):
 @webapp.route('/api/change_auto_scaler_strategy', methods=['POST'])
 def change_auto_scaling_strategy_handler():
     auto_s = auto_scaler.get_auto_scaler()
+    auto_s.set_max_threshold(float(request.form.get('max_threshold')))
+    auto_s.set_min_threshold(float(request.form.get('min_threshold')))
+    auto_s.set_growing_ratio(float(request.form.get('growing_ratio')))
+    auto_s.set_shrinking_ratio(float(request.form.get('shrinking_ratio')))
     return redirect('/')
 
 @webapp.route('/api/get_work_count_graph', methods=['POST','GET'])
