@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+<script type="text/javascript">
+
+    function drawLineChart(canvas_id, data_points) {
+        var canvas = document.getElementById(canvas_id);
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var points = [];
+        var labels = [];
+
+        Array.prototype.forEach.call(data_points, data_point => {
+            points.push(data_point['Average'])
+            labels.push(data_point['Timestamp'])
+        });
+       
+        var data = {
+            labels: labels,
+            datasets: [{
+                            fillColor: "rgba(220,220,220,0.5)",
+                            strokeColor: "rgba(220,220,220,1)",
+                            pointColor: "rgba(220,220,220,1)",
+                            pointStrokeColor: "#fff",
+                            data: points
+                    }]
+        }
+
+
+        var chart = new Chart(ctx).Line(data, {
+            responsive: true,
+            maintainAspectRatio: false,
+            scaleOverride : true,
+            scaleSteps : 10,
+            scaleStepWidth : 10,
+            scaleStartValue : 0
+        });
+
+    };
+
+    function drawPieChart(status_count) {
+        var colors = {'unhealthy' : '#32CD32', 'health' : '	#32CD32', 'draining' : '#00BFFF' , 'initial' : '#CCCC00'}
+        var canvas = document.getElementById('pool_monitor_chart')
+        
+        var ctx = canvas.getContext("2d");
+
+        var data = [];
+
+        Object.keys(status_count).forEach(function(status_type, count){
+            data.push({value : status_count[status_type], label : status_type, color : colors[status_type]})
+        })
+        var myPieChart = new Chart(ctx).Pie(data);
+
+        canvas.style["height"] = "50%";
+        canvas.style["width"] = "auto";
+    };
+</script>
+
+<body class = 'body'>
+
+    <script type=text/javascript>
+    function ChangeStatusDisplayType(event) {
+        switch (event.target.value) {
+            case "CPU Utilization":
+            for (var id in data_points_for_ids) {
+                if (data_points_for_ids.hasOwnProperty(id)) {           
+                    drawLineChart(id, data_points_for_ids[id]);
+                }
+            }
+            break;
+            case "Http Request Rate":
+            for (var id in data_points_for_ids) {
+                if (data_points_for_ids.hasOwnProperty(id)) {           
+                    drawLineChart(id, data_points_for_ids[id]);
+                }
+            }
+            break;
+        };
+    }
+    </script>
+
+        <div id = 'charts' class = 'charts' >
+            <div class = 'charts_control'>
+                    <div  class="charts_control_title" style="color:#cccccc">EC2 Instances Status</div>
+                    <select class="charts_control_select_status_type" onchange="ChangeStatusDisplayType(event)">
+                            <option>CPU Utilization</option> 
+                            <option>Http Request Rate</option> 
+                        </select>
+            </div>
+            <script>
+                var data_points_for_ids = {{instances_data_points | tojson | safe}};
+            </script>
+            {% for instance_id in instances_data_points %}
+            <div>
+                <div class = 'instance_canvas_title'>
+                    <div style="color:#cccccc">{{instance_id}}</div>
+                </div>
+                <canvas id='{{instance_id}}' class="charts_canvas"></canvas>
+            </div>
+            <script type=text/javascript>
+                var id = '{{instance_id}}';
+                var data_points_for_id = {{instances_data_points[instance_id] | tojson | safe}};
+                drawLineChart(id, data_points_for_id);
+            </script>
+            {% endfor %}
+        </div>
+
+        <div id = 'control_panel' class = 'control_panel'>
+            <div class = 'control_panel_pool_monitor_chart'>
+                <div class = 'control_panel_pool_monitor_chart_title'>
+                    <div style="color:#cccccc">Load Balancer Pool Status</div>
+                </div>
+                <canvas id = 'pool_monitor_chart' class = 'control_panel_pool_monitor_chart_canvas'></canvas>
+                <script type=text/javascript>
+                    var status_counts = {{instances_status_counts | tojson | safe}};
+                    drawPieChart(status_counts);
+                </script>
+            </div>
+
+            <div class= 'control_panel_action_control'>
+                <form action='/api/increase_pool' method="POST" width="200">
+                    <input class = 'load_balancer_control_button green' type="submit" value="Increase worker pool ">
+                    <submit>
+                </form>
+                <form action='/api/decrease_pool' method="POST" width="200">
+                    <input class = 'load_balancer_control_button red' type="submit" value="Decrease worker pool">
+                </form>
+                <form action='/api/get_work_count_graph' method="POST" width="200">
+                    <input class = 'load_balancer_control_button purple' type="submit" value="View worker-count graph">
+                </form>
+            </div>  
+        </div>
+
+        <div class='auto_scaler_control_panel'>
+                <div class = 'control_panel_pool_monitor_chart_title'>
+                    <div style="color:#cccccc">Auto Scaler Controller</div>
+                </div>
+                <form action='api/change_auto_scaler_strategy' class="auto_scaler_control_panel_form" method="POST">
+                    Max Threshold
+                    <br>
+                    <input class="range_input" id = "max_threshold_id" type="range" name="max_threshold" min="0" max="1" step="0.05" value='{{scaler_default_settings["max_threshold"]}}' oninput="max_threshold_text.value=max_threshold_id.value">
+                    <output width="10%" id="max_threshold_text" name="amount" for="rangeInput">{{scaler_default_settings["max_threshold"]}}</output>
+                    <br>
+                    Min Threshold
+                    <br>
+                    <input class="range_input" id = "min_threshold_id" type="range" name="min_threshold" min="0" max="1" step="0.05" value='{{scaler_default_settings["min_threshold"]}}' oninput="min_threshold_text.value=min_threshold_id.value">
+                    <output id="min_threshold_text" name="amount" for="rangeInput">{{scaler_default_settings["min_threshold"]}}</output>
+                    <br>
+                    Gourwing Ratio
+                    <br>
+                    <input class="range_input" id = "growing_ratio_id" type="range" name="growing_ratio" min="0" max="10" step = "0.01" value='{{scaler_default_settings["growing_ratio"]}}' oninput="growing_ratio_text.value=growing_ratio_id.value">
+                    <output id="growing_ratio_text" name="amount" for="rangeInput">{{scaler_default_settings["growing_ratio"]}}</output>
+                    <br>
+                    Shrinking Ratio
+                    <br>
+                    <input class="range_input" id = "shrinking_ratio_id" type="range" name="shrinking_ratio" min="0" max="10" step = "0.01" value='{{scaler_default_settings["shrinking_ratio"]}}' oninput="shrinking_ratio_text.value=shrinking_ratio_id.value">
+                    <output id="shrinking_ratio_text" name="amount" for="rangeInput">{{scaler_default_settings["shrinking_ratio"]}}</output>
+                    <br>
+                    <input class="auto_scaler_submit_button" type="submit" value="Confirm">
+                </form>
+        </div>
+    
+</body>
+
+<style>
+    .body {
+        background-color:#eeeeee;
+    }
+
+    .charts {
+        background-color:#ffffff;
+        position: absolute;
+        margin-top: 1%;
+        margin-left: 1%;
+        padding: 10px 4px 4px 4px;
+        overflow: scroll;
+        height:98%;
+        width: 48%;
+    }
+
+    .charts_canvas {
+        width: 100% !important;
+        height: 20% !important;
+    }
+
+    .charts_control {
+        height: 3%;
+        width : 100%;
+    }
+
+    .charts_control_title {
+        float: left;
+        width: 50%
+    }
+
+    .charts_control_select_status_type {
+        float: left;
+        width: 50%
+    }
+
+    .instance_canvas_title {
+        height: 2%;
+        width : 100%;
+    }
+
+    .control_panel {
+        background-color:#ffffff;
+        position : absolute;
+        margin-top: 1%;
+        margin-left: 50%;
+        padding: 10px 3px 3px 3px;
+        height: 48%;
+        width: 48%;
+    }
+
+    .control_panel_pool_monitor_chart {
+        background-color:#ffffff;
+        float: left;
+        position : relative;
+        padding: 3px 3px 3px 3px;
+        height: 98%;
+        width: 50%;
+    }
+
+    .control_panel_pool_monitor_chart_title {
+        height: 3%;
+        width : 100%;
+    }
+
+    .control_panel_pool_monitor_chart_canvas {
+        margin-top : 25%;
+        width: 100% !important;
+    }
+
+    .control_panel_action_control {
+        background-color:#ffffff;
+        float: left;
+        position : relative;
+        padding: 36px 3px 3px 3px;
+        height: 68%;
+        width: 40%;
+    }
+
+    .auto_scaler_control_panel {
+        background-color:#ffffff;
+        position : absolute;
+        margin-top: 26.7%;
+        margin-left: 50%;
+        padding: 10px 3px 3px 3px;
+        height: 47%;
+        width: 48%;
+    }
+
+    .auto_scaler_control_panel_form {
+        background-color:#ffffff;
+        position : relative;
+        margin-left: 50%;
+        padding: 10px 3px 3px 3px;
+        height: 98%;
+        width: 48%;
+    }
+
+    .range_input {
+        width : 88%
+    }
+
+    .auto_scaler_submit_button {
+        color: #fff !important;
+        text-transform: uppercase;
+        text-decoration: none;
+        background: #60a3bc;
+        padding: 20px;
+        border-radius: 50px;
+        display: inline-block;
+        border: none;
+        transition: all 0.4s ease 0s;
+        width : 55%;
+        margin-left : 20%;
+    }
+
+
+    .load_balancer_control_button {
+        color: #fff !important;
+        text-transform: uppercase;
+        text-decoration: none;
+        background: #60a3bc;
+        padding: 20px;
+        border-radius: 50px;
+        display: inline-block;
+        border: none;
+        transition: all 0.4s ease 0s;
+        width : 90%;
+        margin-top : 10%;
+
+    }
+
+    .load_balancer_control_button.green {
+        background: #98FB98;
+    }
+
+    .load_balancer_control_button.red {
+        background: #F08080;
+    }
+
+    .load_balancer_control_button.purple {
+        background: #9932CC;
+    }
+
+
+
+</style>
+
+</html>
