@@ -124,17 +124,21 @@
             </div>
 
             <div class= 'control_panel_action_control'>
-                <form action='/api/increase_pool' method="POST" width="200">
+                <form action='/api/increase_pool' class = 'load_balancer_control_form' method="POST" width="200">
                     <input class = 'load_balancer_control_button green' type="submit" value="Increase worker pool ">
-                    <submit>
+    
                 </form>
-                <form action='/api/decrease_pool' method="POST" width="200">
+                <form action='/api/decrease_pool' class = 'load_balancer_control_form' method="POST" width="200">
                     <input class = 'load_balancer_control_button red' type="submit" value="Decrease worker pool">
                 </form>
-                <form action='/api/get_work_count_graph' method="POST" width="200">
+                <form action='/api/get_work_count_graph' class = 'load_balancer_control_form' method="POST" width="200">
                     <input class = 'load_balancer_control_button purple' type="submit" value="View worker-count graph">
                 </form>
             </div>  
+        </div>
+        
+        <div class = 'ec2_app_control'>
+              <div  class="ec2_app_control_title" style="color:#cccccc">EC2 App Control and Access</div>
         </div>
 
         <div class='auto_scaler_control_panel'>
@@ -176,7 +180,7 @@
     .charts {
         background-color:#ffffff;
         position: absolute;
-        margin-top: 1%;
+        top: 1%;
         margin-left: 1%;
         padding: 10px 4px 4px 4px;
         overflow: scroll;
@@ -202,7 +206,7 @@
 
     .charts_control_title {
         float: left;
-        width: 50%
+        width: 50%;
     }
 
     .charts_control_select_status_type {
@@ -218,10 +222,10 @@
     .control_panel {
         background-color:#ffffff;
         position : absolute;
-        margin-top: 1%;
+        top: 1%;
         margin-left: 50%;
         padding: 10px 3px 3px 3px;
-        height: 48%;
+        height: 28%;
         width: 48%;
     }
 
@@ -240,26 +244,26 @@
     }
 
     .control_panel_pool_monitor_chart_canvas {
-        margin-top : 25%;
-        width: 100% !important;
+        margin-top : 18%;
+	margin-left: 12%;
     }
 
     .control_panel_action_control {
         background-color:#ffffff;
         float: left;
         position : relative;
-        padding: 36px 3px 3px 3px;
-        height: 68%;
+        padding: 3px 3px 3px 3px;
+        height: 98%;
         width: 40%;
     }
 
     .auto_scaler_control_panel {
         background-color:#ffffff;
         position : absolute;
-        margin-top: 26.7%;
+        top: 58.6%;
         margin-left: 50%;
         padding: 10px 3px 3px 3px;
-        height: 47%;
+        height: 39%;
         width: 48%;
     }
 
@@ -267,8 +271,8 @@
         background-color:#ffffff;
         position : relative;
         margin-left: 50%;
-        padding: 10px 3px 3px 3px;
-        height: 98%;
+        padding: 3px 3px 3px 3px;
+        height: 96%;
         width: 48%;
     }
 
@@ -291,6 +295,9 @@
         box-shadow: 2px 5px #5090ab;
     }
 
+    .load_balancer_control_form {
+	height: 30%;
+    }
 
     .load_balancer_control_button {
         color: #fff !important;
@@ -303,7 +310,8 @@
         border: none;
         transition: all 0.4s ease 0s;
         width : 90%;
-        margin-top : 10%;
+	height: 65%;
+        margin-top : 6%;
         box-shadow: 2px 5px #5090ab;
     }
 
@@ -322,7 +330,21 @@
         box-shadow: 2px 5px #8821bb;
     }
 
+    .ec2_app_control {
+	position: absolute;
+	padding: 10px 3px 3px 3px;
+        background-color: #ffffff;
+    	height: 25%;
+	width: 48%;
+	top: 31.3%;
+	margin-left: 50%;
+    }
 
+.ec2_app_contorl_title {
+        float: left;
+        width: 50%;
+
+    } 
 
 </style>
 
