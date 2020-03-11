@@ -133,9 +133,6 @@ def create_directories_if_necessary(bucket_name):
     create_directory_if_necessary(bucket_name, THUMBNAILS_DIR)
     create_directory_if_necessary(bucket_name, RECTANGLES_DIR)
 
-    create_directory_if_necessary(bucket_name, 'asd')
-    create_directory_if_necessary(bucket_name, 'asd//a')
-
 
 def upload_object(bucket_name, key, file):
     '''Upload a file to an S3 bucket
