@@ -1,5 +1,5 @@
 from flask import render_template
-from user_app import account, webapp, directory, photo
+from user_app import account, webapp, photo
 
 
 @webapp.route('/', methods=['GET', 'POST'])
@@ -39,4 +39,4 @@ def main_guest_welcome(args):
 def main_user_welcome(args):
     return render_template(
         'user_welcome.html', title=args.title, username=account.account_get_logged_in_username(), error_message=args.error_message,
-        thumbnails=photo.get_thumbnails(), thumbnail_dir_path=directory.get_thumbnails_dir_path(False))
+        thumbnails=photo.get_thumbnails())

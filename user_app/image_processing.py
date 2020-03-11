@@ -1,10 +1,24 @@
-import numpy as np
-import cv2
 import os
-from user_app import directory
+
+import numpy
+import cv2
+
+# # Get rid of warning messages
+# import sys
+# stderr = sys.stderr
+# stdout = sys.stdout
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+# sys.stderr = open(os.devnull, 'w')
+# sys.stdout = open(os.devnull, 'w')
+# sys.stdwarn = open(os.devnull, 'w')
+# import cvlib as cv
+# sys.stderr = stderr
+# sys.stdout = stdout
+
+from user_app import directory, utility, s3, yolo_net
 
 
-def draw_rectangles(cv_img, boxes, descriptions):
+def draw_rectangles_on_cv_image(cv_img, boxes, descriptions):
     assert(len(boxes) == len(descriptions))
     for box, description in zip(boxes, descriptions):
         (x, y) = (box[0], box[1])
@@ -15,22 +29,22 @@ def draw_rectangles(cv_img, boxes, descriptions):
     return cv_img
 
 
-def detect_objects_on_images(cv_imgs, net):
+def detect_objects_on_cv_images(cv_imgs, net):
     layer_outputs_for_images = net.pass_forward(cv_imgs)
-    boxes_for_all_images, descriptions_for_all_images = extract_boxes_and_descriptions_for_images(layer_outputs_for_images,
+    boxes_for_all_images, descriptions_for_all_images = extract_boxes_and_descriptions_for_cv_images(layer_outputs_for_images,
                                                                                                   cv_imgs)
 
     return boxes_for_all_images, descriptions_for_all_images
 
 
-def extract_boxes_and_descriptions_for_images(layer_outputs, cv_imgs):
+def extract_boxes_and_descriptions_for_cv_images(layer_outputs, cv_imgs):
     boxes_for_all_images = []
     descriptions_for_all_images = []
 
     #OpenCV is stupid
     # Single image and multiple images gives different structure
     for index in range(len(cv_imgs)):
-        boxes, descriptions = extract_boxes_and_descriptions_for_image_from_all_outputs_layers(
+        boxes, descriptions = extract_boxes_and_descriptions_for_cv_image_from_all_outputs_layers(
             layer_outputs, index, cv_imgs[index], len(cv_imgs) == 1)
 
         boxes_for_all_images.append(boxes)
@@ -39,7 +53,7 @@ def extract_boxes_and_descriptions_for_images(layer_outputs, cv_imgs):
     return boxes_for_all_images, descriptions_for_all_images
 
 
-def extract_boxes_and_descriptions_for_image_from_all_outputs_layers(layer_outputs, img_index, cv_img, single_image, target_confidence=0.5, target_threshold=0.3):
+def extract_boxes_and_descriptions_for_cv_image_from_all_outputs_layers(layer_outputs, img_index, cv_img, single_image, target_confidence=0.5, target_threshold=0.3):
     original_height = cv_img.shape[0]
     original_width = cv_img.shape[1]
 
@@ -47,7 +61,7 @@ def extract_boxes_and_descriptions_for_image_from_all_outputs_layers(layer_outpu
     confidences = []
     class_ids = []
 
-    shape_adjustments = np.array(
+    shape_adjustments = numpy.array(
         [original_width, original_height, original_width, original_height])
 
     for layer_output in layer_outputs:
@@ -84,7 +98,7 @@ def get_detections_from_a_layer(layer_output_for_image, shape_adjustments, targe
     for detection in layer_output_for_image:
 
         scores = detection[start_index_of_scores:]
-        class_id = np.argmax(scores)
+        class_id = numpy.argmax(scores)
         confidence = scores[class_id]
 
         if confidence > target_confidence:
@@ -105,7 +119,7 @@ def load_labels():
     return open(labels_path).read().strip().split('\n')
 
 
-def generate_thumbnail_for_cv_img(image, matching_size=120, inter=cv2.INTER_AREA):
+def generate_thumbnail_for_cv_image(image, matching_size=120, inter=cv2.INTER_AREA):
     dim = None
     large_side = None
 
@@ -125,14 +139,17 @@ def generate_thumbnail_for_cv_img(image, matching_size=120, inter=cv2.INTER_AREA
     return cv2.copyMakeBorder(resized, vertical_border, vertical_border, horizonta_border, horizonta_border, cv2.BORDER_CONSTANT, value=[255, 255, 255])
 
 
-def load_cv_img(path):
-    return cv2.imread(path)
+def detect_and_draw_rectangles_on_cv_image(cv_bytes):
+    cv_img_list = []
+    cv_img_list.append(cv_bytes)
+    net = yolo_net.new_yolo_net()
+    boxes, descriptions = detect_objects_on_cv_images(cv_img_list, net)
+    return draw_rectangles_on_cv_image(cv_bytes, boxes[0], descriptions[0])
 
 
-def save_cv_img(photo_bytes, path):
-    cv2.imwrite(path, photo_bytes)
+def convert_cv_bytes_to_file_bytes(format, cv_bytes):
+    return cv2.imencode(format, cv_bytes)[1]
 
 
-def decode_bytes_to_cv_image(photo_bytes):
-    numpy_img = numpy.fromstring(photo_bytes, numpy.uint8)
-    return cv2.imdecode(numpy_img, cv2.IMREAD_COLOR)
+def convert_file_bytes_to_cv_bytes(file_bytes):
+    return cv2.imdecode(numpy.fromstring(file_bytes, numpy.uint8), cv2.IMREAD_COLOR)

@@ -4,8 +4,8 @@ import shutil
 import os
 import argparse
 import database
-import directory
 import utility
+import s3
 
 
 def delete_data():
@@ -13,9 +13,9 @@ def delete_data():
     database.delete_photo_table()
     print('    Succeeded')
 
-    print('Deleting ' + directory.get_root_dir_path(True) + ' ...')
-    if os.path.exists(directory.get_root_dir_path(True)):
-        shutil.rmtree(directory.get_root_dir_path(True))
+    print('Deleting ' + s3.get_s3_path_in_string(key=s3.ROOT_DIR, bucket_name=s3.BUCKET) + ' ...')
+    s3.delete_directory_content(directory=s3.ROOT_DIR)
+    s3.create_directories_if_necessary()
     print('    Succeeded')
 
 
@@ -37,10 +37,11 @@ if __name__ == '__main__':
         '--account_table', help='Print the Account table from the database', action='store_true')
     parser.add_argument(
         '--photo_table', help='Print the Photo table from the database', action='store_true')
-    parser.add_argument('--storage_info', help='Print the ' +
-                        directory.get_root_dir_path(False) + ' directory size', action='store_true')
+    parser.add_argument('--storage_info', help='Print the ' + s3.get_s3_path_in_string(key=s3.ROOT_DIR, bucket_name=s3.BUCKET) + ' directory size', action='store_true')
 
     args = parser.parse_args()
+
+    s3.init()
 
     if args.delete_data:
         delete_data()
@@ -65,8 +66,8 @@ if __name__ == '__main__':
         print()
 
     if args.storage_info:
-        root_dir_path = directory.get_root_dir_path(True)
-        size_str = utility.convert_bytes_to_human_readable(
-            utility.get_dir_size(root_dir_path))
-        print(root_dir_path + '  -----  ' + size_str)
+        size, num_directory, num_file, _ = s3.get_bucket_content_size(key=s3.ROOT_DIR)
+        size_str = utility.convert_bytes_to_human_readable(size)
+        print(s3.get_s3_path_in_string(key=s3.ROOT_DIR, bucket_name=s3.BUCKET) + '  -----  ' + size_str + 
+            ' (' + str(num_file) + ' files, ' + str(num_directory) + ' dirs)')
         print()

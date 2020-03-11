@@ -1,3 +1,4 @@
+import io
 import boto3
 import botocore
 
@@ -22,11 +23,14 @@ def init():
     _s3 = boto3.client('s3')
 
     # Remove the following
-    create_bucket_if_necessary(BUCKET)
-    create_directories_if_necessary(BUCKET)
+    create_bucket_if_necessary()
 
 
-def is_bucket_existed(bucket_name):
+def get_s3_path_in_string(key, bucket_name):
+    return 's3://' + bucket_name +'/' + key
+
+
+def is_bucket_existed(bucket_name=BUCKET):
     response = _s3.list_buckets()
 
     if 'Buckets' in response:
@@ -34,13 +38,13 @@ def is_bucket_existed(bucket_name):
     return False
 
 
-def create_bucket_if_necessary(bucket_name):
+def create_bucket_if_necessary(bucket_name=BUCKET):
     if not is_bucket_existed(bucket_name):
         print('Creating bucket', bucket_name, '!')
         _s3.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={'LocationConstraint': 'us-east-1'})
 
 
-def list_bucket_content(bucket_name, directory='', recursive=True):
+def list_bucket_content(bucket_name=BUCKET, directory='', recursive=True):
     '''List the content in an S3 bucket directory (optional)
 
     :param bucket_name: Bucket to check
@@ -72,7 +76,7 @@ def list_bucket_content(bucket_name, directory='', recursive=True):
     return result
 
 
-def get_bucket_content_size(bucket_name, key):
+def get_bucket_content_size(key, bucket_name=BUCKET):
     '''Get the size of an S3 bucket object
 
     :param bucket_name: Bucket to check
@@ -103,7 +107,7 @@ def get_bucket_content_size(bucket_name, key):
     return (size, dir_count, file_count, l)
 
 
-def is_object_existed(bucket_name, key):
+def is_object_existed(key, bucket_name=BUCKET):
     '''Check whether an object exists in an S3 bucket object
 
     :param bucket_name: Bucket to check
@@ -121,25 +125,38 @@ def is_object_existed(bucket_name, key):
     return False
 
 
-def create_directory_if_necessary(bucket_name, dir_name):
-    if not is_object_existed(bucket_name, dir_name):
-        print('Creating directory', dir_name, 'in bucket', bucket_name, '!')
-        _s3.put_object(Bucket=bucket_name, Key=dir_name)
+def create_directory_if_necessary(directory, bucket_name=BUCKET):
+    if len(directory) > 0:
+        assert directory[-1] == '/'
+    if not is_object_existed(key=directory, bucket_name=bucket_name):
+        print('Creating directory', get_s3_path_in_string(key=directory, bucket_name=bucket_name) , '!')
+        _s3.put_object(Bucket=bucket_name, Key=directory)
 
 
-def create_directories_if_necessary(bucket_name):
-    create_directory_if_necessary(bucket_name, ROOT_DIR)
-    create_directory_if_necessary(bucket_name, PHOTOS_DIR)
-    create_directory_if_necessary(bucket_name, THUMBNAILS_DIR)
-    create_directory_if_necessary(bucket_name, RECTANGLES_DIR)
+def create_directories_if_necessary(bucket_name=BUCKET):
+    create_directory_if_necessary(directory=ROOT_DIR, bucket_name=bucket_name)
+    create_directory_if_necessary(directory=PHOTOS_DIR, bucket_name=bucket_name)
+    create_directory_if_necessary(directory=THUMBNAILS_DIR, bucket_name=bucket_name)
+    create_directory_if_necessary(directory=RECTANGLES_DIR, bucket_name=bucket_name)
 
 
-def upload_object(bucket_name, key, file):
+def upload_file_bytes_object(key, file_bytes, bucket_name=BUCKET):
+    '''Upload file bytes to an S3 bucket
+
+    :param bucket_name: Bucket to upload to
+    :param key: S3 object name
+    :param file_bytes: file bytes object to upload
+    :return: True if file was uploaded, else False
+    '''
+    return upload_file_object(key=key, file=io.BytesIO(file_bytes), bucket_name=bucket_name)
+
+
+def upload_file_object(key, file, bucket_name=BUCKET):
     '''Upload a file to an S3 bucket
 
     :param bucket_name: Bucket to upload to
     :param key: S3 object name
-    :param file: File to upload, must be opened in binary mode
+    :param file: File-like object to upload, must be opened in binary mode
     :return: True if file was uploaded, else False
     '''
 
@@ -151,7 +168,7 @@ def upload_object(bucket_name, key, file):
     return True
 
 
-def get_object_url(bucket_name, key):
+def get_object_url(key, bucket_name=BUCKET):
     '''Get a URL for object in S3 bucket
 
     :param bucket_name: Bucket to retrieve from
@@ -159,12 +176,12 @@ def get_object_url(bucket_name, key):
     :return: url for the object if object was found, else None
     '''
 
-    if not is_object_existed(bucket_name, key):
+    if not is_object_existed(key=key, bucket_name=bucket_name):
         return None
     return _s3.generate_presigned_url('get_object', ExpiresIn=3600, Params={'Bucket': bucket_name, 'Key': key})
 
 
-def delete_directory_content(bucket_name, directory):
+def delete_directory_content(directory, bucket_name=BUCKET):
     if len(directory) > 0:
         assert directory[-1] == '/'
 
@@ -188,30 +205,36 @@ def delete_directory_content(bucket_name, directory):
         _s3.delete_objects(Bucket=bucket_name, Delete=delete_us)
 
 
-def delete_object(bucket_name, key):
+def delete_object(key, bucket_name=BUCKET):
     _s3.delete_object(Bucket=bucket_name, Key=key)
-
 
 
 # init()
 # key = 'data/photos/DSCF0034.JP'
 # print('key',key)
 # try:
-#     print('list_bucket_content', list_bucket_content(BUCKET,key, True))
+#     print('list_bucket_content', list_bucket_content(directory=key, recursive=True))
 # except Exception as e:
 #     print('list_bucket_content')
 
 # try:
-#     print('list_bucket_content', list_bucket_content(BUCKET,key, False))
+#     print('list_bucket_content', list_bucket_content(directory=key, recursive=False))
 # except Exception as e:
 #     print('list_bucket_content')
 
 # try:
-#     print('get_bucket_content_size', get_bucket_content_size(BUCKET, key))
+#     print('get_bucket_content_size', get_bucket_content_size(key=key))
 # except Exception as e:
 #     print('get_bucket_content_size')
 
 # try:
-#     print('is_object_existed', is_object_existed(BUCKET, key))
+#     print('is_object_existed', is_object_existed(key=key))
 # except Exception as e:
 #     print('is_object_existed')
+
+
+
+# init()
+# print(list_bucket_content(directory='', recursive=True))
+# delete_directory_content(directory='')
+# print(list_bucket_content(directory='', recursive=True))

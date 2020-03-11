@@ -1,15 +1,6 @@
 import os
 
 
-def get_dir_size(start_path):
-    total_size = 0
-    for path, _, files in os.walk(start_path):
-        for f in files:
-            fp = os.path.join(path, f)
-            total_size += os.path.getsize(fp)
-    return total_size
-
-
 def convert_bytes_to_human_readable(num):
     """
     this function will convert bytes to MB.... GB... etc
@@ -23,11 +14,11 @@ def convert_bytes_to_human_readable(num):
         num /= step_unit
 
 
-def get_file_extension(file_name):
+def get_file_extension(filename):
     '''
     Return extension of a file, such as '.txt'
     '''
-    _, file_extension = os.path.splitext(file_name)
+    _, file_extension = os.path.splitext(filename)
     return file_extension.lower()
 
 

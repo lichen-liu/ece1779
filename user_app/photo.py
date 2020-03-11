@@ -1,21 +1,7 @@
 import os
-import numpy
-import cv2
-
-# Get rid of warning messages
-import sys
-stderr = sys.stderr
-stdout = sys.stdout
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-sys.stderr = open(os.devnull, 'w')
-sys.stdout = open(os.devnull, 'w')
-sys.stdwarn = open(os.devnull, 'w')
-import cvlib as cv
-sys.stderr = stderr
-sys.stdout = stdout
 
 from flask import redirect, render_template, request, current_app, abort, jsonify
-from user_app import webapp, directory, account, main, utility, ibr_queue, image_processing, yolo_net, database, image_pool_runner
+from user_app import webapp, account, main, utility, image_processing, database, s3
 
 
 @webapp.route('/api/upload', methods=['POST'])
@@ -41,18 +27,7 @@ def photo_upload_handler():
         else:
             return render_template('empty_go_home.html', title='Error', message=error_message)
 
-    image_processing_choice = webapp.config.get('IMAGE_PROCESSING_CHOICE')
-    if image_processing_choice == 0:
-        # Per-request version
-        error_message = process_and_save_image(request)
-    elif image_processing_choice == 1:
-        # image_batch_runner version
-        error_message = try_enqueue_ibr_task(request)
-    elif image_processing_choice == 2:
-        # image_pool_runner version
-        error_message = try_enqueue_ipr_task(request)
-    else:
-        assert(False)
+    error_message = process_and_save_image(request)
 
     if error_message is not None:
         if is_from_api:
@@ -91,32 +66,34 @@ def validate_user_and_input_format(request):
 
 def process_and_save_image(request):
     image = request.files['file']
-    file_name = image.filename
-    photo_bytes = image.read()
+    original_filename = image.filename
+    original_photo_file_bytes = image.read()
 
     # Register the photo in database
-    photo_id = database.create_new_photo(
-        account.account_get_logged_in_userid(), file_name)
+    photo_id = database.create_new_photo(account.account_get_logged_in_userid(), original_filename)
     if photo_id:
         # Get the new filename
-        saved_file_name = str(photo_id) + utility.get_file_extension(file_name)
+        extension = utility.get_file_extension(original_filename)
+        saved_filename = str(photo_id) + extension
 
         # Save the original photo
-        origin_photo_path = os.path.join(
-            directory.get_photos_dir_path(), saved_file_name)
-        save_bytes_img(photo_bytes, origin_photo_path)
+        original_photo_s3_key = s3.PHOTOS_DIR + saved_filename
+        res = s3.upload_file_bytes_object(key=original_photo_s3_key, file_bytes=original_photo_file_bytes)
+        assert res
 
         # Save the rectanged photo
-        rectangled_photo = draw_rectangles_on_photo(photo_bytes)
-        rectangled_photo_path = os.path.join(
-            directory.get_rectangles_dir_path(), saved_file_name)
-        image_processing.save_cv_img(rectangled_photo, rectangled_photo_path)
+        rectangled_photo_cv_bytes = image_processing.detect_and_draw_rectangles_on_cv_image(image_processing.convert_file_bytes_to_cv_bytes(original_photo_file_bytes))
+        rectangled_photo_s3_key = s3.RECTANGLES_DIR + saved_filename
+        rectangled_photo_file_bytes = image_processing.convert_cv_bytes_to_file_bytes(extension, rectangled_photo_cv_bytes)
+        res = s3.upload_file_bytes_object(key=rectangled_photo_s3_key, file_bytes=rectangled_photo_file_bytes)
+        assert res
 
-        thumbnail = image_processing.generate_thumbnail_for_cv_img(
-            rectangled_photo)
-        thumbnail_path = os.path.join(
-            directory.get_thumbnails_dir_path(), saved_file_name)
-        image_processing.save_cv_img(thumbnail, thumbnail_path)
+        thumbnail_cv_bytes = image_processing.generate_thumbnail_for_cv_image(rectangled_photo_cv_bytes)
+        thumbnail_s3_key = s3.THUMBNAILS_DIR + saved_filename
+        thumbnail_file_bytes = image_processing.convert_cv_bytes_to_file_bytes(extension, thumbnail_cv_bytes)
+        res = s3.upload_file_bytes_object(key=thumbnail_s3_key, file_bytes=thumbnail_file_bytes)
+        assert res
+
     else:
         return 'Server has encountered a problem with database when storing the photo'
 
@@ -149,108 +126,21 @@ def delete_photo(photo_id):
         return 'Operation is not allowed!'
 
     print('Deleting ', photo_id, photo_name)
-    saved_photo_file = str(photo_id) + utility.get_file_extension(photo_name)
-    photo_path = os.path.join(directory.get_photos_dir_path(), saved_photo_file)
-    thumbnail_path = os.path.join(directory.get_thumbnails_dir_path(), saved_photo_file)
-    rectangle_path = os.path.join(directory.get_rectangles_dir_path(), saved_photo_file)
+    saved_photo_file_name = str(photo_id) + utility.get_file_extension(photo_name)
+    photo_s3_key = s3.PHOTOS_DIR + saved_photo_file_name
+    thumbnail_s3_key = s3.THUMBNAILS_DIR + saved_photo_file_name
+    rectangle_s3_key = s3.RECTANGLES_DIR + saved_photo_file_name
 
-    if os.path.exists(photo_path):
-        os.remove(photo_path)
-    if os.path.exists(thumbnail_path):
-        os.remove(thumbnail_path)
-    if os.path.exists(rectangle_path):
-        os.remove(rectangle_path)
+    s3.delete_object(key=photo_s3_key)
+    s3.delete_object(key=thumbnail_s3_key)
+    s3.delete_object(key=rectangle_s3_key)
 
     database.delete_photo(photo_id)
 
 
-def draw_rectangles_on_photo(photo_bytes):
-    cv_img = decode_bytes_to_cv_image(photo_bytes)
-    cv_img_list = []
-    cv_img_list.append(cv_img)
-    net = yolo_net.new_yolo_net()
-    boxes, descriptions = image_processing.detect_objects_on_images(
-        cv_img_list, net)
-    return image_processing.draw_rectangles(cv_img, boxes[0], descriptions[0])
-
-
-def decode_bytes_to_cv_image(photo_bytes):
-    numpy_img = numpy.fromstring(photo_bytes, numpy.uint8)
-    return cv2.imdecode(numpy_img, cv2.IMREAD_COLOR)
-
-
-def try_enqueue_ipr_task(request):
-    image = request.files['file']
-    file_name = image.filename
-    photo_bytes = image.read()
-
-    # Register the photo in database
-    photo_id = database.create_new_photo(account.account_get_logged_in_userid(), file_name)
-    if photo_id:
-        # Get the new filename
-        saved_file_name = str(photo_id) + utility.get_file_extension(file_name)
-
-        # Save the original photo
-        origin_photo_path = os.path.join(directory.get_photos_dir_path(), saved_file_name)
-        save_bytes_img(photo_bytes, origin_photo_path)
-
-        # Add to the task queue
-        is_successful = image_pool_runner.send_image_task_to_pool(*prepare_task(saved_file_name))
-        if not is_successful:
-            if os.path.exists(origin_photo_path):
-                os.remove(origin_photo_path)
-            database.delete_photo(photo_id)
-            return 'Server are handling too many requests, please try again later'
-    else:
-        return 'Server has encountered a problem with database when storing the photo'
-
-
-def try_enqueue_ibr_task(request):
-    image = request.files['file']
-    file_name = image.filename
-    photo_bytes = image.read()
-    task_queue = ibr_queue.get_queue()
-
-    with task_queue.acquire_lock() as acquired:
-        if(acquired):
-            if not task_queue.is_full():
-                # Register the photo in database
-                photo_id = database.create_new_photo(
-                    account.account_get_logged_in_userid(), file_name)
-                if photo_id:
-                    # Get the new filename
-                    saved_file_name = str(photo_id) + utility.get_file_extension(file_name)
-                    # Add to the task queue
-                    is_successful = task_queue.add(ibr_queue.Task(*prepare_task(saved_file_name)))
-                    assert is_successful
-
-                    # Save the original photo
-                    origin_photo_path = os.path.join(
-                        directory.get_photos_dir_path(), saved_file_name)
-                    save_bytes_img(photo_bytes, origin_photo_path)
-                else:
-                    return 'Server has encountered a problem with database when storing the photo'
-            else:
-                return 'Server are handling too many requests, please try again later'
-        else:
-            return 'Server are overloaded, please try again later'
-
-
-def prepare_task(file_name):
-    source_path = os.path.join(directory.get_photos_dir_path(), file_name)
-    thumbnail_dest_path = os.path.join(directory.get_thumbnails_dir_path(), file_name)
-    rectangled_dest_path = os.path.join(directory.get_rectangles_dir_path(), file_name)
-    return (source_path, thumbnail_dest_path, rectangled_dest_path)
-
-
-def is_extension_allowed(file_name):
-    extension = utility.get_file_extension(file_name)
+def is_extension_allowed(filename):
+    extension = utility.get_file_extension(filename)
     return extension and (extension in current_app.config['ALLOWED_IMAGE_EXTENSION'])
-
-
-def save_bytes_img(photo_bytes, path):
-    f = open(path, 'wb')
-    f.write(photo_bytes)
 
 
 @webapp.route('/api/photo_display', methods=['POST'])
@@ -261,39 +151,40 @@ def display_photo_handler():
 
         result = database.get_photo(int(photo_id_str))
         if result:
-            _, photo_name = result
-            saved_photo_file = photo_id_str + utility.get_file_extension(photo_name)
+            user_id, photo_name = result
+            if user_id == account.account_get_logged_in_userid():
+                saved_photo_file = photo_id_str + utility.get_file_extension(photo_name)
 
-            return render_template(
-                'display_photo.html', saved_photo_file=saved_photo_file,
-                photo_name=photo_name, photo_id=int(photo_id_str),
-                processed_photo_dir=directory.get_rectangles_dir_path(False),
-                original_photo_dir=directory.get_photos_dir_path(False))
+                rectangled_photo_url = s3.get_object_url(key=s3.RECTANGLES_DIR + saved_photo_file)
+                original_photo_url = s3.get_object_url(key=s3.PHOTOS_DIR + saved_photo_file)
+
+                if rectangled_photo_url and original_photo_url:
+                    return render_template(
+                        'display_photo.html', saved_photo_file=saved_photo_file,
+                        photo_name=photo_name, photo_id=int(photo_id_str),
+                        rectangled_photo_url=rectangled_photo_url,
+                        original_photo_url=original_photo_url)
 
     return render_template('empty_go_home.html', title='Error', message='Please try again!')
 
 
 @webapp.route('/api/render_thumbnail_gallery', methods=['POST'])
 def render_thumbnail_gallery():
-    print('Received Refresh')
-    return jsonify({'data': render_template('thumbnail_gallery.html', thumbnail_dir_path=directory.get_thumbnails_dir_path(False), thumbnails=get_thumbnails())})
+    return jsonify({'data': render_template('thumbnail_gallery.html', thumbnails=get_thumbnails())})
 
 
 def get_thumbnails():
     '''
-    [(photo_id_str, file_extension, photo_name)]
+    [(photo_id_str, photo_name, thumbnail_url)]
     '''
-
-    user_thumbnails_dir = directory.get_thumbnails_dir_path()
-
     result = list()
     rows = database.get_account_photo(account.account_get_logged_in_userid())
     if rows:
         for photo_id, photo_name in rows:
-            extension = utility.get_file_extension(photo_name)
             photo_id_str = str(photo_id)
-            path = os.path.join(user_thumbnails_dir, photo_id_str + extension)
-            if os.path.exists(path):
-                result.append((photo_id_str, extension, photo_name))
+            thumbnail_s3_key = s3.THUMBNAILS_DIR + photo_id_str + utility.get_file_extension(photo_name)
+            thumbnail_url = s3.get_object_url(key=thumbnail_s3_key)
+            if thumbnail_url:
+                result.append((photo_id_str, photo_name, thumbnail_url))
 
     return result

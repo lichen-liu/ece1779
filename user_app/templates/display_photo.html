@@ -15,12 +15,12 @@
     <div class="image_container">
         <div class="title">Original Image</div>
         <img class="image" title={{photo_name}}
-            src="{{ url_for('static', filename = original_photo_dir + '/' + saved_photo_file) }}" />
+            src="{{ original_photo_url }}" />
     </div>
     <div class="image_container">
         <div class="title">Processed Image</div>
         <img class="image" title={{photo_name}}
-            src="{{ url_for('static', filename = processed_photo_dir + '/' + saved_photo_file) }}" />
+            src="{{ rectangled_photo_url }}" />
     </div>
 </div>
 
