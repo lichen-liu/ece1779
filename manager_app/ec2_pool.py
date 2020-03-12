@@ -1,24 +1,26 @@
 from manager_app import aws_api_helper, manager_config
 class EC2Pool:
     def __init__(self):
-        self._default_load_balancer_index = 0
-        self._default_target_group_index = 0
+        self._default_load_balancer_index = manager_config.get_default_load_balancer_index()
+        self._default_target_group_index = manager_config.get_default_target_group_index()
         self._api = aws_api_helper.get_api()
-        self._load_balancer_arn = self.init_default_load_balancer()
+        self._load_balancer_arn = self.get_default_load_balancer()['LoadBalancerArn']
+        self._load_balancer_dns_name = self.get_default_load_balancer()['DNSName']
         self._target_group_arn = self.init_default_target_group()
-        self._min_work_count = 1
-        self._defined_working_status = {'healthy', 'unhealthy'}
-        self._hosting_ec2_id = manager_config.get_hosting_ec2_id() 
-    def init_default_load_balancer(self):
+        self._min_work_count = manager_config.get_min_worker_num()
+        self._valid_status_for_deregistration = {'healthy', 'unhealthy'}
+        self._hosting_ec2_id = manager_config.get_hosting_ec2_id()
+
+    def get_default_load_balancer(self):
         load_balancers = self._api.get_load_balancers()
-        return load_balancers['LoadBalancers'][self._default_load_balancer_index]['LoadBalancerArn']
-    
+        return load_balancers['LoadBalancers'][self._default_load_balancer_index]
+
     def init_default_target_group(self):
         target_groups = self._api.get_target_group_on_load_balancer(self._load_balancer_arn)
         return target_groups['TargetGroups'][self._default_target_group_index]['TargetGroupArn']
 
     def get_working_status(self):
-        return self._defined_working_status
+        return self._valid_status_for_deregistration
 
     def get_min_worker_count(self):
         return self._min_work_count
@@ -38,9 +40,13 @@ class EC2Pool:
 
         return instances_health_status 
     
-    def stop_all_registerd_instaces(self):
+    def stop_and_deregister_all_registerd_instaces(self):
+        target_ids = []
         registered_ids = self.get_registered_instances_ids()
-        self._api.shutdown_ec2_instances_by_ids()
+        self._api.shutdown_ec2_instances_by_ids(registered_ids)
+        #for instance_id in registered_ids:
+        #    target_ids.append({'Id': instance_id})
+        #self._api.deregister_targets_from_target_group(self._target_group_arn, target_ids)
 
     def get_registered_instances_ids(self):
         return self.get_registered_instances_health_status().keys()
@@ -62,7 +68,7 @@ class EC2Pool:
             if(num <= 0):
                 break
             target_ids.append(available_id)
-            num = num - 1
+            num -= 1
 
         response = self._api.register_targets_to_target_group(self._target_group_arn, target_ids)
         return response
@@ -74,13 +80,15 @@ class EC2Pool:
         for instance_id in instances_health_status:
             if(num <= 0):
                 break
-            if(instances_health_status[instance_id] in self.get_working_status()):
+            if(instances_health_status[instance_id] in self._valid_status_for_deregistration):
                 target_ids.append({'Id' : instance_id})
-                num = num - 1
+                num -= 1
 
         response = self._api.deregister_targets_from_target_group(self._target_group_arn, target_ids)
         return response
 
+    def get_load_balancer_dns_name(self):
+        return self._load_balancer_dns_name
 pool = EC2Pool()
 def get_worker_pool():
     return pool

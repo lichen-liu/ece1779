@@ -1,7 +1,7 @@
 from flask import render_template, redirect, request
-from manager_app import webapp, ec2_pool, pool_monitor_helper, worker_count_monitor, auto_scaler
+from manager_app import webapp, ec2_pool, pool_monitor_helper, worker_count_monitor, auto_scaler, manager_shutdown_helper
 from datetime import datetime
-
+import helper
 @webapp.route('/', methods=['GET','POST'])
 def main_handler():
     return render_manager_main_page()
@@ -11,7 +11,8 @@ def render_manager_main_page():
     return render_template('manager_main.html', 
     instances_data_points = prepare_cpu_utilization_info(), 
     instances_status_counts = prepare_instance_status_info(),
-    scaler_default_settings = prepare_autoscaler_default_values()
+    scaler_default_settings = prepare_autoscaler_default_values(),
+    dns_name = prepare_dns_name()
     )
 
 @webapp.route('/api/increase_pool', methods=['POST'])
@@ -40,6 +41,17 @@ def get_worker_count_graph_handler():
     monitor = worker_count_monitor.get_worker_count_monitor()
     return render_template('worker_count_graph_page.html', 
     worker_count_by_time = monitor.get_count_status())
+
+@webapp.route('/api/delete_all_user_data', methods=['POST'])
+def delete_all_user_data():
+    helper.reset_all()
+    return redirect('/')
+
+@webapp.route('/api/shutdown_manager', methods=['POST'])
+def shutdown_manager_handler():
+    shutdown_helper = manager_shutdown_helper()
+    shutdown_helper.shutdown_manager()
+
 
 def prepare_cpu_utilization_info():
     helper = pool_monitor_helper.get_monitor_helper()
@@ -70,6 +82,8 @@ def prepare_autoscaler_default_values():
     scaler_default_settings['shrinking_ratio'] = auto_s.get_shrinking_ratio()
     return scaler_default_settings
 
-
+def prepare_dns_name():
+    pool = ec2_pool.get_worker_pool()
+    return pool.get_load_balancer_dns_name()
 
 

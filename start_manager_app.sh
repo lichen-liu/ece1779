@@ -9,6 +9,8 @@ python3 -m venv venv
 source venv/bin/activate
 echo "> Installing Flask..."
 pip install Flask
+echo "> Installing MySql connector..."
+pip install mysql-connector-python
 echo "> Installing AWS command line interface..."
 pip install awscli
 echo "> Installing Boto3..."
