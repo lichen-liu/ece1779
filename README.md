@@ -30,7 +30,7 @@ chmod 777 start_user_app.sh
 ./start_user_app.sh
 ```
 ```
-tmux n -s NAME
+tmux new -s NAME
 ctrl + b, d
 tmux a -t NAME
 tmux ls
