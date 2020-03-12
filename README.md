@@ -29,6 +29,12 @@ chmod 777 start_user_app.sh
 # To run without git pull
 ./start_user_app.sh
 ```
+```
+tmux n -s NAME
+ctrl + b, d
+tmux a -t NAME
+tmux ls
+```
 
 
 ### 1.3 Helper Script
