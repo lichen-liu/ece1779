@@ -49,7 +49,7 @@ def delete_all_user_data():
 
 @webapp.route('/api/shutdown_manager', methods=['POST'])
 def shutdown_manager_handler():
-    shutdown_helper = manager_shutdown_helper()
+    shutdown_helper  = manager_shutdown_helper.get_manager_shutdown_helper()
     shutdown_helper.shutdown_manager()
 
 

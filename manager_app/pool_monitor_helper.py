@@ -1,4 +1,4 @@
-from manager_app import aws_api_helper, ec2_pool
+from manager_app import aws_api_helper, ec2_pool, utils
 class PoolMonitoringHelper:
     def __init__(self, pool):
         self._pool = pool

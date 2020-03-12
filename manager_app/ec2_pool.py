@@ -1,4 +1,4 @@
-from manager_app import aws_api_helper, manager_config
+from manager_app import aws_api_helper, manager_config, utils
 class EC2Pool:
     def __init__(self):
         self._default_load_balancer_index = manager_config.get_default_load_balancer_index()
@@ -25,13 +25,6 @@ class EC2Pool:
     def get_min_worker_count(self):
         return self._min_work_count
     
-    def get_all_running_instances_ids(self):
-        instances = self._api.get_running_ec2_instance()
-        print(instances)
-        for instance in instances:
-            print(instance)
-        return [ {'Id' : str(instance.id)} for instance in instances]
-
     def get_registered_instances_health_status(self):
         targets_status = self._api.get_health_status_on_group_targets(self._target_group_arn)
         instances_health_status = {}
@@ -40,19 +33,12 @@ class EC2Pool:
 
         return instances_health_status 
     
-    def stop_and_deregister_all_registerd_instaces(self):
-        target_ids = []
-        registered_ids = self.get_registered_instances_ids()
-        self._api.shutdown_ec2_instances_by_ids(registered_ids)
-        #for instance_id in registered_ids:
-        #    target_ids.append({'Id': instance_id})
-        #self._api.deregister_targets_from_target_group(self._target_group_arn, target_ids)
-
     def get_registered_instances_ids(self):
         return self.get_registered_instances_health_status().keys()
 
     def get_available_ec2_instance_ids(self):
-        all_running_ids = self.get_all_running_instances_ids()
+        instances = self._api.get_running_ec2_instance()
+        all_running_ids = utils.prepare_id_in_dict_form(instances)
         registered_ids = self.get_registered_instances_ids()
         available_ec2_ids = []
         for running_id in all_running_ids:

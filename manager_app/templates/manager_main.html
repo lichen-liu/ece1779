@@ -141,12 +141,12 @@
         <div class = 'ec2_app_control'>
               <div  class="ec2_app_control_title" style="color:#cccccc">EC2 App Control and Access</div>
  		<div class= 'ec2_storage_action_control'>
-                <form action='/api/increase_pool' class = 'load_balancer_control_form' method="POST" width="200">
-                    <input class = 'load_balancer_control_button orange' type="submit" value="Delete All User Images">
+                <form action='/api/delete_all_user_data' class = 'load_balancer_control_form' method="POST" width="200">
+                    <input class = 'load_balancer_control_button orange' type="submit" value="Delete All User Data">
 
                 </form>
-                <form action='/api/decrease_pool' class = 'load_balancer_control_form' method="POST" width="200">
-                    <input class = 'load_balancer_control_button gold' type="submit" value="Uninstall Application Database">
+                <form action='/api/shutdown_manager' class = 'load_balancer_control_form' method="POST" width="200">
+                    <input class = 'load_balancer_control_button gold' type="submit" value="Shutdown All Workers And Manager">
                 </form>
             </div>
 	    <div class='ec2_load_balancer_content'>

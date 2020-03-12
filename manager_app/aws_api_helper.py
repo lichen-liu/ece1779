@@ -5,6 +5,21 @@ running_ec2_instance_filters = [
         {
             'Name': 'instance-state-name', 
             'Values': ['running']
+        },
+        {
+            'Name': 'tag:Name',
+            'Values' : ['a2-*']
+        }
+]
+
+stopped_ec2_instance_filters = [
+        {
+            'Name': 'instance-state-name', 
+            'Values': ['stopped']
+        },
+        {
+            'Name': 'tag:Name',
+            'Values' : ['a2-*']
         }
 ]
 
@@ -21,6 +36,9 @@ class AwsApiHelper:
     def shutdown_ec2_instances_by_ids(self, ids):
         self._ec2_client.stop_instances(InstanceIds=ids, DryRun = False)
 
+    def start_ec2_instances_by_ids(self, ids):
+        self._ec2_client.start_instances(InstanceIds=ids, DryRun = False)
+
     def get_target_group_on_load_balancer(self, load_balancer_arn):
         return self._elbv2_client.describe_target_groups(LoadBalancerArn = load_balancer_arn)
     
@@ -29,6 +47,9 @@ class AwsApiHelper:
 
     def get_running_ec2_instance(self):
         return self._ec2_resource.instances.filter(Filters=running_ec2_instance_filters)
+
+    def get_stopped_ec2_instances(self):
+        return self._ec2_resource.instances.filter(Filters=stopped_ec2_instance_filters)
     
     def get_health_status_on_group_targets(self, target_group_arn):
         return self._elbv2_client.describe_target_health(TargetGroupArn = target_group_arn)
