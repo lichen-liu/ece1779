@@ -1,4 +1,4 @@
-from manager_app import aws_api_helper
+from manager_app import aws_api_helper, manager_config
 class EC2Pool:
     def __init__(self):
         self._default_load_balancer_index = 0
@@ -8,7 +8,7 @@ class EC2Pool:
         self._target_group_arn = self.init_default_target_group()
         self._min_work_count = 1
         self._defined_working_status = {'healthy', 'unhealthy'}
-    
+        self._hosting_ec2_id = manager_config.get_hosting_ec2_id() 
     def init_default_load_balancer(self):
         load_balancers = self._api.get_load_balancers()
         return load_balancers['LoadBalancers'][self._default_load_balancer_index]['LoadBalancerArn']
@@ -25,6 +25,9 @@ class EC2Pool:
     
     def get_all_running_instances_ids(self):
         instances = self._api.get_running_ec2_instance()
+        print(instances)
+        for instance in instances:
+            print(instance)
         return [ {'Id' : str(instance.id)} for instance in instances]
 
     def get_registered_instances_health_status(self):
@@ -35,6 +38,10 @@ class EC2Pool:
 
         return instances_health_status 
     
+    def stop_all_registerd_instaces(self):
+        registered_ids = self.get_registered_instances_ids()
+        self._api.shutdown_ec2_instances_by_ids()
+
     def get_registered_instances_ids(self):
         return self.get_registered_instances_health_status().keys()
 
@@ -43,7 +50,7 @@ class EC2Pool:
         registered_ids = self.get_registered_instances_ids()
         available_ec2_ids = []
         for running_id in all_running_ids:
-            if running_id['Id'] not in registered_ids:
+            if running_id['Id'] not in registered_ids and running_id['Id'] != self._hosting_ec2_id:
                 available_ec2_ids.append(running_id)
         return available_ec2_ids
 

@@ -45,7 +45,8 @@
     };
 
     function drawPieChart(status_count) {
-        var colors = {'unhealthy' : '#32CD32', 'health' : '	#32CD32', 'draining' : '#00BFFF' , 'initial' : '#CCCC00'}
+        var colors = {'unhealthy' : '#32CD32', 'healthy' : '#32CD32', 'draining' : '#00BFFF' , 'initial' : '#CCCC00',
+        'unused' : '#AAAAAA'}
         var canvas = document.getElementById('pool_monitor_chart')
         
         var ctx = canvas.getContext("2d");

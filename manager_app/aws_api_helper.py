@@ -11,12 +11,16 @@ running_ec2_instance_filters = [
 class AwsApiHelper:
     def __init__(self):
         self._ec2_resource = boto3.resource('ec2')
+        self._ec2_client = boto3.client('ec2')
         self._elbv2_client = boto3.client('elbv2')
         self._cw_client = boto3.client('cloudwatch')
     
     def get_load_balancers(self):
         return self._elbv2_client.describe_load_balancers()
-    
+
+    def shutdown_ec2_instances_by_ids(self, ids):
+        self._ec2_client.stop_instances(InstanceIds=ids, DryRun = False)
+
     def get_target_group_on_load_balancer(self, load_balancer_arn):
         return self._elbv2_client.describe_target_groups(LoadBalancerArn = load_balancer_arn)
     
