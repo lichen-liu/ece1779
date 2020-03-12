@@ -9,6 +9,7 @@ Use: Python 3.7.3
 ```
 python -m venv venv
 venv\Scripts\activate
+source venv/bin/activate
 pip install Flask
 pip install mysql-connector-python
 pip install opencv-python
@@ -23,6 +24,7 @@ Use: Python 3.7.3
 ```
 python -m venv venv
 venv\Scripts\activate
+source venv/bin/activate
 pip install Flask
 pip install awscli
 pip install boto3
