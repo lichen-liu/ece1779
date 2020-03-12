@@ -1,6 +1,9 @@
 # This only works on AWS EC2 instance used for deployment."
 
-git pull
+if ["$1" = "git"]; then
+    echo "git pull"
+    git pull
+fi
 python3 -m venv venv
 source venv/bin/activate
 pip install Flask
