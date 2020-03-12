@@ -2,7 +2,7 @@
 
 # This only works on AWS EC2 instance used for deployment."
 
-if ["$1" = "git"]; then
+if [ "$1" = "git" ]; then
     echo "> git checkout -f"
     git checkout -f
     echo "> git pull"
