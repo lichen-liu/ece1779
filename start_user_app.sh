@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # This only works on AWS EC2 instance used for deployment."
 
 if ["$1" = "git"]; then
@@ -5,6 +7,8 @@ if ["$1" = "git"]; then
     git checkout -f
     echo "> git pull"
     git pull
+    echo "> chmod 777 ${0}"
+    chmod 777 "${0}"
 fi
 python3 -m venv venv
 source venv/bin/activate
