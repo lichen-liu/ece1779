@@ -57,7 +57,7 @@ python run_user_app_local.py
 ```
 To Clean up:
 ```
-python user_app/server_helper.py
+python helper.py
 ```
 
 

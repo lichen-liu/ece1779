@@ -15,7 +15,8 @@ import cv2
 # sys.stderr = stderr
 # sys.stdout = stdout
 
-from user_app import directory, utility, s3, yolo_net
+from user_app import directory, yolo_net
+from common_lib import utility, s3
 
 
 def draw_rectangles_on_cv_image(cv_img, boxes, descriptions):

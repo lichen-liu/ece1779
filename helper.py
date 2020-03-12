@@ -3,13 +3,11 @@
 import shutil
 import os
 import argparse
-import database
-import utility
-import s3
+from common_lib import database, utility, s3
 
 
-def delete_data():
-    print('Deleting Table Photo ...')
+def reset_data():
+    print('Deleting Table ece1779.photo ...')
     database.delete_photo_table()
     print('    Succeeded')
 
@@ -19,47 +17,54 @@ def delete_data():
     print('    Succeeded')
 
 
-def delete_all():
-    delete_data()
+def reset_all():
+    print('Deleting ' + s3.get_s3_path_in_string(key=s3.ROOT_DIR, bucket_name=s3.BUCKET) + ' ...')
+    s3.delete_directory_content(directory=s3.ROOT_DIR)
+    s3.create_directories_if_necessary()
+    print('    Succeeded')
 
-    print('Deleting Account Photo ...')
-    database.delete_account_table()
+    print('Dropping Schema ece1779 ...')
+    database.drop_schema()
+    print('    Succeeded')
+
+    print('Creating Schema ece1779 ...')
+    database.create_schema()
     print('    Succeeded')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--delete_data', help='Delete all user data (database and S3)', action='store_true')
+        '--reset_data', help='Reset all user data (RDS MySQL and S3)', action='store_true')
     parser.add_argument(
-        '--delete_all', help='Delete all user data and accounts (database and S3)', action='store_true')
+        '--reset_all', help='Reset all user data and accounts (RDS MySQL and S3)', action='store_true')
     parser.add_argument(
-        '--account_table', help='Print the Account table from the database', action='store_true')
+        '--account_table', help='Print ece1779.account from the RDS MySQL', action='store_true')
     parser.add_argument(
-        '--photo_table', help='Print the Photo table from the database', action='store_true')
+        '--photo_table', help='Print ece1779.photo from the RDS MySQL', action='store_true')
     parser.add_argument('--storage_info', help='Print the ' + s3.get_s3_path_in_string(key=s3.ROOT_DIR, bucket_name=s3.BUCKET) + ' directory size', action='store_true')
 
     args = parser.parse_args()
 
-    s3.init()
+    s3.create_bucket_if_necessary()
 
-    if args.delete_data:
-        delete_data()
+    if args.reset_data:
+        reset_data()
         print()
 
-    if args.delete_all:
-        delete_all()
+    if args.reset_all:
+        reset_all()
         print()
 
     if args.account_table:
-        print('ACCOUNT TABLE:')
+        print('ece1779.account:')
         rows = database.get_account_table()
         for row in rows:
             print(row)
         print()
 
     if args.photo_table:
-        print('PHOTO TABLE:')
+        print('ece1779.photo:')
         rows = database.get_photo_table()
         for row in rows:
             print(row)

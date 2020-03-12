@@ -1,6 +1,7 @@
 import os
 
-from user_app import webapp, directory, utility, s3
+from user_app import webapp, directory
+from common_lib import utility, s3, database
 
 
 def init():
@@ -13,9 +14,12 @@ def init():
     # Initialize directories
     directory.create_directories_if_necessary()
 
-    # Initialize s3
-    s3.init()
+    # Initialize S3
+    s3.create_bucket_if_necessary()
     s3.create_directories_if_necessary()
+
+    # Initialize RDS MySQL
+    database.create_schema_if_necessary()
 
     # Construct yolov3.weights if necessary
     yolov3_weights_dst_file = os.path.join(

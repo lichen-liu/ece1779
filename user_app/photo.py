@@ -1,7 +1,8 @@
 import os
 
 from flask import redirect, render_template, request, current_app, abort, jsonify
-from user_app import webapp, account, main, utility, image_processing, database, s3
+from user_app import webapp, account, main, image_processing
+from common_lib import utility, database, s3
 
 
 @webapp.route('/api/upload', methods=['POST'])
