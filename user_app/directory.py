@@ -3,11 +3,11 @@ import pathlib
 
 
 def get_static_dir_path():
-    return os.path.join(pathlib.Path(__file__).parent.absolute(), 'static')
+    return os.path.join(str(pathlib.Path(__file__).parent.absolute()), 'static')
 
 
 def get_yolo_dir_path():
-    return os.path.join(pathlib.Path(__file__).parent.absolute(), 'yolo')
+    return os.path.join(str(pathlib.Path(__file__).parent.absolute()), 'yolo')
 
 
 def create_static_dir_if_necessary():

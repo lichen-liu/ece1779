@@ -8,7 +8,7 @@ _MYSQL_HOST = 'ece1779-db.caxvvqofsqfz.us-east-1.rds.amazonaws.com'
 _MYSQL_PORT = 3306
 _MYSQL_USERNAME = 'admin'
 _MYSQL_PASSWORD = 'ece1779ins!'
-_MYSQL_SCHEMA_FILE = os.path.join(pathlib.Path(__file__).parent.absolute(), 'schema.sql')
+_MYSQL_SCHEMA_FILE = os.path.join(str(pathlib.Path(__file__).parent.absolute()), 'schema.sql')
 
 
 # Decorator for connecting to and disconnecting from the database
