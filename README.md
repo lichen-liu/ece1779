@@ -23,7 +23,9 @@ python run_user_app_local.py
 
 ### 1.2 EC2
 ```
-chmod 777 start_user_app.sh
+# To git pull the latest repo, and run
+chmod 777 start_user_app.sh git
+# To run without git pull
 ./start_user_app.sh
 ```
 
