@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # This only works on AWS EC2 instance used for deployment.
+cd /home/ubuntu/ece1779
 
 if [ "$1" = "git" ]; then
     echo "> Update repository"
