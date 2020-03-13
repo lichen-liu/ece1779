@@ -157,14 +157,18 @@ def display_photo_handler():
                 saved_photo_file = photo_id_str + utility.get_file_extension(photo_name)
 
                 rectangled_photo_url = s3.get_object_url(key=s3.RECTANGLES_DIR + saved_photo_file)
+                rectangled_photo_size = s3.get_bucket_content_size(key=s3.RECTANGLES_DIR + saved_photo_file)[0]
                 original_photo_url = s3.get_object_url(key=s3.PHOTOS_DIR + saved_photo_file)
+                original_photo_size = s3.get_bucket_content_size(key=s3.PHOTOS_DIR + saved_photo_file)[0]
 
                 if rectangled_photo_url and original_photo_url:
                     return render_template(
                         'display_photo.html', saved_photo_file=saved_photo_file,
                         photo_name=photo_name, photo_id=int(photo_id_str),
                         rectangled_photo_url=rectangled_photo_url,
-                        original_photo_url=original_photo_url)
+                        original_photo_url=original_photo_url,
+                        rectangled_photo_size=utility.convert_bytes_to_human_readable(rectangled_photo_size),
+                        original_photo_size=utility.convert_bytes_to_human_readable(original_photo_size))
 
     return render_template('empty_go_home.html', title='Error', message='Please try again!')
 
