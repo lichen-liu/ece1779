@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{title}}</title>
+</head>
+
+<body>
+    <h1>{{title}}</h2>
+    </h1>
+    
+
+    <table class="main_table">
+        <tr>
+            {% for item in title_row %}
+            <th>{{item}}</th>
+            {% endfor %}
+        </tr>
+        
+        {% for row in table %}
+            <tr>
+                {% for item in row %}
+                    <td>{{item}}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    <p>{{description if description}}</p>
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <div>
+        This page will be refreshed automatically after <span id='refresh_countdown'></span> seconds. 
+        <input type="checkbox" id="refesh_countdown_enable" checked>
+        <label for="refesh_countdown_enable"> Allow Refresh</label>
+    </div>
+
+    <script type="text/javascript">
+        const refresh_time = 60;
+        var countDown = refresh_time;
+
+        function countdown() {
+            setInterval(function () {
+                if(countDown == 0) {
+                    if(document.getElementById('refesh_countdown_enable').checked) {
+                        window.location.reload(1);
+                        countDown = refresh_time
+                    }
+                    return;
+                }
+                countDown--;
+                document.getElementById('refresh_countdown').innerHTML = countDown;
+                return countDown;
+            }, 1000);
+        }
+
+        document.getElementById('refresh_countdown').innerHTML = countDown;
+        countdown();
+    </script>
+
+    <br>
+    <br>
+    <form action="/" method="POST">
+        <input type="submit" value="Home">
+    </form>
+</body>
+
+<style>
+.main_table {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.main_table td, .main_table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.main_table tr:nth-child(even){background-color: #f2f2f2;}
+
+.main_table tr:hover {background-color: #ddd;}
+
+.main_table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+</style>
+
+</html>

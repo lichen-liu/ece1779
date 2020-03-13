@@ -2,7 +2,7 @@ from flask import Flask
 
 webapp = Flask(__name__)
 
-from manager_app import manager_main, worker_count_monitor, auto_scaler, manager_shutdown_helper
+from manager_app import manager_main, table_query, worker_count_monitor, auto_scaler, manager_shutdown_helper
 
 monitor = worker_count_monitor.get_worker_count_monitor()
 monitor.start()

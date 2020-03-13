@@ -172,7 +172,7 @@
         </div>
         
         <div class = 'ec2_app_control'>
-            <div  class="ec2_app_control_title" style="color:#cccccc">EC2 App Control and Access</div>
+            <div  class="ec2_app_control_title" style="color:#cccccc">EC2 App Control, Access, and View</div>
             <div class= 'ec2_storage_action_control'>
 
                 <form action='/api/delete_all_user_storage' class = 'load_balancer_control_form' method="POST" width="200">
@@ -191,19 +191,25 @@
                 </form>
             </div>
             <div>
-                {% set ece1779_account_num_rows, ece1779_photo_num_rows, s3_path, s3_path_size, s3_path_num_files, s3_path_num_directories = rds_s3_stats %}
+                {% set quote_function, ece1779_account_num_rows, ece1779_photo_num_rows, s3_path, s3_path_size, s3_path_num_files, s3_path_num_directories = rds_s3_stats %}
                 <table class='rds_s3_stats_table'>
                     <tr>
-                        <th>ece1779.account</th>
-                        <th>{{ece1779_account_num_rows}} rows</th>
+                        <td>ece1779.account</td>
+                        <td>
+                            <a href={{ url_for('table_ece1779_account_handler') }}>{{ece1779_account_num_rows}} rows</a>
+                        </td>
                     </tr>
                     <tr>
-                        <th>ece1779.photo</th>
-                        <th>{{ece1779_photo_num_rows}} rows</th>
+                        <td>ece1779.photo</td>
+                        <td>
+                            <a href={{ url_for('table_ece1779_photo_handler') }}>{{ece1779_photo_num_rows}} rows</a>
+                        </td>
                     </tr>
                     <tr>
-                        <th>{{s3_path}}</th>
-                        <th>{{s3_path_size}} ({{s3_path_num_files}} files, {{s3_path_num_directories}} dirs)</th>
+                        <td>{{s3_path}}</td>
+                        <td>
+                            <a href={{ url_for('table_s3_filesystem_handler', key=quote_function(s3_path)) }}>{{s3_path_size}} ({{s3_path_num_files}} files, {{s3_path_num_directories}} dirs)</a>
+                        </td>
                     </tr>
                 </table>
             </div>

@@ -3,6 +3,7 @@ from manager_app import webapp, ec2_pool, pool_monitor_helper, worker_count_moni
 from datetime import datetime
 import helper
 from common_lib import database, s3, utility
+import urllib
 
 @webapp.route('/', methods=['GET','POST'])
 def main_handler():
@@ -97,6 +98,7 @@ def prepare_dns_name():
 def prepare_rds_s3_stats():
     ece1779_account_num_rows = len(database.get_account_table())
     ece1779_photo_num_rows = len(database.get_photo_table())
-    s3_path = s3.get_s3_path_in_string(key=s3.ROOT_DIR, bucket_name=s3.BUCKET)
+    s3_path = s3.ROOT_DIR
     s3_path_size, s3_path_num_directories, s3_path_num_files, _ = s3.get_bucket_content_size(key=s3.ROOT_DIR)
-    return (ece1779_account_num_rows, ece1779_photo_num_rows, s3_path, utility.convert_bytes_to_human_readable(s3_path_size), s3_path_num_files, s3_path_num_directories)
+    quote_function = urllib.parse.quote
+    return (quote_function, ece1779_account_num_rows, ece1779_photo_num_rows, s3_path, utility.convert_bytes_to_human_readable(s3_path_size), s3_path_num_files, s3_path_num_directories)
