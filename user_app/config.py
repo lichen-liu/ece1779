@@ -6,4 +6,4 @@ class Config(object):
     PERMANENT_SESSION_LIFETIME = timedelta(minutes= 60 * 24)
     SESSION_REFRESH_EACH_REQUEST = True
     MAXIMUM_IMAGE_SIZE = 20 * 1024 * 1024
-    ALLOWED_IMAGE_EXTENSION = set(['.png', '.jpg', '.jpeg', '.gif']) # Lower case
+    ALLOWED_IMAGE_EXTENSION = set(['.png', '.jpg', '.jpeg']) # Lower case
