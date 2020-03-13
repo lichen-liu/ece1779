@@ -54,7 +54,7 @@ def delete_all_user_storage():
 @webapp.route('/api/delete_everything', methods=['POST'])
 def delete_everything():
     helper.reset_all()
-    return redirect('')
+    return redirect('/')
 
 @webapp.route('/api/stop_all', methods=['POST'])
 def stop_all_handler():
