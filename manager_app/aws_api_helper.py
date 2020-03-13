@@ -34,10 +34,12 @@ class AwsApiHelper:
         return self._elbv2_client.describe_load_balancers()
 
     def shutdown_ec2_instances_by_ids(self, ids):
-        self._ec2_client.stop_instances(InstanceIds=ids, DryRun = False)
+        if len(ids):
+            self._ec2_client.stop_instances(InstanceIds=ids, DryRun = False)
 
     def start_ec2_instances_by_ids(self, ids):
-        self._ec2_client.start_instances(InstanceIds=ids, DryRun = False)
+        if len(ids):
+            self._ec2_client.start_instances(InstanceIds=ids, DryRun = False)
 
     def get_target_group_on_load_balancer(self, load_balancer_arn):
         return self._elbv2_client.describe_target_groups(LoadBalancerArn = load_balancer_arn)
