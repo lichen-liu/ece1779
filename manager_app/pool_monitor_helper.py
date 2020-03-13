@@ -20,9 +20,12 @@ class PoolMonitoringHelper:
             samples_for_each_instance = self._api.get_average_cpu_utilization(
                 [{'Name': 'InstanceId', 'Value': instance_id }], 2
                 )['Datapoints']
-
-            average_cpu_util_for_instance[instance_id] =  sum( point['Average'] for point in samples_for_each_instance) / len(samples_for_each_instance)
-        
+            
+            if(len(samples_for_each_instance)):
+                average_cpu_util_for_instance[instance_id] = sum( point['Average'] for point in samples_for_each_instance) / len(samples_for_each_instance)
+            else:
+                average_cpu_util_for_instance[instance_id] = 0
+                
         return average_cpu_util_for_instance
 
     def get_http_request_rate_for_registered_instances(self):

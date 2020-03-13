@@ -60,6 +60,7 @@ class EC2Pool:
         return response
 
     def decrease_pool_by_size(self, num = 1):
+        print("pool is decreaingggggggggggggg")
         target_ids = []
         instances_health_status = self.get_registered_instances_health_status()
 

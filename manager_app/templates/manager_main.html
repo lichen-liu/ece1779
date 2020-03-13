@@ -143,14 +143,9 @@
             <div class = "charts_content">
             {% for instance_id in instances_data_points %}
                 <div class = 'instance_canvas_title'>
-                    <div style="color:#bbbbbb">{{instance_id}} </div>
+                    <div style="color:#bbbbbb">{{instance_id}}, <font color="{{instance_status_text_color[instance_status_by_id[instance_id]]}}">{{instance_status_by_id[instance_id]}}</font> </div>
                 </div>
                 <canvas id='{{instance_id}}' class='charts_canvas'></canvas>
-            <script type=text/javascript>
-                //var id = '{{instance_id}}';
-                //var data_points_for_id = {{instances_data_points[instance_id] | tojson | safe}};
-                //drawLineChart(id, data_points_for_id);
-            </script>
             {% endfor %}
             </div>
         </div>

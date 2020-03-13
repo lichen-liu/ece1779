@@ -48,6 +48,8 @@ class AutoScaler:
     def auto_scaling(self):
         while True:
             average = self.calculate_average_work_pool_cpu_usage() / 100
+            print("averageeeeee", average)
+            print("thressss", self._min_threshold)
             if average > self._max_threshold:
                 self.try_increase_pool_size()
             if average < self._min_threshold:

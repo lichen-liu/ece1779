@@ -11,9 +11,13 @@ def main_handler():
 
 def render_manager_main_page():
 
+    status_by_id = prepare_instance_status_info()
     return render_template('manager_main.html', 
     instances_data_points = prepare_cpu_utilization_info(), 
-    instances_status_counts = prepare_instance_status_info(),
+    instance_status_by_id = status_by_id,
+    instance_status_text_color = {'healthy':'green', 'unhealthy':'red', 'draining': '#00BFFF', 
+    'initial' : '#CCCC00', 'unused' : '#CCCCCC'},
+    instances_status_counts = prepare_instance_status_count_info(status_by_id),
     scaler_default_settings = prepare_autoscaler_default_values(),
     dns_name = prepare_dns_name(),
     rds_s3_stats = prepare_rds_s3_stats()
@@ -74,9 +78,12 @@ def prepare_cpu_utilization_info():
 def prepare_instance_status_info():
     pool = ec2_pool.get_worker_pool()
     instances_status_counts = {}
-    instances_health_status = pool.get_registered_instances_health_status()
-    for instance_id in instances_health_status:
-        status_type = instances_health_status[instance_id]
+    return pool.get_registered_instances_health_status()
+
+def prepare_instance_status_count_info(status_by_id):
+    instances_status_counts = {}
+    for instance_id in status_by_id:
+        status_type = status_by_id[instance_id]
         if status_type not in instances_status_counts:
             instances_status_counts[status_type] = 0
         instances_status_counts[status_type] += 1
