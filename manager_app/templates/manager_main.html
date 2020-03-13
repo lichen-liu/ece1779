@@ -94,6 +94,12 @@
         canvas.style["height"] = "50%";
         canvas.style["width"] = "auto";
     };
+
+    function showConfirmationHint(){
+        confirm_button = document.getElementById('auto_scaler_confirm_button');
+        confirm_button.value = 'Click To Save Changes'
+       // confirm_button.style
+    }
 </script>
 
 <body class = 'body' onload="GenerateGraph()">
@@ -239,27 +245,27 @@
                     <div style="color:white">Auto Scaler Controller</div>
                 </div>
                 <form action='api/change_auto_scaler_strategy' class="auto_scaler_control_panel_form" method="POST">
-                    Scale Up Threshold
+                    <font color='white'>Scale Up Threshold</font>
                     <br>
-                    <input class="range_input" id = "max_threshold_id" type="range" name="max_threshold" min="0" max="1" step="0.05" value='{{scaler_default_settings["max_threshold"]}}' oninput="max_threshold_text.value=max_threshold_id.value">
-                    <output width="10%" id="max_threshold_text" name="amount" for="rangeInput">{{scaler_default_settings["max_threshold"]}}</output>
+                    <input class="range_input" id = "max_threshold_id" type="range" name="max_threshold" min="0" max="1" step="0.05" value='{{scaler_default_settings["max_threshold"]}}' onchange="showConfirmationHint()" oninput="max_threshold_text.value=max_threshold_id.value">
+                    <output width="10%" id="max_threshold_text" name="amount" for="rangeInput"><font color='white'>{{scaler_default_settings["max_threshold"]}}</font></output>
                     <br>
-                    Scale Down Threshold
+                    <font color='white'>Scale Down Threshold</font>
                     <br>
-                    <input class="range_input" id = "min_threshold_id" type="range" name="min_threshold" min="0" max="1" step="0.05" value='{{scaler_default_settings["min_threshold"]}}' oninput="min_threshold_text.value=min_threshold_id.value">
-                    <output id="min_threshold_text" name="amount" for="rangeInput">{{scaler_default_settings["min_threshold"]}}</output>
+                    <input class="range_input" id = "min_threshold_id" type="range" name="min_threshold" min="0" max="1" step="0.05" value='{{scaler_default_settings["min_threshold"]}}' onchange="showConfirmationHint()" oninput="min_threshold_text.value=min_threshold_id.value">
+                    <output id="min_threshold_text" name="amount" for="rangeInput"><font color='white'>{{scaler_default_settings["min_threshold"]}}</font></output>
                     <br>
-                    Growing Ratio
+                    <font color='white'>Growing Ratio</font>
                     <br>
-                    <input class="range_input" id = "growing_ratio_id" type="range" name="growing_ratio" min="0" max="10" step = "0.01" value='{{scaler_default_settings["growing_ratio"]}}' oninput="growing_ratio_text.value=growing_ratio_id.value">
-                    <output id="growing_ratio_text" name="amount" for="rangeInput">{{scaler_default_settings["growing_ratio"]}}</output>
+                    <input class="range_input" id = "growing_ratio_id" type="range" name="growing_ratio" min="0" max="10" step = "0.01" value='{{scaler_default_settings["growing_ratio"]}}' onchange="showConfirmationHint()" oninput="growing_ratio_text.value=growing_ratio_id.value">
+                    <output id="growing_ratio_text" name="amount" for="rangeInput"><font color='white'>{{scaler_default_settings["growing_ratio"]}}</font></output>
                     <br>
-                    Shrinking Ratio
+                    <font color='white'>Shrinking Ratio</font>
                     <br>
-                    <input class="range_input" id = "shrinking_ratio_id" type="range" name="shrinking_ratio" min="0" max="1" step = "0.01" value='{{scaler_default_settings["shrinking_ratio"]}}' oninput="shrinking_ratio_text.value=shrinking_ratio_id.value">
-                    <output id="shrinking_ratio_text" name="amount" for="rangeInput">{{scaler_default_settings["shrinking_ratio"]}}</output>
+                    <input class="range_input" id = "shrinking_ratio_id" type="range" name="shrinking_ratio" min="0" max="1" step = "0.01" value='{{scaler_default_settings["shrinking_ratio"]}}' onchange="showConfirmationHint()" oninput="shrinking_ratio_text.value=shrinking_ratio_id.value">
+                    <output id="shrinking_ratio_text" name="amount" for="rangeInput"><font color='white'>{{scaler_default_settings["shrinking_ratio"]}}</font></output>
                     <br>
-                    <input class="load_balancer_control_button blue" type="submit" value="Confirm">
+                    <input id="auto_scaler_confirm_button" class="load_balancer_control_button blue" type="submit" value="Confirm">
                 </form>
         </div>
     

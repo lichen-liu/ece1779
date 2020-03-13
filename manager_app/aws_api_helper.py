@@ -68,7 +68,7 @@ class AwsApiHelper:
 
     def get_average_cpu_utilization(self, dimensions, sample_num = 30):
         endTime = datetime.now() + timedelta(seconds = 60)
-        startTime = endTime - timedelta(seconds = 60 * 30)
+        startTime = endTime - timedelta(seconds = 60 * sample_num)
         return self._cw_client.get_metric_statistics(
                     Namespace='AWS/EC2',
                     MetricName='CPUUtilization',
