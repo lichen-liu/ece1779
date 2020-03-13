@@ -3,11 +3,10 @@
 # This only works on AWS EC2 instance used for deployment.
 cd ~/ece1779
 
-if [ "$1" = "git" ]; then
+if [ "$1" != "nogit" ]; then
     echo "> Update repository"
     git checkout -f
     git pull
-    chmod 777 "${0}"
 fi
 echo "> Initialize virtual environment..."
 python3 -m venv venv
