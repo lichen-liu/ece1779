@@ -55,21 +55,22 @@ def table_user_details_handler():
         account_thumbnails_count = 0
         account_thumbnails_size = 0
         
-        for account_photo_table_row in account_photo_table:
-            photo_id, photo_name = account_photo_table_row
-            saved_file_name = str(photo_id) + utility.get_file_extension(photo_name)
+        if account_photo_table:
+            for account_photo_table_row in account_photo_table:
+                photo_id, photo_name = account_photo_table_row
+                saved_file_name = str(photo_id) + utility.get_file_extension(photo_name)
 
-            if s3.is_object_existed(key=s3.PHOTOS_DIR + saved_file_name):
-                account_photos_count += 1
-                account_photos_size += s3.get_bucket_content_size(key=s3.PHOTOS_DIR + saved_file_name)[0]
+                if s3.is_object_existed(key=s3.PHOTOS_DIR + saved_file_name):
+                    account_photos_count += 1
+                    account_photos_size += s3.get_bucket_content_size(key=s3.PHOTOS_DIR + saved_file_name)[0]
 
-            if s3.is_object_existed(key=s3.RECTANGLES_DIR + saved_file_name):
-                account_rectangles_count += 1
-                account_rectangles_size += s3.get_bucket_content_size(key=s3.RECTANGLES_DIR + saved_file_name)[0]
+                if s3.is_object_existed(key=s3.RECTANGLES_DIR + saved_file_name):
+                    account_rectangles_count += 1
+                    account_rectangles_size += s3.get_bucket_content_size(key=s3.RECTANGLES_DIR + saved_file_name)[0]
 
-            if s3.is_object_existed(key=s3.THUMBNAILS_DIR + saved_file_name):
-                account_thumbnails_count += 1
-                account_thumbnails_size += s3.get_bucket_content_size(key=s3.THUMBNAILS_DIR + saved_file_name)[0]
+                if s3.is_object_existed(key=s3.THUMBNAILS_DIR + saved_file_name):
+                    account_thumbnails_count += 1
+                    account_thumbnails_size += s3.get_bucket_content_size(key=s3.THUMBNAILS_DIR + saved_file_name)[0]
 
         account_total_count = account_photos_count + account_rectangles_count + account_thumbnails_count
         account_total_size = account_photos_size + account_rectangles_size + account_thumbnails_size
