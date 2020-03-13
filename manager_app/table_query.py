@@ -77,7 +77,7 @@ def table_user_details_handler():
 
         user_details_table.append(
             (account_id, username, 
-            len(account_photo_table), account_total_count, utility.convert_bytes_to_human_readable(account_total_size),
+            len(account_photo_table) if account_photo_table else 0, account_total_count, utility.convert_bytes_to_human_readable(account_total_size),
             account_photos_count, utility.convert_bytes_to_human_readable(account_photos_size),
             account_rectangles_count, utility.convert_bytes_to_human_readable(account_rectangles_size),
             account_thumbnails_count, utility.convert_bytes_to_human_readable(account_thumbnails_size)))
