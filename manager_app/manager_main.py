@@ -42,13 +42,18 @@ def get_worker_count_graph_handler():
     return render_template('worker_count_graph_page.html', 
     worker_count_by_time = monitor.get_count_status())
 
-@webapp.route('/api/delete_all_user_data', methods=['POST'])
-def delete_all_user_data():
-    helper.reset_all()
+@webapp.route('/api/delete_all_user_storage', methods=['POST'])
+def delete_all_user_storage():
+    helper.reset_data()
     return redirect('/')
 
-@webapp.route('/api/shutdown_manager', methods=['POST'])
-def shutdown_manager_handler():
+@webapp.route('/api/delete_everything', methods=['POST'])
+def delete_everything():
+    helper.reset_all()
+    return redirect('')
+
+@webapp.route('/api/stop_all', methods=['POST'])
+def stop_all_handler():
     shutdown_helper  = manager_shutdown_helper.get_manager_shutdown_helper()
     shutdown_helper.shutdown_manager()
 

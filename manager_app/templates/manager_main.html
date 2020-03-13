@@ -86,6 +86,9 @@
         }
     </script>
 
+        <div class = 'user_app_dns'>
+            <a class = 'user_app_dns_button' href={{'http://' + dns_name}} target="_blank">{{dns_name}}</a>
+        </div>
         <div id = 'charts' class = 'charts' >
             <div class = 'charts_control'>
                     <div  class="charts_control_title" style="color:#cccccc">EC2 Instances Status</div>
@@ -139,19 +142,25 @@
         </div>
         
         <div class = 'ec2_app_control'>
-              <div  class="ec2_app_control_title" style="color:#cccccc">EC2 App Control and Access</div>
- 		<div class= 'ec2_storage_action_control'>
-                <form action='/api/delete_all_user_data' class = 'load_balancer_control_form' method="POST" width="200">
-                    <input class = 'load_balancer_control_button orange' type="submit" value="Delete All User Data">
+            <div  class="ec2_app_control_title" style="color:#cccccc">EC2 App Control and Access</div>
+            <div class= 'ec2_storage_action_control'>
+                    <!-- <textarea class='ec2_load_balancer_dns_name_text' readonly='readonly' rows='1' cols='70' >{{dns_name}}</textarea> -->
 
+                <form action='/api/delete_all_user_storage' class = 'load_balancer_control_form' method="POST" width="200">
+                    <input class = 'load_balancer_control_button orange' type="submit" value="Delete All User Storage"
+                        onclick="return confirm('Do you want to delete all user storage?')">
                 </form>
-                <form action='/api/shutdown_manager' class = 'load_balancer_control_form' method="POST" width="200">
-                    <input class = 'load_balancer_control_button gold' type="submit" value="Shutdown All Workers And Manager">
+
+                <form action='/api/delete_everything' class = 'load_balancer_control_form' method="POST" width="200">
+                    <input class = 'load_balancer_control_button red' type="submit" value="Delete Everything"
+                        onclick="return confirm('Do you want to delete everything, including all user storage and all user accounts?')">
+                </form>
+
+                <form action='/api/stop_all' class = 'load_balancer_control_form' method="POST" width="200">
+                    <input class = 'load_balancer_control_button gold' type="submit" value="Stop All Workers and Manager"
+                        onclick="return confirm('Do you want to stop all workers and manager?')">
                 </form>
             </div>
-	    <div class='ec2_load_balancer_content'>
-		<textarea class='ec2_load_balancer_dns_name_text' readonly='readonly' rows='4' cols='50' >{{dns_name}}</textarea>
-	    </div>
         </div>
 
         <div class='auto_scaler_control_panel'>
@@ -190,14 +199,27 @@
         background-color:#eeeeee;
     }
 
-    .charts {
-        background-color:#ffffff;
+    .user_app_dns {
         position: absolute;
         top: 1%;
         margin-left: 1%;
         padding: 10px 4px 4px 4px;
+        height:3%;
+        width: 48%;
+        background-color: white;
+        border-width:1px;
+        border-style:solid;
+        border-color:gray;
+    }
+
+    .charts {
+        background-color:#ffffff;
+        position: absolute;
+        top: 6%;
+        margin-left: 1%;
+        padding: 10px 4px 4px 4px;
         overflow: scroll;
-        height:98%;
+        height:92%;
         width: 48%;
     }
 
@@ -389,13 +411,6 @@
         height: 85%;
         width: 40%;
 
-}
-
-.ec2_load_balancer_dns_name_text {
-	position: relative;
-    margin-top: 10%;
-	height: 50%;
-	width: 100%;
 }
 
 </style>
