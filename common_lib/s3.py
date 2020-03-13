@@ -16,6 +16,12 @@ THUMBNAILS_DIR = ROOT_DIR + 'thumbnails' + '/'
 RECTANGLES_DIR = ROOT_DIR + 'rectangles' + '/'
 
 
+def is_path_s3_directory(key):
+    if len(key) > 0:
+        return key[-1] == '/'
+    return True
+
+
 def get_s3_path_in_string(key, bucket_name):
     return 's3://' + bucket_name +'/' + key
 
@@ -42,8 +48,8 @@ def list_bucket_content(bucket_name=BUCKET, directory='', recursive=True):
     :param recursive: True to list the content recursively, else only list the content inside dir
     :return: [(object, size)]
     '''
-    if len(directory) > 0:
-        assert directory[-1] == '/'
+    assert(is_path_s3_directory(directory))
+
     paginator = boto3.client('s3').get_paginator('list_objects_v2')
     pages = paginator.paginate(Bucket=bucket_name, Prefix=directory)
 
@@ -116,8 +122,8 @@ def is_object_existed(key, bucket_name=BUCKET):
 
 
 def create_directory_if_necessary(directory, bucket_name=BUCKET):
-    if len(directory) > 0:
-        assert directory[-1] == '/'
+    assert(is_path_s3_directory(directory))
+
     if not is_object_existed(key=directory, bucket_name=bucket_name):
         print('Creating directory', get_s3_path_in_string(key=directory, bucket_name=bucket_name) , '!')
         boto3.client('s3').put_object(Bucket=bucket_name, Key=directory)
@@ -172,8 +178,7 @@ def get_object_url(key, bucket_name=BUCKET):
 
 
 def delete_directory_content(directory, bucket_name=BUCKET):
-    if len(directory) > 0:
-        assert directory[-1] == '/'
+    assert(is_path_s3_directory(directory))
 
     s3 = boto3.client('s3')
 
@@ -227,6 +232,5 @@ def delete_object(key, bucket_name=BUCKET):
 
 
 # init()
-# print(list_bucket_content(directory='', recursive=True))
 # delete_directory_content(directory='')
 # print(list_bucket_content(directory='', recursive=True))

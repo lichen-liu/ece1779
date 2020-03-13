@@ -19,8 +19,21 @@
         
         {% for row in table %}
             <tr>
-                {% for item in row %}
-                    <td>{{item}}</td>
+                {% for col_idx in range(row|length) %}
+                {% set item = row[col_idx] %}
+
+                {% set action_on_item = action_handler_assigner_row and action_handler_assigner_row[col_idx] %}
+                {% if action_on_item %}
+                    {% set action_on_item = action_handler_assigner_row[col_idx](item) %}
+                {% endif %}
+                
+                    <td>
+                        {% if action_on_item %}
+                            <a href={{ url_for(action_on_item) + '?' + title_row[col_idx] + '=' + item }}>{{item}}</a>
+                        {% else %}
+                            {{item}}
+                        {% endif %}
+                    </td>
                 {% endfor %}
             </tr>
         {% endfor %}
