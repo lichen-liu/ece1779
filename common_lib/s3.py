@@ -72,12 +72,12 @@ def list_bucket_content(bucket_name=BUCKET, directory='', recursive=True):
     return result
 
 
-def get_bucket_content_size(key, bucket_name=BUCKET):
+def get_bucket_content_size(key, debug=False, bucket_name=BUCKET):
     '''Get the size of an S3 bucket object
 
     :param bucket_name: Bucket to check
     :param key: Object to check. Does not support partial name
-    :return: (size, num_directory, num_file, [object])
+    :return: (size, num_directory, num_file, [object] if debug)
     '''
     paginator = boto3.client('s3').get_paginator('list_objects_v2')
     pages = paginator.paginate(Bucket=bucket_name, Prefix=key)
@@ -100,7 +100,10 @@ def get_bucket_content_size(key, bucket_name=BUCKET):
                     file_count += 1
 
                 l.append(k)
-    return (size, dir_count, file_count, l)
+    if debug:
+        return (size, dir_count, file_count, l)
+    else:
+        return (size, dir_count, file_count)
 
 
 def is_object_existed(key, bucket_name=BUCKET):

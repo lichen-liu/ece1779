@@ -24,12 +24,12 @@
 
                 {% set action_on_item = action_handler_assigner_row and action_handler_assigner_row[col_idx] %}
                 {% if action_on_item %}
-                    {% set action_on_item = action_handler_assigner_row[col_idx](item) %}
+                    {% set action_on_item = action_handler_assigner_row[col_idx](item, row) %}
                 {% endif %}
                 
                     <td>
                         {% if action_on_item %}
-                            <a href={{ url_for(action_on_item) + '?' + title_row[col_idx] + '=' + item }}>{{item}}</a>
+                            <a href={{ action_on_item }}>{{item}}</a>
                         {% else %}
                             {{item}}
                         {% endif %}

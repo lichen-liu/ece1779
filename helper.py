@@ -71,7 +71,7 @@ if __name__ == '__main__':
         print()
 
     if args.storage_info:
-        size, num_directory, num_file, _ = s3.get_bucket_content_size(key=s3.ROOT_DIR)
+        size, num_directory, num_file = s3.get_bucket_content_size(key=s3.ROOT_DIR)
         size_str = utility.convert_bytes_to_human_readable(size)
         print(s3.get_s3_path_in_string(key=s3.ROOT_DIR, bucket_name=s3.BUCKET) + '  -----  ' + size_str + 
             ' (' + str(num_file) + ' files, ' + str(num_directory) + ' dirs)')

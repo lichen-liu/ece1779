@@ -204,7 +204,9 @@
                 {% set quote_function, ece1779_account_num_rows, ece1779_photo_num_rows, s3_path, s3_path_size, s3_path_num_files, s3_path_num_directories = rds_s3_stats %}
                 <table class='rds_s3_stats_table'>
                     <tr>
-                        <td>ece1779.account</td>
+                        <td>
+                            <a href={{ url_for('table_user_details_handler') }}>ece1779.account</a>
+                        </td>
                         <td>
                             <a href={{ url_for('table_ece1779_account_handler') }}>{{ece1779_account_num_rows}} rows</a>
                         </td>
