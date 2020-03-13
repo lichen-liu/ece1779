@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 
+<head>
+    <meta http-equiv="refresh" content="15"/>
+</head>
+
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 <script type="text/javascript">
@@ -144,7 +148,6 @@
         <div class = 'ec2_app_control'>
             <div  class="ec2_app_control_title" style="color:#cccccc">EC2 App Control and Access</div>
             <div class= 'ec2_storage_action_control'>
-                    <!-- <textarea class='ec2_load_balancer_dns_name_text' readonly='readonly' rows='1' cols='70' >{{dns_name}}</textarea> -->
 
                 <form action='/api/delete_all_user_storage' class = 'load_balancer_control_form' method="POST" width="200">
                     <input class = 'load_balancer_control_button orange' type="submit" value="Delete All User Storage"
@@ -160,6 +163,23 @@
                     <input class = 'load_balancer_control_button gold' type="submit" value="Stop All Workers and Manager"
                         onclick="return confirm('Do you want to stop all workers and manager?')">
                 </form>
+            </div>
+            <div>
+                {% set ece1779_account_num_rows, ece1779_photo_num_rows, s3_path, s3_path_size, s3_path_num_files, s3_path_num_directories = rds_s3_stats %}
+                <table class='rds_s3_stats_table'>
+                    <tr>
+                        <th>ece1779.account</th>
+                        <th>{{ece1779_account_num_rows}} rows</th>
+                    </tr>
+                    <tr>
+                        <th>ece1779.photo</th>
+                        <th>{{ece1779_photo_num_rows}} rows</th>
+                    </tr>
+                    <tr>
+                        <th>{{s3_path}}</th>
+                        <th>{{s3_path_size}} ({{s3_path_num_files}} files, {{s3_path_num_directories}} dirs)</th>
+                    </tr>
+                </table>
             </div>
         </div>
 
@@ -178,7 +198,7 @@
                     <input class="range_input" id = "min_threshold_id" type="range" name="min_threshold" min="0" max="1" step="0.05" value='{{scaler_default_settings["min_threshold"]}}' oninput="min_threshold_text.value=min_threshold_id.value">
                     <output id="min_threshold_text" name="amount" for="rangeInput">{{scaler_default_settings["min_threshold"]}}</output>
                     <br>
-                    Gourwing Ratio
+                    Growing Ratio
                     <br>
                     <input class="range_input" id = "growing_ratio_id" type="range" name="growing_ratio" min="0" max="10" step = "0.01" value='{{scaler_default_settings["growing_ratio"]}}' oninput="growing_ratio_text.value=growing_ratio_id.value">
                     <output id="growing_ratio_text" name="amount" for="rangeInput">{{scaler_default_settings["growing_ratio"]}}</output>
@@ -401,6 +421,27 @@
         height: 80%;
         width: 40%;
         margin-top: 1.5%;
+}
+
+.rds_s3_stats_table {
+  border-collapse: collapse;
+  float: right;
+  position: relative;
+  padding: 5px 5px 5px 5px;
+  height: 80%;
+  width: 55%;
+  margin-top: 6.5%;
+  font-size: smaller;
+}
+
+.rds_s3_stats_table td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.rds_s3_stats_table tr:nth-child(even) {
+  background-color: #dddddd;
 }
 
 .ec2_load_balancer_content {

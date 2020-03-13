@@ -2,6 +2,8 @@ from flask import render_template, redirect, request
 from manager_app import webapp, ec2_pool, pool_monitor_helper, worker_count_monitor, auto_scaler, manager_shutdown_helper
 from datetime import datetime
 import helper
+from common_lib import database, s3, utility
+
 @webapp.route('/', methods=['GET','POST'])
 def main_handler():
     return render_manager_main_page()
@@ -12,7 +14,8 @@ def render_manager_main_page():
     instances_data_points = prepare_cpu_utilization_info(), 
     instances_status_counts = prepare_instance_status_info(),
     scaler_default_settings = prepare_autoscaler_default_values(),
-    dns_name = prepare_dns_name()
+    dns_name = prepare_dns_name(),
+    rds_s3_stats = prepare_rds_s3_stats()
     )
 
 @webapp.route('/api/increase_pool', methods=['POST'])
@@ -91,4 +94,9 @@ def prepare_dns_name():
     pool = ec2_pool.get_worker_pool()
     return pool.get_load_balancer_dns_name()
 
-
+def prepare_rds_s3_stats():
+    ece1779_account_num_rows = len(database.get_account_table())
+    ece1779_photo_num_rows = len(database.get_photo_table())
+    s3_path = s3.get_s3_path_in_string(key=s3.ROOT_DIR, bucket_name=s3.BUCKET)
+    s3_path_size, s3_path_num_directories, s3_path_num_files, _ = s3.get_bucket_content_size(key=s3.ROOT_DIR)
+    return (ece1779_account_num_rows, ece1779_photo_num_rows, s3_path, utility.convert_bytes_to_human_readable(s3_path_size), s3_path_num_files, s3_path_num_directories)
