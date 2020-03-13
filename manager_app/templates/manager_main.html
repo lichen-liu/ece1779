@@ -116,8 +116,9 @@
     </script>
 
         <div class = 'user_app_dns'>
-            <a class = 'user_app_dns_button' href={{'http://' + dns_name}} target="_blank">{{dns_name}}</a>
+            <a href={{'http://' + dns_name}} target="_blank">{{dns_name}}</a>
         </div>
+
         <div id = 'charts' class = 'charts' >
             <div class = 'charts_control'>
                     <div  class="charts_control_title" style="color:#cccccc">EC2 Instances Status</div>
@@ -249,18 +250,19 @@
         top: 1%;
         margin-left: 1%;
         padding: 10px 4px 4px 4px;
-        height:3%;
+        height:2%;
         width: 48%;
         background-color: white;
         border-width:1px;
         border-style:solid;
         border-color:gray;
+        font-size:x-small;
     }
 
     .charts {
         background-color:#ffffff;
         position: absolute;
-        top: 6%;
+        top: 5%;
         margin-left: 1%;
         padding: 10px 4px 4px 4px;
         overflow: scroll;
