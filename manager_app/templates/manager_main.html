@@ -8,7 +8,7 @@
     function countdown() {
         setInterval(function () {
             if(countDown == 0) {
-                if(document.getElementById('refesh_countdown_enable').checked) {
+                if(isCountdownRefreshEnabled()) {
                     window.location.reload(1);
                     countDown = refresh_time
                 }
@@ -18,6 +18,18 @@
             document.getElementById('refresh_countdown').innerHTML = countDown;
             return countDown;
         }, 1000);
+    }
+
+    function isCountdownRefreshEnabled() {
+        return document.getElementById('countdown_refresh_enable').checked;
+    }
+
+    function enableCountdownRefresh() {
+        document.getElementById('countdown_refresh_enable').checked = true;
+    }
+
+    function disableCountdownRefresh() {
+        document.getElementById('countdown_refresh_enable').checked = false;
     }
 
 </script>
@@ -113,8 +125,8 @@
 
                 <div class= 'header_auto_refresher' onload="countdown()">
                         This page will be refreshed automatically after <span id='refresh_countdown'></span> seconds. 
-                        <input type="checkbox" id="refesh_countdown_enable" checked>
-                        <label for="refesh_countdown_enable"> Allow Refresh</label>
+                        <input type="checkbox" id="countdown_refresh_enable" checked>
+                        <label for="countdown_refresh_enable"> Allow Refresh</label>
                 </div>
                 <div class='header_dns_title'>
                         Load Balancer Url: 
@@ -200,22 +212,22 @@
                 <table class='rds_s3_stats_table'>
                     <tr>
                         <td>
-                            <a href={{ url_for('table_user_details_handler') }}>ece1779.account</a>
+                            <a href={{ url_for('table_user_details_handler') }} onclick="disableCountdownRefresh()">ece1779.account</a>
                         </td>
                         <td>
-                            <a href={{ url_for('table_ece1779_account_handler') }}>{{ece1779_account_num_rows}} rows</a>
+                            <a href={{ url_for('table_ece1779_account_handler') }} onclick="disableCountdownRefresh();">{{ece1779_account_num_rows}} rows</a>
                         </td>
                     </tr>
                     <tr>
                         <td>ece1779.photo</td>
                         <td>
-                            <a href={{ url_for('table_ece1779_photo_handler') }}>{{ece1779_photo_num_rows}} rows</a>
+                            <a href={{ url_for('table_ece1779_photo_handler') }} onclick="disableCountdownRefresh();">{{ece1779_photo_num_rows}} rows</a>
                         </td>
                     </tr>
                     <tr>
                         <td>{{s3_path}}</td>
                         <td>
-                            <a href={{ url_for('table_s3_filesystem_handler', key=quote_function(s3_path)) }}>{{s3_path_size}} ({{s3_path_num_files}} files, {{s3_path_num_directories}} dirs)</a>
+                            <a href={{ url_for('table_s3_filesystem_handler', key=quote_function(s3_path)) }} onclick="disableCountdownRefresh();">{{s3_path_size}} ({{s3_path_num_files}} files, {{s3_path_num_directories}} dirs)</a>
                         </td>
                     </tr>
                 </table>
@@ -227,12 +239,12 @@
                     <div style="color:white">Auto Scaler Controller</div>
                 </div>
                 <form action='api/change_auto_scaler_strategy' class="auto_scaler_control_panel_form" method="POST">
-                    Max Threshold
+                    Scale Up Threshold
                     <br>
                     <input class="range_input" id = "max_threshold_id" type="range" name="max_threshold" min="0" max="1" step="0.05" value='{{scaler_default_settings["max_threshold"]}}' oninput="max_threshold_text.value=max_threshold_id.value">
                     <output width="10%" id="max_threshold_text" name="amount" for="rangeInput">{{scaler_default_settings["max_threshold"]}}</output>
                     <br>
-                    Min Threshold
+                    Scale Down Threshold
                     <br>
                     <input class="range_input" id = "min_threshold_id" type="range" name="min_threshold" min="0" max="1" step="0.05" value='{{scaler_default_settings["min_threshold"]}}' oninput="min_threshold_text.value=min_threshold_id.value">
                     <output id="min_threshold_text" name="amount" for="rangeInput">{{scaler_default_settings["min_threshold"]}}</output>
