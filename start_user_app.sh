@@ -7,7 +7,6 @@ if [ "$1" != "nogit" ]; then
     echo "> Update repository"
     git checkout -f
     git pull
-    chmod 777 "${0}"
 fi
 echo "> Initialize virtual environment..."
 python3 -m venv venv
