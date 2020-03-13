@@ -1,9 +1,34 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta http-equiv="refresh" content="15"/>
-</head>
+<div class="auto_refresher">
+    This page will be refreshed automatically after <span id='refresh_countdown'></span> seconds. 
+    <input type="checkbox" id="refesh_countdown_enable" checked>
+    <label for="refesh_countdown_enable"> Allow Refresh</label>
+</div>
+
+<script type="text/javascript">
+    const refresh_time = 15;
+    var countDown = refresh_time;
+
+    function countdown() {
+        setInterval(function () {
+            if(countDown == 0) {
+                if(document.getElementById('refesh_countdown_enable').checked) {
+                    window.location.reload(1);
+                    countDown = refresh_time
+                }
+                return;
+            }
+            countDown--;
+            document.getElementById('refresh_countdown').innerHTML = countDown;
+            return countDown;
+        }, 1000);
+    }
+
+    document.getElementById('refresh_countdown').innerHTML = countDown;
+    countdown();
+</script>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
@@ -274,10 +299,21 @@
         width : 100%;
     }
 
-    .control_panel {
+    .auto_refresher {
         background-color:#ffffff;
         position : absolute;
         top: 1%;
+        margin-left: 50%;
+        padding: 10px 3px 3px 3px;
+        height: 2%;
+        width: 48%;
+        font-size: x-small;
+    }
+
+    .control_panel {
+        background-color:#ffffff;
+        position : absolute;
+        top: 5%;
         margin-left: 50%;
         padding: 10px 3px 3px 3px;
         height: 28%;
@@ -315,10 +351,10 @@
     .auto_scaler_control_panel {
         background-color:#ffffff;
         position : absolute;
-        top: 58.6%;
+        top: 62.6%;
         margin-left: 50%;
         padding: 10px 3px 3px 3px;
-        height: 39%;
+        height: 35%;
         width: 48%;
     }
 
@@ -404,7 +440,7 @@
         background-color: #ffffff;
     	height: 25%;
 	width: 48%;
-	top: 31.3%;
+	top: 35.3%;
 	margin-left: 50%;
     }
 
