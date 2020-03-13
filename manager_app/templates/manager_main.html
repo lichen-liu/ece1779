@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html>
 
-<div class="auto_refresher">
-    This page will be refreshed automatically after <span id='refresh_countdown'></span> seconds. 
-    <input type="checkbox" id="refesh_countdown_enable" checked>
-    <label for="refesh_countdown_enable"> Allow Refresh</label>
-</div>
-
 <script type="text/javascript">
     const refresh_time = 15;
     var countDown = refresh_time;
@@ -26,8 +20,6 @@
         }, 1000);
     }
 
-    document.getElementById('refresh_countdown').innerHTML = countDown;
-    countdown();
 </script>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -115,13 +107,31 @@
         }
     </script>
 
-        <div class = 'user_app_dns'>
-            <a href={{'http://' + dns_name}} target="_blank">{{dns_name}}</a>
+
+        <div class='website_header'>
+
+
+                <div class= 'header_auto_refresher' onload="countdown()">
+                        This page will be refreshed automatically after <span id='refresh_countdown'></span> seconds. 
+                        <input type="checkbox" id="refesh_countdown_enable" checked>
+                        <label for="refesh_countdown_enable"> Allow Refresh</label>
+                </div>
+                <div class='header_dns_title'>
+                        Load Balancer Url: 
+                </div>
+            <a class= 'header_user_app_dns' href={{'http://' + dns_name}} target="_blank">{{dns_name}}</a>
+
+            <script>
+                document.getElementById('refresh_countdown').innerHTML = countDown;
+                countdown();
+            </script>
+       
+            
         </div>
 
         <div id = 'charts' class = 'charts' >
             <div class = 'charts_control'>
-                    <div  class="charts_control_title" style="color:#cccccc">EC2 Instances Status</div>
+                    <div  class="charts_control_title" style="color:#bbbbbb">EC2 Instances Status</div>
                     <select class="charts_control_select_status_type" onchange="ChangeStatusDisplayType(event)">
                             <option>CPU Utilization</option> 
                             <option>Http Request Rate</option> 
@@ -133,7 +143,7 @@
             <div class = "charts_content">
             {% for instance_id in instances_data_points %}
                 <div class = 'instance_canvas_title'>
-                    <div style="color:#cccccc">{{instance_id}}</div>
+                    <div style="color:#bbbbbb">{{instance_id}} </div>
                 </div>
                 <canvas id='{{instance_id}}' class='charts_canvas'></canvas>
             <script type=text/javascript>
@@ -148,7 +158,7 @@
         <div id = 'control_panel' class = 'control_panel'>
             <div class = 'control_panel_pool_monitor_chart'>
                 <div class = 'control_panel_pool_monitor_chart_title'>
-                    <div style="color:#cccccc">Load Balancer Pool Status</div>
+                    <div style="color:white">Load Balancer Pool Status</div>
                 </div>
                 <canvas id = 'pool_monitor_chart' class = 'control_panel_pool_monitor_chart_canvas'></canvas>
                 <script type=text/javascript>
@@ -163,7 +173,7 @@
     
                 </form>
                 <form action='/api/decrease_pool' class = 'load_balancer_control_form' method="POST" width="200">
-                    <input class = 'load_balancer_control_button red' type="submit" value="Decrease worker pool">
+                    <input class = 'load_balancer_control_button green' type="submit" value="Decrease worker pool">
                 </form>
                 <form action='/api/get_work_count_graph' class = 'load_balancer_control_form' method="POST" width="200">
                     <input class = 'load_balancer_control_button purple' type="submit" value="View worker-count graph">
@@ -172,7 +182,7 @@
         </div>
         
         <div class = 'ec2_app_control'>
-            <div  class="ec2_app_control_title" style="color:#cccccc">EC2 App Control, Access, and View</div>
+            <div  class="ec2_app_control_title" style="color:white">EC2 App Control, Access, and View</div>
             <div class= 'ec2_storage_action_control'>
 
                 <form action='/api/delete_all_user_storage' class = 'load_balancer_control_form' method="POST" width="200">
@@ -217,7 +227,7 @@
 
         <div class='auto_scaler_control_panel'>
                 <div class = 'control_panel_pool_monitor_chart_title'>
-                    <div style="color:#cccccc">Auto Scaler Controller</div>
+                    <div style="color:white">Auto Scaler Controller</div>
                 </div>
                 <form action='api/change_auto_scaler_strategy' class="auto_scaler_control_panel_form" method="POST">
                     Max Threshold
@@ -240,7 +250,7 @@
                     <input class="range_input" id = "shrinking_ratio_id" type="range" name="shrinking_ratio" min="0" max="1" step = "0.01" value='{{scaler_default_settings["shrinking_ratio"]}}' oninput="shrinking_ratio_text.value=shrinking_ratio_id.value">
                     <output id="shrinking_ratio_text" name="amount" for="rangeInput">{{scaler_default_settings["shrinking_ratio"]}}</output>
                     <br>
-                    <input class="auto_scaler_submit_button" type="submit" value="Confirm">
+                    <input class="load_balancer_control_button blue" type="submit" value="Confirm">
                 </form>
         </div>
     
@@ -251,29 +261,65 @@
         background-color:#eeeeee;
     }
 
-    .user_app_dns {
+    .website_header {
         position: absolute;
         top: 1%;
         margin-left: 1%;
-        padding: 10px 4px 4px 4px;
-        height:2%;
-        width: 48%;
-        background-color: white;
-        border-width:1px;
-        border-style:solid;
-        border-color:gray;
-        font-size:x-small;
+        height: 4%;
+        width: 98%;
+        background-color: #e6e6ea;
     }
 
+    .header_user_app_dns {
+        position: relative;
+        height:90%;
+        width: 40%;
+        top: 13%;
+        border-width:1px;
+        border-style:solid;
+        font-size:x-small;
+        color:white;
+    }
+
+    .header_dns_title {
+    position: relative;
+    top: 20%;
+    width: 11%;
+    float: left;
+    height: 100%;
+    margin-left: 9.4%;
+    color:white;
+    }
+
+    .header_user_app_dns_link {
+        position: relative;
+        color:white;
+    
+    }
+
+
+    .header_auto_refresher {
+        color: white;
+        position : relative;
+        float: left;
+        margin-left: 1%;
+        top:13%;
+        height: 90%;
+        width: 40%;
+        font-size: x-small;
+    }
+
+
     .charts {
-        background-color:#ffffff;
+        background-color:#f4f4f8;
         position: absolute;
-        top: 5%;
+        top: 5.5%;
         margin-left: 1%;
         padding: 10px 4px 4px 4px;
         overflow: scroll;
         height:92%;
         width: 48%;
+
     }
 
     .charts_canvas {
@@ -307,21 +353,11 @@
         width : 100%;
     }
 
-    .auto_refresher {
-        background-color:#ffffff;
-        position : absolute;
-        top: 1%;
-        margin-left: 50%;
-        padding: 10px 3px 3px 3px;
-        height: 2%;
-        width: 48%;
-        font-size: x-small;
-    }
-
     .control_panel {
-        background-color:#ffffff;
+       
+        background-color: 	 #fed766;
         position : absolute;
-        top: 5%;
+        top: 5.5%;
         margin-left: 50%;
         padding: 10px 3px 3px 3px;
         height: 28%;
@@ -329,7 +365,6 @@
     }
 
     .control_panel_pool_monitor_chart {
-        background-color:#ffffff;
         float: left;
         position : relative;
         padding: 3px 3px 3px 3px;
@@ -348,18 +383,18 @@
     }
 
     .control_panel_action_control {
-        background-color:#ffffff;
         float: left;
         position : relative;
+        margin-top: 5%;
         padding: 3px 3px 3px 3px;
         height: 98%;
         width: 40%;
     }
 
     .auto_scaler_control_panel {
-        background-color:#ffffff;
+        background-color:#fe4a49;
         position : absolute;
-        top: 62.6%;
+        top: 64.1%;
         margin-left: 50%;
         padding: 10px 3px 3px 3px;
         height: 35%;
@@ -367,7 +402,6 @@
     }
 
     .auto_scaler_control_panel_form {
-        background-color:#ffffff;
         position : relative;
         margin-left: 50%;
         padding: 3px 3px 3px 3px;
@@ -379,76 +413,80 @@
         width : 88%
     }
 
-    .auto_scaler_submit_button {
-        color: #fff !important;
-        text-transform: uppercase;
-        text-decoration: none;
-        background: #60a3bc;
-        padding: 20px;
-        border-radius: 50px;
-        display: inline-block;
-        border: none;
-        transition: all 0.4s ease 0s;
-        width : 55%;
-        margin-left : 20%;
-        box-shadow: 2px 5px #5090ab;
-    }
 
     .load_balancer_control_form {
-	height: 30%;
+        position: relative;
+	    height: 40px;
+        top: 2%;
     }
 
     .load_balancer_control_button {
-        color: #fff !important;
+        font-size : 8px;
+        width:90%;
+        height:90%;
+        color: white !important;
         text-transform: uppercase;
         text-decoration: none;
-        background: #60a3bc;
-        padding: 20px;
-        border-radius: 50px;
+        background: #ffffff;
+        padding: 10px;
+        border: 4px solid white !important;
         display: inline-block;
-        border: none;
         transition: all 0.4s ease 0s;
-        width : 90%;
-	height: 65%;
-        margin-top : 6%;
-        box-shadow: 2px 5px #5090ab;
+        border-radius: 50px;
+        box-shadow: 1px 2px 1px 0px  #cccccc;
+        background: transparent;
+    }
+
+    .load_balancer_control_button:hover {
+        color: #ffffff !important;
+        background: #f6b93b;
+        border-color: #f6b93b !important;
+        transition: all 0.4s ease 0s;
     }
 
     .load_balancer_control_button.green {
-        background: #98FB98;
-        box-shadow: 2px 5px #87EA87;
+        background: transparent;
+    }
+
+   
+
+    .load_balancer_control_button.purple {
+        background: transparent;
     }
 
     .load_balancer_control_button.red {
-        background: #F08080;
-        box-shadow: 2px 5px #E07070;
-    }
-
-    .load_balancer_control_button.purple {
-        background: #9932CC;
-        box-shadow: 2px 5px #8821bb;
+        background-color: #d06060;
+        margin-left: 5%;
+        background: transparent;
     }
 	
     .load_balancer_control_button.orange {
-        margin-top: 5%;
-	background: #ff7f50;
-        box-shadow: 2px 5px #ee6e40;
+        background-color: #d06060;
+        margin-left: 5%;
+        background: transparent;
     }
     
     .load_balancer_control_button.gold {
-        background: #FFD700;
-        box-shadow: 2px 5px #eec600;
+        background-color: #d06060;
+        margin-left: 5%;
+        background: transparent;
     }
 
+        
+    .load_balancer_control_button.blue {
+        background-color: #40809a;
+        height: 20%;
+        background: transparent;
+    }
 
 
     .ec2_app_control {
 	position: absolute;
 	padding: 10px 3px 3px 3px;
-        background-color: #ffffff;
+        background-color: #2ab7ca;
     	height: 25%;
 	width: 48%;
-	top: 35.3%;
+	top: 36.2%;
 	margin-left: 50%;
     }
 
@@ -458,7 +496,6 @@
 
     } 
 .ec2_storage_action_control {
-	background-color:#ffffff;
         float: left;
         position : relative;
         padding: 3px 3px 3px 3px;
@@ -474,22 +511,22 @@
   padding: 5px 5px 5px 5px;
   height: 80%;
   width: 55%;
-  margin-top: 6.5%;
+  margin-top: 2.9%;
   font-size: smaller;
 }
 
 .rds_s3_stats_table td, th {
-  border: 1px solid #dddddd;
+  border: 1px solid white;
   text-align: left;
   padding: 8px;
 }
 
 .rds_s3_stats_table tr:nth-child(even) {
-  background-color: #dddddd;
+  background-color: #e6e6ea;
 }
 
 .ec2_load_balancer_content {
- 	background-color:#ffffff;
+ 	background-color:white;
         margin-left: 50%;
         position : relative;
         padding: 3px 3px 3px 3px;
