@@ -39,8 +39,53 @@
 <script type="text/javascript">
 
     var oldLineChart;
+    
+    function prepareDataFeedForLineChart(data_points, data_field){
 
-    function drawLineChart(canvas_id, data_points, datafield) {
+        var points = [];
+        var labels = [];
+
+        Array.prototype.forEach.call(data_points, data_point => {
+            points.push(data_point[data_field])
+            labels.push(data_point['Timestamp'])
+        });
+       
+        return {
+                    labels: labels,
+                    datasets: [{
+                        fillColor: "rgba(220,220,220,0.5)",
+                        strokeColor: "rgba(220,220,220,1)",
+                        pointColor: "rgba(220,220,220,1)",
+                        pointStrokeColor: "#fff",
+                        data: points
+                    }]
+                }
+
+    }
+
+    function prepareLineChartOption(graph_type){
+        switch (graph_type){
+            case "CPUUtilization":
+                options = {
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    scaleOverride : true,
+                    scaleSteps : 10,
+                    scaleStepWidth : 10,
+                    scaleStartValue : 0
+                }
+            break;
+            case "HttpRequestCount":
+                options = {
+                    responsive: false,
+                    maintainAspectRatio: false,
+                }
+            break;
+        }
+        return options;
+    }
+
+    function drawLineChart(canvas_id, data, options) {
 
         if(oldLineChart){
             oldLineChart.destroy()
@@ -48,42 +93,10 @@
 
         var canvas = document.getElementById(canvas_id);
         var ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        var points = [];
-        var labels = [];
-
-        Array.prototype.forEach.call(data_points, data_point => {
-            points.push(data_point[datafield])
-            labels.push(data_point['Timestamp'])
-        });
-       
-        var data = {
-            labels: labels,
-            datasets: [{
-                            fillColor: "rgba(220,220,220,0.5)",
-                            strokeColor: "rgba(220,220,220,1)",
-                            pointColor: "rgba(220,220,220,1)",
-                            pointStrokeColor: "#fff",
-                            data: points
-                    }]
-        }
-
-
-        var chart = new Chart(ctx).Line(data, {
-            responsive: false,
-            maintainAspectRatio: false,
-            scaleOverride : true,
-            scaleSteps : 10,
-            scaleStepWidth : 10,
-            scaleStartValue : 0
-        });
-
+        var chart = new Chart(ctx).Line(data, options);
         var parent = document.getElementById(canvas_id).parentNode.parentElement;
 
-        //canvas.style["height"] = "30%";
-        //canvas.style["width"] = "100%";
         return chart;
-
     };
 
     function drawPieChart(status_count) {
@@ -127,8 +140,10 @@
 
     function GenerateGraph(metric, datafield){
         for (var id in data_points_for_ids) {
-            if (data_points_for_ids.hasOwnProperty(id)) {           
-                oldLineChart = drawLineChart(id, data_points_for_ids[id][metric], datafield);
+            if (data_points_for_ids.hasOwnProperty(id)) {   
+                var data = prepareDataFeedForLineChart(data_points_for_ids[id][metric], datafield) 
+                var options = prepareLineChartOption(metric)       
+                oldLineChart = drawLineChart(id, data, options);
             }
         }
     }

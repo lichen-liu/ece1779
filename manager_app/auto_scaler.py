@@ -11,7 +11,7 @@ class AutoScaler:
         self._pool_monitor_helper = pool_monitor_helper
         self._pool = pool
         self._operation_timestamp = datetime(1970, 1, 1, 0, 0)
-        self._minimum_operation_cooldown = timedelta(seconds = 15) 
+        self._minimum_operation_cooldown = timedelta(seconds = 60) 
         self._monitoring_interval = 10
         self._running_thread = threading.Thread(target = self.auto_scaling, daemon = True)
         self._started = False
