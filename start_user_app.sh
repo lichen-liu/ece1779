@@ -19,6 +19,6 @@ pip install cvlib
 pip install tensorflow
 pip install boto3
 pip install gunicorn
-
+pip install ec2-metadata
 echo "> Starting the user app on Port = 5000 ..."
 venv/bin/gunicorn --bind 0.0.0.0:5000 --workers=1 run_user_app:webapp

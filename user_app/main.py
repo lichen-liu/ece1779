@@ -1,7 +1,7 @@
 from flask import render_template
 from user_app import account, webapp, photo
-from aws_api_helper import put_http_request_count
-
+#from aws_api_helper import put_http_request_count
+from user_app import aws_api_helper
 
 @webapp.route('/', methods=['GET', 'POST'])
 @webapp.route('/index', methods=['GET', 'POST'])
@@ -10,10 +10,13 @@ from aws_api_helper import put_http_request_count
 def main_handler():
     return main()
 
-
+http_request_counter = 0
+aws_api=aws_api_helper.get_api()
 @webapp.before_request
 def do_something_whenever_a_request_comes_in():
-    put_http_request_count(1)
+    global http_request_counter 
+    http_request_counter = 1 + http_request_counter
+    aws_api.put_http_request_count(http_request_counter)
 
 
 class GuestWelcomeArgs:

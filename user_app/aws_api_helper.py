@@ -1,5 +1,6 @@
 import boto3
 from datetime import datetime, timedelta
+from ec2_metadata import ec2_metadata
 
 running_ec2_instance_filters = [
     {
@@ -84,25 +85,20 @@ class AwsApiHelper:
         )
 
     def put_http_request_count(self, count):
+        instance_id = ec2_metadata.instance_id
         response = self._cw_client.put_metric_data(
-            Namespace='string',
+            Namespace='AWS/EC2',
             MetricData=[
                 {
                     'MetricName': 'http_request_count',
                     'Dimensions': [
                         {
-                            'Name': 'string',
-                            'Value': 'string'
+                            'Name': 'InstanceId',
+                            'Value': instance_id
                         },
                     ],
-                    'Timestamp': datetime().now(),
-                    'Value': 1,
-                    'StatisticValues': {
-                        'SampleCount': 1.0,
-                        'Sum': 123.0,
-                        'Minimum': 123.0,
-                        'Maximum': 123.0
-                    },
+                    'Timestamp': datetime.now(),
+                    'Value': count,
                     'StorageResolution': 60
                 },
             ]
