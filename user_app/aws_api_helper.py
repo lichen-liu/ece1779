@@ -99,7 +99,7 @@ class AwsApiHelper:
                     ],
                     'Timestamp': datetime.now(),
 #                    'Value': count,
-                    'StatisticValues': {'SampleCount': count, 'Sum': count, 'Minimum': count, count},
+                    'StatisticValues': {'SampleCount': count, 'Sum': count, 'Minimum': count, 'Maximum': count},
                     'StorageResolution': 60
                 },
             ]
