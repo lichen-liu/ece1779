@@ -85,6 +85,7 @@ class AwsApiHelper:
         )
 
     def put_http_request_count(self, count):
+        print(count)
         instance_id = ec2_metadata.instance_id
         response = self._cw_client.put_metric_data(
             Namespace='AWS/EC2',
@@ -98,8 +99,8 @@ class AwsApiHelper:
                         },
                     ],
                     'Timestamp': datetime.now(),
-#                    'Value': count,
-                    'StatisticValues': {'SampleCount': count, 'Sum': count, 'Minimum': count, 'Maximum': count},
+                    'Value': count,
+#                    'StatisticValues': {'SampleCount': count, 'Sum': count, 'Minimum': count, 'Maximum': count},
                     'StorageResolution': 60
                 },
             ]

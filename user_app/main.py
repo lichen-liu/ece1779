@@ -16,6 +16,7 @@ aws_api=aws_api_helper.get_api()
 def do_something_whenever_a_request_comes_in():
     global http_request_counter 
     http_request_counter = 1 + http_request_counter
+    print(http_request_counter)
     aws_api.put_http_request_count(http_request_counter)
 
 
