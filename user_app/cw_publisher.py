@@ -16,8 +16,8 @@ def get_ec2_instance_id():
 
 
 def put_http_request_count(count, ec2_instance_id):
-    print('count', count)
-    print('instance_id', ec2_instance_id)
+    # print('count', count)
+    # print('instance_id', ec2_instance_id)
     _response = boto3.client('cloudwatch').put_metric_data(
         Namespace='ece1779/EC2',
         MetricData=[
@@ -31,12 +31,6 @@ def put_http_request_count(count, ec2_instance_id):
                 ],
                 'Timestamp': datetime.now(),
                 'Value': count,
-                # 'StatisticValues': {
-                #     'SampleCount':1,
-                #     'Sum': count,
-                #     'Minimum': count,
-                #     'Maximum': count
-                # },
                 'Unit': 'Count',
                 'StorageResolution': 60
             },
