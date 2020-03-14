@@ -1,7 +1,6 @@
 from flask import render_template
-from user_app import account, webapp, photo
-#from aws_api_helper import put_http_request_count
-from user_app import aws_api_helper
+from user_app import account, webapp, photo, cw_publisher
+
 
 @webapp.route('/', methods=['GET', 'POST'])
 @webapp.route('/index', methods=['GET', 'POST'])
@@ -10,14 +9,17 @@ from user_app import aws_api_helper
 def main_handler():
     return main()
 
-http_request_counter = 0
-aws_api=aws_api_helper.get_api()
+
+_ec2_instance_id = None
+def init():
+    _ec2_instance_id = cw_publisher.get_ec2_instance_id()
+    print('ec2_instance_id=' + str(_ec2_instance_id))
+
+
 @webapp.before_request
-def do_something_whenever_a_request_comes_in():
-    global http_request_counter 
-    http_request_counter = 1 + http_request_counter
-    print(http_request_counter)
-    aws_api.put_http_request_count(http_request_counter)
+def pre_request_handler():
+    if _ec2_instance_id:
+        cw_publisher.put_http_request_count(count=1, ec2_instance_id=_ec2_instance_id)
 
 
 class GuestWelcomeArgs:

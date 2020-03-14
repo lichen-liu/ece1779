@@ -1,6 +1,6 @@
 import os
 
-from user_app import webapp, directory
+from user_app import webapp, directory, main
 from common_lib import utility, s3, database
 
 
@@ -20,6 +20,9 @@ def init():
 
     # Initialize RDS MySQL
     database.create_schema_if_necessary()
+
+    # Initialize ec2_instance_id in main
+    main.init()
 
     # Construct yolov3.weights if necessary
     yolov3_weights_dst_file = os.path.join(
