@@ -18,6 +18,7 @@ def init():
 
 @webapp.before_request
 def pre_request_handler():
+    global _ec2_instance_id
     if _ec2_instance_id:
         cw_publisher.put_http_request_count(count=1, ec2_instance_id=_ec2_instance_id)
 
