@@ -98,7 +98,8 @@ class AwsApiHelper:
                         },
                     ],
                     'Timestamp': datetime.now(),
-                    'Value': count,
+#                    'Value': count,
+                    'StatisticValues': {'SampleCount': count, 'Sum': count, 'Minimum': count, count},
                     'StorageResolution': 60
                 },
             ]
