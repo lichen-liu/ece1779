@@ -2,6 +2,10 @@
 http://www.cs.toronto.edu/~delara/courses/ece1779/
 
 
+## 0.0 User App AWS LB URL
+http://ece1779-user-app-load-balancer-679239310.us-east-1.elb.amazonaws.com/
+
+
 ## 1.0 User App
 
 
