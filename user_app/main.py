@@ -1,5 +1,6 @@
 from flask import render_template
-from user_app import account, webapp, photo, cw_publisher
+from user_app import account, webapp, photo
+from common_lib import cw_publisher
 
 
 @webapp.route('/', methods=['GET', 'POST'])
