@@ -38,9 +38,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 <script type="text/javascript">
 
+    var oldLineChart;
+
     function drawLineChart(canvas_id, data_points, datafield) {
+
+        if(oldLineChart){
+            oldLineChart.destroy()
+        }
+
         var canvas = document.getElementById(canvas_id);
         var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         var points = [];
         var labels = [];
 
@@ -74,6 +82,7 @@
 
         //canvas.style["height"] = "30%";
         //canvas.style["width"] = "100%";
+        return chart;
 
     };
 
@@ -119,7 +128,7 @@
     function GenerateGraph(metric, datafield){
         for (var id in data_points_for_ids) {
             if (data_points_for_ids.hasOwnProperty(id)) {           
-                drawLineChart(id, data_points_for_ids[id][metric], datafield);
+                oldLineChart = drawLineChart(id, data_points_for_ids[id][metric], datafield);
             }
         }
     }
