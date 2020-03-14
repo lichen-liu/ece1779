@@ -13,7 +13,7 @@ def render_manager_main_page():
 
     status_by_id = prepare_instance_status_info()
     return render_template('manager_main.html', 
-    instances_data_points = prepare_cpu_utilization_info(), 
+    instances_data_points = prepare_metrics_datapoints(), 
     instance_status_by_id = status_by_id,
     instance_status_text_color = {'healthy':'green', 'unhealthy':'red', 'draining': '#00BFFF', 
     'initial' : '#CCCC00', 'unused' : '#CCCCCC'},
@@ -67,14 +67,31 @@ def stop_all_handler():
     return redirect('/')
 
 
-def prepare_cpu_utilization_info():
+def prepare_metrics_datapoints():
+    '''
+    datapoint[instance_id]['CPUUtilization'|'HttpRequestCount'][Datapoints Idx]
+    '''
     helper = pool_monitor_helper.get_monitor_helper()
-    unordered_utilization_info = helper.get_cpu_utilization_for_registered_instances()
-    for instance_id in unordered_utilization_info:
-        unordered_utilization_info[instance_id].sort(key = lambda datapoint : datapoint['Timestamp'])
-        for datapoint in unordered_utilization_info[instance_id]:
-            datapoint['Timestamp'] = datapoint['Timestamp'].strftime("%H:%M")
-    return unordered_utilization_info
+    
+    cpu_utilization_info = helper.get_cpu_utilization_for_registered_instances()
+    http_request_count_info = helper.get_http_request_count_for_registered_instances()
+    
+    unified_info = dict()
+
+    # Combine two metrics into one
+    for instance_id in cpu_utilization_info:
+        unified_info.setdefault(instance_id, dict())['CPUUtilization'] = cpu_utilization_info[instance_id]
+    for instance_id in http_request_count_info:
+        unified_info.setdefault(instance_id, dict())['HttpRequestCount'] = http_request_count_info[instance_id]
+    
+    # Process the datapoints
+    for instance_id in unified_info:
+        for metrics in unified_info[instance_id]:
+            unified_info[instance_id][metrics].sort(key = lambda datapoint : datapoint['Timestamp'])
+            for datapoint in unified_info[instance_id][metrics]:
+                datapoint['Timestamp'] = datapoint['Timestamp'].strftime("%H:%M")
+
+    return unified_info
 
 def prepare_instance_status_info():
     pool = ec2_pool.get_worker_pool()

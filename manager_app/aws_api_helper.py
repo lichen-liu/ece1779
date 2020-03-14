@@ -67,7 +67,7 @@ class AwsApiHelper:
             Targets = target_ids)
 
     def get_average_cpu_utilization(self, dimensions, sample_num = 30):
-        endTime = datetime.now() + timedelta(seconds = 60)
+        endTime = datetime.utcnow() + timedelta(seconds = 60) # why shifting the entire dataset forward by 60 seconds?
         startTime = endTime - timedelta(seconds = 60 * sample_num)
         return self._cw_client.get_metric_statistics(
                     Namespace='AWS/EC2',
@@ -81,6 +81,23 @@ class AwsApiHelper:
                     ],
                     Unit='Percent'
                 )
+    
+    def get_http_request_per_minute_count(self, dimensions, sample_num = 30):
+        endTime = datetime.utcnow() + timedelta(seconds = 60) # why shifting the entire dataset forward by 60 seconds?
+        startTime = endTime - timedelta(seconds = 60 * sample_num)
+        return self._cw_client.get_metric_statistics(
+                    Namespace='ece1779/EC2',
+                    MetricName='HttpRequestCount',
+                    Dimensions=dimensions,
+                    StartTime= startTime,
+                    EndTime= endTime,
+                    Period=60,
+                    Statistics=[
+                        'Sum',
+                    ],
+                    Unit='Count'
+                )
+
 api = AwsApiHelper()
 def get_api():
     return api

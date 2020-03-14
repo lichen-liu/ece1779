@@ -38,14 +38,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 <script type="text/javascript">
 
-    function drawLineChart(canvas_id, data_points) {
+    function drawLineChart(canvas_id, data_points, datafield) {
         var canvas = document.getElementById(canvas_id);
         var ctx = canvas.getContext("2d");
         var points = [];
         var labels = [];
 
         Array.prototype.forEach.call(data_points, data_point => {
-            points.push(data_point['Average'])
+            points.push(data_point[datafield])
             labels.push(data_point['Timestamp'])
         });
        
@@ -102,27 +102,35 @@
     }
 </script>
 
-<body class = 'body' onload="GenerateGraph()">
+<body class = 'body' onload="GenerateGraphCPUUtilization()">
 
     <script type=text/javascript>
     function ChangeStatusDisplayType(event) {
         switch (event.target.value) {
             case "CPU Utilization":
-            GenerateGraph()
+            GenerateGraphCPUUtilization()
             break;
             case "Http Request Rate":
-            GenerateGraph()
+            GenerateGraphHttpRequestCount()
             break;
         };
     }
 
-    function GenerateGraph(){
+    function GenerateGraph(metric, datafield){
         for (var id in data_points_for_ids) {
-                if (data_points_for_ids.hasOwnProperty(id)) {           
-                    drawLineChart(id, data_points_for_ids[id]);
-                }
+            if (data_points_for_ids.hasOwnProperty(id)) {           
+                drawLineChart(id, data_points_for_ids[id][metric], datafield);
             }
         }
+    }
+
+    function GenerateGraphCPUUtilization() {
+        GenerateGraph("CPUUtilization", "Average")
+    }
+
+    function GenerateGraphHttpRequestCount() {
+        GenerateGraph("HttpRequestCount", "Sum")
+    }
     </script>
 
 
@@ -245,25 +253,41 @@
                     <div style="color:white">Auto Scaler Controller</div>
                 </div>
                 <form action='api/change_auto_scaler_strategy' class="auto_scaler_control_panel_form" method="POST">
-                    <font color='white'>Scale Up Threshold</font>
+                    <font color='white'>
+                        <span title='The auto scaler will scale up if average CPU Utialization is greater than this value'>
+                            Pool Scale Up CPU Utilization Threshold
+                        </span>
+                    </font>
                     <br>
                     <input class="range_input" id = "max_threshold_id" type="range" name="max_threshold" min="0" max="1" step="0.05"
                         value='{{scaler_default_settings["max_threshold"]}}' onchange="showConfirmationHint()" oninput="max_threshold_text.value=max_threshold_id.value; disableCountdownRefresh();">
                     <output width="10%" id="max_threshold_text" name="amount" for="rangeInput"><font color='white'>{{scaler_default_settings["max_threshold"]}}</font></output>
                     <br>
-                    <font color='white'>Scale Down Threshold</font>
+                    <font color='white'>
+                        <span title='The auto scaler will scale down if average CPU Utialization is less than this value'>
+                            Pool Scale Down CPU Utilization Threshold
+                        </span>
+                    </font>
                     <br>
                     <input class="range_input" id = "min_threshold_id" type="range" name="min_threshold" min="0" max="1" step="0.05"
                         value='{{scaler_default_settings["min_threshold"]}}' onchange="showConfirmationHint()" oninput="min_threshold_text.value=min_threshold_id.value; disableCountdownRefresh();">
                     <output id="min_threshold_text" name="amount" for="rangeInput"><font color='white'>{{scaler_default_settings["min_threshold"]}}</font></output>
                     <br>
-                    <font color='white'>Growing Ratio</font>
+                    <font color='white'>
+                        <span>
+                            Pool Growing Ratio
+                        </span>
+                    </font>
                     <br>
                     <input class="range_input" id = "growing_ratio_id" type="range" name="growing_ratio" min="0" max="10" step = "0.01"
                         value='{{scaler_default_settings["growing_ratio"]}}' onchange="showConfirmationHint()" oninput="growing_ratio_text.value=growing_ratio_id.value; disableCountdownRefresh();">
                     <output id="growing_ratio_text" name="amount" for="rangeInput"><font color='white'>{{scaler_default_settings["growing_ratio"]}}</font></output>
                     <br>
-                    <font color='white'>Shrinking Ratio</font>
+                    <font color='white'>
+                        <span>
+                            Pool Shrinking Ratio
+                        </span>
+                    </font>
                     <br>
                     <input class="range_input" id = "shrinking_ratio_id" type="range" name="shrinking_ratio" min="0" max="1" step = "0.01"
                         value='{{scaler_default_settings["shrinking_ratio"]}}' onchange="showConfirmationHint()" oninput="shrinking_ratio_text.value=shrinking_ratio_id.value; disableCountdownRefresh();">
