@@ -1,5 +1,6 @@
 from flask import render_template
 from user_app import account, webapp, photo
+from aws_api_helper import put_http_request_count
 
 
 @webapp.route('/', methods=['GET', 'POST'])
@@ -8,6 +9,11 @@ from user_app import account, webapp, photo
 # Display an HTML page with links
 def main_handler():
     return main()
+
+
+@webapp.before_request
+def do_something_whenever_a_request_comes_in():
+    put_http_request_count(1)
 
 
 class GuestWelcomeArgs:
