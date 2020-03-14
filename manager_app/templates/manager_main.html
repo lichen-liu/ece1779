@@ -38,7 +38,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 <script type="text/javascript">
 
-    var oldLineChart;
+    var oldLineCharts = {};
     
     function prepareDataFeedForLineChart(data_points, data_field){
 
@@ -85,16 +85,11 @@
         return options;
     }
 
-    function drawLineChart(canvas_id, data, options) {
-
-        if(oldLineChart){
-            oldLineChart.destroy()
-        }
+    function drawLineChart(canvas_id, data, options) {    
 
         var canvas = document.getElementById(canvas_id);
         var ctx = canvas.getContext("2d");
         var chart = new Chart(ctx).Line(data, options);
-        var parent = document.getElementById(canvas_id).parentNode.parentElement;
 
         return chart;
     };
@@ -142,8 +137,11 @@
         for (var id in data_points_for_ids) {
             if (data_points_for_ids.hasOwnProperty(id)) {   
                 var data = prepareDataFeedForLineChart(data_points_for_ids[id][metric], datafield) 
-                var options = prepareLineChartOption(metric)       
-                oldLineChart = drawLineChart(id, data, options);
+                var options = prepareLineChartOption(metric)   
+                if(oldLineCharts.hasOwnProperty(id)){
+                    oldLineCharts[id].destroy();  
+                }
+                oldLineCharts[id] = drawLineChart(id, data, options);
             }
         }
     }
