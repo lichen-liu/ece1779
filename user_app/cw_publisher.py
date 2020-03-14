@@ -32,6 +32,7 @@ def put_http_request_count(count, ec2_instance_id):
                 'Timestamp': datetime.now(),
                 'Value': count,
 #                    'StatisticValues': {'SampleCount': count, 'Sum': count, 'Minimum': count, 'Maximum': count},
+                'Unit': 'Count',
                 'StorageResolution': 60
             },
         ]
