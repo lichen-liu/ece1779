@@ -1,8 +1,7 @@
 from flask import render_template, redirect, request
 from manager_app import webapp, ec2_pool, pool_monitor_helper, worker_count_monitor, auto_scaler, manager_shutdown_helper, auto_scaler_state_manager
 from datetime import datetime
-import helper
-from common_lib import database, s3, utility
+from common_lib import database, s3, utility, combined_aws
 import urllib
 
 @webapp.route('/', methods=['GET','POST'])
@@ -52,12 +51,12 @@ def get_worker_count_graph_handler():
 
 @webapp.route('/api/delete_all_user_storage', methods=['POST'])
 def delete_all_user_storage():
-    helper.reset_data()
+    combined_aws.delete_all_photos_from_s3_and_database()
     return redirect('/')
 
 @webapp.route('/api/delete_everything', methods=['POST'])
 def delete_everything():
-    helper.reset_all()
+    combined_aws.delete_everything_from_s3_and_database()
     return redirect('/')
 
 @webapp.route('/api/stop_all', methods=['POST'])

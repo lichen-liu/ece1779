@@ -53,13 +53,6 @@ tmux ls
 ```
 
 
-### 1.3 Helper Script
-Use this script to check and manage S3 and RDS content.
-```
-python helper.py
-```
-
-
 ## 2.0 Manager App
 
 
