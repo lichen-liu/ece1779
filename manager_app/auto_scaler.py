@@ -107,13 +107,13 @@ class AutoScaler:
         self._next_pool_size = downsized_count
 
     def _is_operation_finished_or_timeout(self):
+        if(self._operation_timestamp + self._resizing_timeout < datetime.now()):
+            return True
         if(self._pool_monitor_helper.get_number_of_running_workers_in_pool() == self._next_pool_size):
             # This allows the incoming requests to be received by latest pool
             time.sleep(self._cooldown_period)
             return True
-        if(self._operation_timestamp + self._resizing_timeout < datetime.now()):
-            return True
-
+       
         return False
 
     def update_timestamp(self):
