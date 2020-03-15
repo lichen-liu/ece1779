@@ -111,7 +111,7 @@ class AutoScaler:
             # This allows the incoming requests to be received by latest pool
             time.sleep(self._cooldown_period)
             return True
-        if(self._operation_timestamp + self._minimum_operation_cooldown < datetime.now()):
+        if(self._operation_timestamp + self._resizing_timeout < datetime.now()):
             return True
 
         return False
