@@ -39,48 +39,46 @@ def table_s3_filesystem_handler():
 
 @webapp.route('/api/table/user_details', methods=['GET'])
 def table_user_details_handler():
-    account_table = database.get_account_table()
+    # {account_id: dict(key='username', 'num_photos', 'num_photos_files', 'photos_size', 'num_rectangles_files', 'rectangles_size', 'num_thumbnails_files', 'thumbnails_size')}
+    user_details_dict = {row[0]: 
+        {'username':row[1], 'num_photos_files':0, 'photos_size':0, 'num_rectangles_files':0, 'rectangles_size':0, 'num_thumbnails_files':0, 'thumbnails_size':0, 'num_photos':0} 
+        for row in database.get_account_table()}
+    for photo_table_row in database.get_photo_table():
+        photo_id, account_id, photo_name = photo_table_row
+        saved_file_name = str(photo_id) + utility.get_file_extension(photo_name)
+
+        user_entry = user_details_dict[account_id]
+
+        photo_size, _, photo_num_file = s3.get_bucket_content_size(key=s3.PHOTOS_DIR + saved_file_name)
+        if photo_num_file == 1:
+            user_entry['num_photos_files'] += 1
+            user_entry['photos_size'] += photo_size
+
+        rectangle_size, _, rectangle_num_file = s3.get_bucket_content_size(key=s3.RECTANGLES_DIR + saved_file_name)
+        if rectangle_num_file == 1:
+            user_entry['num_rectangles_files'] += 1
+            user_entry['rectangles_size'] += rectangle_size
+
+        thumbnail_size, _, thumbnail_num_file = s3.get_bucket_content_size(key=s3.THUMBNAILS_DIR + saved_file_name)
+        if thumbnail_num_file == 1:
+            user_entry['num_thumbnails_files'] += 1
+            user_entry['thumbnails_size'] += thumbnail_size
+
+        user_entry['num_photos'] += 1
+
+    # 'account_id', 'username', 'num_photos', 'total_num_files', 'total_size', 'num_photos_files', 'photos_size', 'num_rectangles_files', 'rectangles_size', 'num_thumbnails_files', 'thumbnails_size'
     user_details_table = list()
-    
-    for account_table_row in account_table:
-        account_id, username, _, _ = account_table_row
-        account_id = str(account_id)
-        
-        account_photo_table = database.get_account_photo(account_id)
-        
-        account_photos_count = 0
-        account_photos_size = 0
-        account_rectangles_count = 0
-        account_rectangles_size = 0
-        account_thumbnails_count = 0
-        account_thumbnails_size = 0
-        
-        if account_photo_table:
-            for account_photo_table_row in account_photo_table:
-                photo_id, photo_name = account_photo_table_row
-                saved_file_name = str(photo_id) + utility.get_file_extension(photo_name)
+    for user_details_dict_row in user_details_dict.items():
+        account_id, user_entry = user_details_dict_row
 
-                if s3.is_object_existed(key=s3.PHOTOS_DIR + saved_file_name):
-                    account_photos_count += 1
-                    account_photos_size += s3.get_bucket_content_size(key=s3.PHOTOS_DIR + saved_file_name)[0]
+        total_num_files = user_entry['num_photos_files'] + user_entry['num_rectangles_files'] + user_entry['num_thumbnails_files']
+        total_size = user_entry['photos_size'] + user_entry['rectangles_size'] + user_entry['thumbnails_size']
 
-                if s3.is_object_existed(key=s3.RECTANGLES_DIR + saved_file_name):
-                    account_rectangles_count += 1
-                    account_rectangles_size += s3.get_bucket_content_size(key=s3.RECTANGLES_DIR + saved_file_name)[0]
-
-                if s3.is_object_existed(key=s3.THUMBNAILS_DIR + saved_file_name):
-                    account_thumbnails_count += 1
-                    account_thumbnails_size += s3.get_bucket_content_size(key=s3.THUMBNAILS_DIR + saved_file_name)[0]
-
-        account_total_count = account_photos_count + account_rectangles_count + account_thumbnails_count
-        account_total_size = account_photos_size + account_rectangles_size + account_thumbnails_size
-
-        user_details_table.append(
-            (account_id, username, 
-            len(account_photo_table) if account_photo_table else 0, account_total_count, utility.convert_bytes_to_human_readable(account_total_size),
-            account_photos_count, utility.convert_bytes_to_human_readable(account_photos_size),
-            account_rectangles_count, utility.convert_bytes_to_human_readable(account_rectangles_size),
-            account_thumbnails_count, utility.convert_bytes_to_human_readable(account_thumbnails_size)))
+        user_details_table.append((str(account_id), user_entry['username'], 
+            user_entry['num_photos'], total_num_files, utility.convert_bytes_to_human_readable(total_size),
+            user_entry['num_photos_files'], utility.convert_bytes_to_human_readable(user_entry['photos_size']),
+            user_entry['num_rectangles_files'], utility.convert_bytes_to_human_readable(user_entry['rectangles_size']),
+            user_entry['num_thumbnails_files'], utility.convert_bytes_to_human_readable(user_entry['thumbnails_size'])))
     
     title_rows = ('account_id', 'username', 
         'num_photos', 'total_num_files', 'total_size',
