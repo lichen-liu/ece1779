@@ -62,7 +62,6 @@ class AutoScaler:
             # if (averages[0] + averages[1]) / 2.0 < self._min_threshold:
             #     self.try_decrease_pool_size()
             if average > self._max_threshold:
-                :
                 self.try_increase_pool_size()
             if average < self._min_threshold:
                 self.try_decrease_pool_size()
