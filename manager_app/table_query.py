@@ -30,7 +30,7 @@ def table_s3_filesystem_handler():
     size_table = [(row[0], *s3.get_bucket_content_size(key=row[0])) for row in table]
 
     readable_table = [(row[0], utility.convert_bytes_to_human_readable(row[1]), row[2], row[3]) for row in size_table]
-    action_handler_assigner_row = (lambda item, _: url_for('table_s3_filesystem_handler', key=urllib.parse.quote(item)) if s3.is_path_s3_directory(item) else None, None, None, None)
+    action_handler_assigner_row = (lambda item, _: url_for('table_s3_filesystem_handler', key=item) if s3.is_path_s3_directory(item) else None, None, None, None)
     
     return render_table_page(title=path, 
         title_row=('key', 'size', 'num_directory', 'num_file'), action_handler_assigner_row=action_handler_assigner_row,
@@ -39,6 +39,10 @@ def table_s3_filesystem_handler():
 
 @webapp.route('/api/table/user_details', methods=['GET'])
 def table_user_details_handler():
+    description = request.args.get('description')
+    if description:
+        description = urllib.parse.unquote(description)
+
     # {userid: dict(key='username', 'num_photos', 'num_photos_files', 'photos_size', 'num_rectangles_files', 'rectangles_size', 'num_thumbnails_files', 'thumbnails_size')}
     user_details_dict = {row[0]: 
         {'username':row[1], 'num_photos_files':0, 'photos_size':0, 'num_rectangles_files':0, 'rectangles_size':0, 'num_thumbnails_files':0, 'thumbnails_size':0, 'num_photos':0} 
@@ -88,7 +92,7 @@ def table_user_details_handler():
         'num_thumbnails_files', 'thumbnails_size', 'Delete User Photo')
 
     ahs_userid = lambda item, _: url_for('table_ece1779_account_handler', find_key='id', find_value=item)
-    ahs_username = lambda item, _: url_for('table_ece1779_account_handler', find_key='username', find_value=urllib.parse.quote(item))
+    ahs_username = lambda item, _: url_for('table_ece1779_account_handler', find_key='username', find_value=item)
     ahs_num_photos = lambda item, row: url_for('table_ece1779_photo_handler', find_key='account_id', find_value=row[0])
     ahs_delete_user_photo = lambda _, row: url_for('table_delete_user_photos_handler', userid=row[0])
     action_handler_assigner_row=(ahs_userid, ahs_username, 
@@ -97,18 +101,22 @@ def table_user_details_handler():
         None, None,
         None, None, ahs_delete_user_photo)
     
-    return render_table_page(title='User Details', title_row=title_rows, action_handler_assigner_row=action_handler_assigner_row, table=user_details_table)
+    return render_table_page(title='User Details', title_row=title_rows, action_handler_assigner_row=action_handler_assigner_row, table=user_details_table, description=description)
 
 
 @webapp.route('/api/table/delete_user_photos', methods=['GET'])
 def table_delete_user_photos_handler():
     userid = request.args.get('userid')
     account_photo_table = database.get_account_photo(userid)
-    for account_photo_row in account_photo_table:
-        photo_id, photo_name = account_photo_row
-        combined_aws.delete_photo_from_s3_and_database(photo_id, photo_name)
-
-    return redirect('/api/table/user_details')
+    if account_photo_table:
+        for account_photo_row in account_photo_table:
+            photo_id, photo_name = account_photo_row
+            combined_aws.delete_photo_from_s3_and_database(photo_id, photo_name)
+        description='Successfully deleted all {} photos from userid <{}>!'.format(len(account_photo_table), userid)
+    else:
+        description='Userid <{}> does not have any photos!'.format(userid)
+    
+    return redirect(url_for('table_user_details_handler', description=description))
 
 
 def render_table_page(title, title_row, table, action_handler_assigner_row=None, description=None):
