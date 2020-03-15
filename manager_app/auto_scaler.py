@@ -17,7 +17,7 @@ class AutoScaler:
         # Allow resizing operation to take up to 2 mins 
         self._resizing_timeout = timedelta(seconds = 150) 
         self._next_pool_size = 0
-        self._cooldown_period = timedelta(seconds = 30)
+        self._cooldown_period = timedelta(seconds = 90)
         self._monitoring_interval = 10
         self._running_thread = threading.Thread(
             target=self.auto_scaling, daemon=True)
