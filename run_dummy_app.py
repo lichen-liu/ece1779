@@ -1,3 +1,4 @@
+#!venv/bin/python
 import dummy_app
 from dummy_app import webapp
 if __name__ == '__main__':
