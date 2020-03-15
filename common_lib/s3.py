@@ -79,19 +79,40 @@ def get_bucket_content_size(key, debug=False, bucket_name=BUCKET):
     :param key: Object to check. Does not support partial name
     :return: (size, num_directory, num_file, [object] if debug)
     '''
+    return get_bucket_content_size_batch(keys=[key], common_prefix=key, debug=debug, bucket_name=bucket_name)[key]
+
+
+def get_bucket_content_size_batch(keys, common_prefix, debug=False, bucket_name=BUCKET):
+    '''Get the size of a list of S3 bucket objects
+
+    :param bucket_name: Bucket to check
+    :param keys: Objects to check. Does not support partial name
+    :param common_prefix: The common_prefix for all keys
+    :return: {key: (size, num_directory, num_file, [object] if debug)}
+    '''
+    for key in keys:
+        assert key.find(common_prefix) == 0, 'key=' + key + ' is not started with common_prefix=' + common_prefix
     paginator = boto3.client('s3').get_paginator('list_objects_v2')
-    pages = paginator.paginate(Bucket=bucket_name, Prefix=key)
+    pages = paginator.paginate(Bucket=bucket_name, Prefix=common_prefix)
 
-    size = 0
-    l = list()
-    dir_count = 0
-    file_count = 0
+    # [{'Key': key, 'Size': size}]
+    cached_pages = list()
     for item in pages.search('Contents'):
-        if item is not None:
-            k = item['Key']
-            subkey = k[len(key):]
+        if item:
+            cached_pages.append({'Key': item['Key'], 'Size': item['Size']})
 
-            if len(subkey) == 0 or len(key) == 0 or (len(key) > 0 and key[-1] == '/'):
+    result = dict()
+    for key in keys:
+        size = 0
+        l = list()
+        dir_count = 0
+        file_count = 0
+        for item in cached_pages:
+            k = item['Key']
+            if k.find(key) != 0:
+                continue
+
+            if k == key or is_path_s3_directory(key):
                 size += item['Size']
 
                 if k[-1] == '/':
@@ -100,10 +121,12 @@ def get_bucket_content_size(key, debug=False, bucket_name=BUCKET):
                     file_count += 1
 
                 l.append(k)
-    if debug:
-        return (size, dir_count, file_count, l)
-    else:
-        return (size, dir_count, file_count)
+        if debug:
+            result[key]=(size, dir_count, file_count, l)
+        else:
+            result[key]=(size, dir_count, file_count)
+    
+    return result
 
 
 def is_object_existed(key, bucket_name=BUCKET):

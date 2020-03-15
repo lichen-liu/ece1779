@@ -23,15 +23,12 @@ def table_s3_filesystem_handler():
         request_key = s3.ROOT_DIR
     path=urllib.parse.unquote(request_key)
     
-    table = s3.list_bucket_content(directory=path, recursive=False)
-    # print(str(table))
-    # print(str(s3.get_bucket_content_size(key=path)))
+    content_list = [row[0] for row in s3.list_bucket_content(directory=path, recursive=False)]
+    size_table = s3.get_bucket_content_size_batch(keys=content_list, common_prefix=path)
 
-    size_table = [(row[0], *s3.get_bucket_content_size(key=row[0])) for row in table]
-
-    readable_table = [(row[0], utility.convert_bytes_to_human_readable(row[1]), row[2], row[3]) for row in size_table]
+    readable_table = [(row[0], utility.convert_bytes_to_human_readable(row[1][0]), row[1][1], row[1][2]) for row in size_table.items()]
     action_handler_assigner_row = (lambda item, _: url_for('table_s3_filesystem_handler', key=item) if s3.is_path_s3_directory(item) else None, None, None, None)
-    
+
     return render_table_page(title=path, 
         title_row=('key', 'size', 'num_directory', 'num_file'), action_handler_assigner_row=action_handler_assigner_row,
         table=readable_table, description='Total Size: ' + utility.convert_bytes_to_human_readable(s3.get_bucket_content_size(key=path)[0]))
