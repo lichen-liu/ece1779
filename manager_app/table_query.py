@@ -47,24 +47,29 @@ def table_user_details_handler():
     user_details_dict = {row[0]: 
         {'username':row[1], 'num_photos_files':0, 'photos_size':0, 'num_rectangles_files':0, 'rectangles_size':0, 'num_thumbnails_files':0, 'thumbnails_size':0, 'num_photos':0} 
         for row in database.get_account_table()}
+
+    s3_photos_list = {row[0]: row[1] for row in s3.list_bucket_content(directory=s3.PHOTOS_DIR, recursive=False)}
+    s3_rectangles_list = {row[0]: row[1] for row in s3.list_bucket_content(directory=s3.RECTANGLES_DIR, recursive=False)}
+    s3_thumbnails_list = {row[0]: row[1] for row in s3.list_bucket_content(directory=s3.THUMBNAILS_DIR, recursive=False)}
+
     for photo_table_row in database.get_photo_table():
         photo_id, userid, photo_name = photo_table_row
         saved_file_name = str(photo_id) + utility.get_file_extension(photo_name)
 
         user_entry = user_details_dict[userid]
 
-        photo_size, _, photo_num_file = s3.get_bucket_content_size(key=s3.PHOTOS_DIR + saved_file_name)
-        if photo_num_file == 1:
+        photo_size = s3_photos_list.get(s3.PHOTOS_DIR + saved_file_name)
+        if photo_size:
             user_entry['num_photos_files'] += 1
             user_entry['photos_size'] += photo_size
 
-        rectangle_size, _, rectangle_num_file = s3.get_bucket_content_size(key=s3.RECTANGLES_DIR + saved_file_name)
-        if rectangle_num_file == 1:
+        rectangle_size = s3_rectangles_list.get(s3.RECTANGLES_DIR + saved_file_name)
+        if rectangle_size:
             user_entry['num_rectangles_files'] += 1
             user_entry['rectangles_size'] += rectangle_size
 
-        thumbnail_size, _, thumbnail_num_file = s3.get_bucket_content_size(key=s3.THUMBNAILS_DIR + saved_file_name)
-        if thumbnail_num_file == 1:
+        thumbnail_size = s3_thumbnails_list.get(s3.THUMBNAILS_DIR + saved_file_name)
+        if thumbnail_size:
             user_entry['num_thumbnails_files'] += 1
             user_entry['thumbnails_size'] += thumbnail_size
 
