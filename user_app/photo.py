@@ -152,8 +152,8 @@ def display_photo_handler():
 
         result = database.get_photo(int(photo_id_str))
         if result:
-            user_id, photo_name = result
-            if user_id == account.account_get_logged_in_userid():
+            userid, photo_name = result
+            if userid == account.account_get_logged_in_userid():
                 saved_photo_file = photo_id_str + utility.get_file_extension(photo_name)
 
                 rectangled_photo_url = s3.get_object_url(key=s3.RECTANGLES_DIR + saved_photo_file)
