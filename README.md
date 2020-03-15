@@ -22,7 +22,7 @@ pip install cvlib
 pip install tensorflow
 pip install boto3
 
-python run_user_app_local.py
+python run_user_app.py
 ```
 
 Then set ~/.aws/credentials following this format:

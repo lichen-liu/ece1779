@@ -7,8 +7,8 @@
 
     function countdown() {
         setInterval(function () {
-            if(countDown == 0) {
-                if(isCountdownRefreshEnabled()) {
+            if (countDown == 0) {
+                if (isCountdownRefreshEnabled()) {
                     window.location.reload(1);
                     countDown = refresh_time
                 }
@@ -39,8 +39,8 @@
 <script type="text/javascript">
 
     var oldLineCharts = {};
-    
-    function prepareDataFeedForLineChart(data_points, data_field){
+
+    function prepareDataFeedForLineChart(data_points, data_field) {
 
         var points = [];
         var labels = [];
@@ -49,43 +49,43 @@
             points.push(data_point[data_field])
             labels.push(data_point['Timestamp'])
         });
-       
+
         return {
-                    labels: labels,
-                    datasets: [{
-                        fillColor: "rgba(220,220,220,0.5)",
-                        strokeColor: "rgba(220,220,220,1)",
-                        pointColor: "rgba(220,220,220,1)",
-                        pointStrokeColor: "#fff",
-                        data: points
-                    }]
-                }
+            labels: labels,
+            datasets: [{
+                fillColor: "rgba(220,220,220,0.5)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                data: points
+            }]
+        }
 
     }
 
-    function prepareLineChartOption(graph_type){
-        switch (graph_type){
+    function prepareLineChartOption(graph_type) {
+        switch (graph_type) {
             case "CPUUtilization":
                 options = {
                     responsive: false,
                     maintainAspectRatio: false,
-                    scaleOverride : true,
-                    scaleSteps : 10,
-                    scaleStepWidth : 10,
-                    scaleStartValue : 0
+                    scaleOverride: true,
+                    scaleSteps: 10,
+                    scaleStepWidth: 10,
+                    scaleStartValue: 0
                 }
-            break;
+                break;
             case "HttpRequestCount":
                 options = {
                     responsive: false,
                     maintainAspectRatio: false,
                 }
-            break;
+                break;
         }
         return options;
     }
 
-    function drawLineChart(canvas_id, data, options) {    
+    function drawLineChart(canvas_id, data, options) {
 
         var canvas = document.getElementById(canvas_id);
         var ctx = canvas.getContext("2d");
@@ -95,16 +95,18 @@
     };
 
     function drawPieChart(status_count) {
-        var colors = {'unhealthy' : '#32CD32', 'healthy' : '#32CD32', 'draining' : '#00BFFF' , 'initial' : '#CCCC00',
-        'unused' : '#AAAAAA'}
+        var colors = {
+            'unhealthy': '#ff0000', 'healthy': '#32CD32', 'draining': '#00BFFF', 'initial': '#CCCC00',
+            'unused': '#AAAAAA'
+        }
         var canvas = document.getElementById('pool_monitor_chart')
-        
+
         var ctx = canvas.getContext("2d");
 
         var data = [];
 
-        Object.keys(status_count).forEach(function(status_type, count){
-            data.push({value : status_count[status_type], label : status_type, color : colors[status_type]})
+        Object.keys(status_count).forEach(function (status_type, count) {
+            data.push({ value: status_count[status_type], label: status_type, color: colors[status_type] })
         })
         var myPieChart = new Chart(ctx).Pie(data);
 
@@ -112,14 +114,14 @@
         canvas.style["width"] = "auto";
     };
 
-    function showConfirmationHint(){
+    function showConfirmationHint() {
         confirm_button = document.getElementById('auto_scaler_confirm_button');
         confirm_button.value = 'Click To Save Changes'
-       // confirm_button.style
+        // confirm_button.style
     }
 </script>
 
-<body class = 'body' onload="GenerateGraphCPUUtilization()">
+<body class='body' onload="GenerateGraphCPUUtilization()">
 
     <script type=text/javascript>
     function ChangeStatusDisplayType(event) {
@@ -156,174 +158,195 @@
     </script>
 
 
-        <div class='website_header'>
+    <div class='website_header'>
 
 
-                <div class= 'header_auto_refresher' onload="countdown()">
-                        This page will be refreshed automatically after <span id='refresh_countdown'></span> seconds. 
-                        <input type="checkbox" id="countdown_refresh_enable" checked>
-                        <label for="countdown_refresh_enable"> Allow Refresh</label>
-                </div>
-                <div class='header_dns_title'>
-                        Load Balancer Url: 
-                </div>
-            <a class= 'header_user_app_dns' href={{'http://' + dns_name}} target="_blank">{{dns_name}}</a>
-
-            <script>
-                document.getElementById('refresh_countdown').innerHTML = countDown;
-                countdown();
-            </script>
-       
-            
+        <div class='header_auto_refresher' onload="countdown()">
+            This page will be refreshed automatically after <span id='refresh_countdown'></span> seconds.
+            <input type="checkbox" id="countdown_refresh_enable" checked>
+            <label for="countdown_refresh_enable"> Allow Refresh</label>
         </div>
+        <div class='header_dns_title'>
+            Load Balancer Url:
+        </div>
+        <a class='header_user_app_dns' href={{'http://' + dns_name}} target="_blank">{{dns_name}}</a>
 
-        <div id = 'charts' class = 'charts' >
-            <div class = 'charts_control'>
-                    <div  class="charts_control_title" style="color:#bbbbbb">EC2 Instances Status</div>
-                    <select class="charts_control_select_status_type" onchange="ChangeStatusDisplayType(event)">
-                            <option>CPU Utilization</option> 
-                            <option>Http Request Rate</option> 
-                        </select>
-            </div>
-            <script>
-                var data_points_for_ids = {{instances_data_points | tojson | safe}};
-            </script>
-            <div class = "charts_content">
+        <script>
+            document.getElementById('refresh_countdown').innerHTML = countDown;
+            countdown();
+        </script>
+
+
+    </div>
+
+    <div id='charts' class='charts'>
+        <div class='charts_control'>
+            <div class="charts_control_title" style="color:#bbbbbb">EC2 Instances Status</div>
+            <select class="charts_control_select_status_type" onchange="ChangeStatusDisplayType(event)">
+                <option>CPU Utilization</option>
+                <option>Http Request Rate</option>
+            </select>
+        </div>
+        <script>
+            var data_points_for_ids = {{ instances_data_points | tojson | safe}};
+        </script>
+        <div class="charts_content">
             {% for instance_id in instances_data_points %}
-                <div class = 'instance_canvas_title'>
-                    <div style="color:#bbbbbb">{{instance_id}}, <font color="{{instance_status_text_color[instance_status_by_id[instance_id]]}}">{{instance_status_by_id[instance_id]}}</font> </div>
+            <div class='instance_canvas_title'>
+                <div style="color:#bbbbbb">{{instance_id}}, <font
+                        color="{{instance_status_text_color[instance_status_by_id[instance_id]]}}">
+                        {{instance_status_by_id[instance_id]}}</font>
                 </div>
-                <canvas id='{{instance_id}}' class='charts_canvas'></canvas>
-            {% endfor %}
             </div>
+            <canvas id='{{instance_id}}' class='charts_canvas'></canvas>
+            {% endfor %}
         </div>
+    </div>
 
-        <div id = 'control_panel' class = 'control_panel'>
-            <div class = 'control_panel_pool_monitor_chart'>
-                <div class = 'control_panel_pool_monitor_chart_title'>
-                    <div style="color:white">Load Balancer Pool Status</div>
-                </div>
-                <canvas id = 'pool_monitor_chart' class = 'control_panel_pool_monitor_chart_canvas'></canvas>
-                <script type=text/javascript>
+    <div id='control_panel' class='control_panel'>
+        <div class='control_panel_pool_monitor_chart'>
+            <div class='control_panel_pool_monitor_chart_title'>
+                <div style="color:white">Load Balancer Pool Status</div>
+            </div>
+            <canvas id='pool_monitor_chart' class='control_panel_pool_monitor_chart_canvas'></canvas>
+            <script type=text/javascript>
                     var status_counts = {{instances_status_counts | tojson | safe}};
                     drawPieChart(status_counts);
                 </script>
-            </div>
-
-            <div class= 'control_panel_action_control'>
-                <form action='/api/increase_pool' class = 'load_balancer_control_form' method="POST" width="200">
-                    <input class = 'load_balancer_control_button green' type="submit" value="Increase worker pool ">
-    
-                </form>
-                <form action='/api/decrease_pool' class = 'load_balancer_control_form' method="POST" width="200">
-                    <input class = 'load_balancer_control_button green' type="submit" value="Decrease worker pool">
-                </form>
-                <form action='/api/get_work_count_graph' class = 'load_balancer_control_form' method="POST" width="200">
-                    <input class = 'load_balancer_control_button purple' type="submit" value="View worker-count graph">
-                </form>
-            </div>  
-        </div>
-        
-        <div class = 'ec2_app_control'>
-            <div  class="ec2_app_control_title" style="color:white">EC2 App Control, Access, and View</div>
-            <div class= 'ec2_storage_action_control'>
-
-                <form action='/api/delete_all_user_storage' class = 'load_balancer_control_form' method="POST" width="200">
-                    <input class = 'load_balancer_control_button orange' type="submit" value="Delete All User Storage"
-                        onclick="return confirm('Do you want to delete all user storage?')">
-                </form>
-
-                <form action='/api/delete_everything' class = 'load_balancer_control_form' method="POST" width="200">
-                    <input class = 'load_balancer_control_button red' type="submit" value="Delete Everything"
-                        onclick="return confirm('Do you want to delete everything, including all user storage and all user accounts?')">
-                </form>
-
-                <form action='/api/stop_all' class = 'load_balancer_control_form' method="POST" width="200">
-                    <input class = 'load_balancer_control_button gold' type="submit" value="Stop All Workers and Manager"
-                        onclick="return confirm('Do you want to stop all workers and manager?')">
-                </form>
-            </div>
-            <div>
-                {% set quote_function, ece1779_account_num_rows, ece1779_photo_num_rows, s3_path, s3_path_size, s3_path_num_files, s3_path_num_directories = rds_s3_stats %}
-                <table class='rds_s3_stats_table'>
-                    <tr>
-                        <td>
-                            <a href={{ url_for('table_user_details_handler') }} onclick="disableCountdownRefresh()">ece1779.account</a>
-                        </td>
-                        <td>
-                            <a href={{ url_for('table_ece1779_account_handler') }} onclick="disableCountdownRefresh();">{{ece1779_account_num_rows}} rows</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>ece1779.photo</td>
-                        <td>
-                            <a href={{ url_for('table_ece1779_photo_handler') }} onclick="disableCountdownRefresh();">{{ece1779_photo_num_rows}} rows</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>{{s3_path}}</td>
-                        <td>
-                            <a href={{ url_for('table_s3_filesystem_handler', key=quote_function(s3_path)) }} onclick="disableCountdownRefresh();">{{s3_path_size}} ({{s3_path_num_files}} files, {{s3_path_num_directories}} dirs)</a>
-                        </td>
-                    </tr>
-                </table>
-            </div>
         </div>
 
-        <div class='auto_scaler_control_panel'>
-                <div class = 'control_panel_pool_monitor_chart_title'>
-                    <div style="color:white">Auto Scaler Controller</div>
-                </div>
-                <form action='api/change_auto_scaler_strategy' class="auto_scaler_control_panel_form" method="POST">
-                    <font color='white'>
-                        <span title='The auto scaler will scale up if average CPU Utialization is greater than this value'>
-                            Pool Scale Up CPU Utilization Threshold
-                        </span>
-                    </font>
-                    <br>
-                    <input class="range_input" id = "max_threshold_id" type="range" name="max_threshold" min="0" max="1" step="0.05"
-                        value='{{scaler_default_settings["max_threshold"]}}' onchange="showConfirmationHint()" oninput="max_threshold_text.value=max_threshold_id.value; disableCountdownRefresh();">
-                    <output width="10%" id="max_threshold_text" name="amount" for="rangeInput"><font color='white'>{{scaler_default_settings["max_threshold"]}}</font></output>
-                    <br>
-                    <font color='white'>
-                        <span title='The auto scaler will scale down if average CPU Utialization is less than this value'>
-                            Pool Scale Down CPU Utilization Threshold
-                        </span>
-                    </font>
-                    <br>
-                    <input class="range_input" id = "min_threshold_id" type="range" name="min_threshold" min="0" max="1" step="0.05"
-                        value='{{scaler_default_settings["min_threshold"]}}' onchange="showConfirmationHint()" oninput="min_threshold_text.value=min_threshold_id.value; disableCountdownRefresh();">
-                    <output id="min_threshold_text" name="amount" for="rangeInput"><font color='white'>{{scaler_default_settings["min_threshold"]}}</font></output>
-                    <br>
-                    <font color='white'>
-                        <span>
-                            Pool Growing Ratio
-                        </span>
-                    </font>
-                    <br>
-                    <input class="range_input" id = "growing_ratio_id" type="range" name="growing_ratio" min="0" max="10" step = "0.01"
-                        value='{{scaler_default_settings["growing_ratio"]}}' onchange="showConfirmationHint()" oninput="growing_ratio_text.value=growing_ratio_id.value; disableCountdownRefresh();">
-                    <output id="growing_ratio_text" name="amount" for="rangeInput"><font color='white'>{{scaler_default_settings["growing_ratio"]}}</font></output>
-                    <br>
-                    <font color='white'>
-                        <span>
-                            Pool Shrinking Ratio
-                        </span>
-                    </font>
-                    <br>
-                    <input class="range_input" id = "shrinking_ratio_id" type="range" name="shrinking_ratio" min="0" max="1" step = "0.01"
-                        value='{{scaler_default_settings["shrinking_ratio"]}}' onchange="showConfirmationHint()" oninput="shrinking_ratio_text.value=shrinking_ratio_id.value; disableCountdownRefresh();">
-                    <output id="shrinking_ratio_text" name="amount" for="rangeInput"><font color='white'>{{scaler_default_settings["shrinking_ratio"]}}</font></output>
-                    <br>
-                    <input id="auto_scaler_confirm_button" class="load_balancer_control_button blue" type="submit" value="Confirm">
-                </form>
+        <div class='control_panel_action_control'>
+            <form action='/api/increase_pool' class='load_balancer_control_form' method="POST" width="200">
+                <input class='load_balancer_control_button green' type="submit" value="Increase worker pool ">
+
+            </form>
+            <form action='/api/decrease_pool' class='load_balancer_control_form' method="POST" width="200">
+                <input class='load_balancer_control_button green' type="submit" value="Decrease worker pool">
+            </form>
+            <form action='/api/get_work_count_graph' class='load_balancer_control_form' method="POST" width="200">
+                <input class='load_balancer_control_button purple' type="submit" value="View worker-count graph">
+            </form>
         </div>
-    
+    </div>
+
+    <div class='ec2_app_control'>
+        <div class="ec2_app_control_title" style="color:white">EC2 App Control, Access, and View</div>
+        <div class='ec2_storage_action_control'>
+
+            <form action='/api/delete_all_user_storage' class='load_balancer_control_form' method="POST" width="200">
+                <input class='load_balancer_control_button orange' type="submit" value="Delete All User Storage"
+                    onclick="return confirm('Do you want to delete all user storage?')">
+            </form>
+
+            <form action='/api/delete_everything' class='load_balancer_control_form' method="POST" width="200">
+                <input class='load_balancer_control_button red' type="submit" value="Delete Everything"
+                    onclick="return confirm('Do you want to delete everything, including all user storage and all user accounts?')">
+            </form>
+
+            <form action='/api/stop_all' class='load_balancer_control_form' method="POST" width="200">
+                <input class='load_balancer_control_button gold' type="submit" value="Stop All Workers and Manager"
+                    onclick="return confirm('Do you want to stop all workers and manager?')">
+            </form>
+        </div>
+        <div>
+            {% set quote_function, ece1779_account_num_rows, ece1779_photo_num_rows, s3_path, s3_path_size, s3_path_num_files, s3_path_num_directories = rds_s3_stats %}
+            <table class='rds_s3_stats_table'>
+                <tr>
+                    <td>
+                        <a href={{ url_for('table_user_details_handler') }}
+                            onclick="disableCountdownRefresh()">ece1779.account</a>
+                    </td>
+                    <td>
+                        <a href={{ url_for('table_ece1779_account_handler') }}
+                            onclick="disableCountdownRefresh();">{{ece1779_account_num_rows}} rows</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ece1779.photo</td>
+                    <td>
+                        <a href={{ url_for('table_ece1779_photo_handler') }}
+                            onclick="disableCountdownRefresh();">{{ece1779_photo_num_rows}} rows</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{s3_path}}</td>
+                    <td>
+                        <a href={{ url_for('table_s3_filesystem_handler', key=quote_function(s3_path)) }}
+                            onclick="disableCountdownRefresh();">{{s3_path_size}} ({{s3_path_num_files}} files,
+                            {{s3_path_num_directories}} dirs)</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class='auto_scaler_control_panel'>
+        <div class='control_panel_pool_monitor_chart_title'>
+            <div style="color:white">Auto Scaler Controller</div>
+        </div>
+        <form action='api/change_auto_scaler_strategy' class="auto_scaler_control_panel_form" method="POST">
+            <font color='white'>
+                <span title='The auto scaler will scale up if average CPU Utialization is greater than this value'>
+                    Pool Scale Up CPU Utilization Threshold
+                </span>
+            </font>
+            <br>
+            <input class="range_input" id="max_threshold_id" type="range" name="max_threshold" min="0" max="1"
+                step="0.05" value='{{scaler_default_settings["max_threshold"]}}' onchange="showConfirmationHint()"
+                oninput="max_threshold_text.value=max_threshold_id.value; disableCountdownRefresh();">
+            <output width="10%" id="max_threshold_text" name="amount" for="rangeInput">
+                <font color='white'>{{scaler_default_settings["max_threshold"]}}</font>
+            </output>
+            <br>
+            <font color='white'>
+                <span title='The auto scaler will scale down if average CPU Utialization is less than this value'>
+                    Pool Scale Down CPU Utilization Threshold
+                </span>
+            </font>
+            <br>
+            <input class="range_input" id="min_threshold_id" type="range" name="min_threshold" min="0" max="1"
+                step="0.05" value='{{scaler_default_settings["min_threshold"]}}' onchange="showConfirmationHint()"
+                oninput="min_threshold_text.value=min_threshold_id.value; disableCountdownRefresh();">
+            <output id="min_threshold_text" name="amount" for="rangeInput">
+                <font color='white'>{{scaler_default_settings["min_threshold"]}}</font>
+            </output>
+            <br>
+            <font color='white'>
+                <span>
+                    Pool Growing Ratio
+                </span>
+            </font>
+            <br>
+            <input class="range_input" id="growing_ratio_id" type="range" name="growing_ratio" min="0" max="10"
+                step="0.01" value='{{scaler_default_settings["growing_ratio"]}}' onchange="showConfirmationHint()"
+                oninput="growing_ratio_text.value=growing_ratio_id.value; disableCountdownRefresh();">
+            <output id="growing_ratio_text" name="amount" for="rangeInput">
+                <font color='white'>{{scaler_default_settings["growing_ratio"]}}</font>
+            </output>
+            <br>
+            <font color='white'>
+                <span>
+                    Pool Shrinking Ratio
+                </span>
+            </font>
+            <br>
+            <input class="range_input" id="shrinking_ratio_id" type="range" name="shrinking_ratio" min="0" max="1"
+                step="0.01" value='{{scaler_default_settings["shrinking_ratio"]}}' onchange="showConfirmationHint()"
+                oninput="shrinking_ratio_text.value=shrinking_ratio_id.value; disableCountdownRefresh();">
+            <output id="shrinking_ratio_text" name="amount" for="rangeInput">
+                <font color='white'>{{scaler_default_settings["shrinking_ratio"]}}</font>
+            </output>
+            <br>
+            <input id="auto_scaler_confirm_button" class="load_balancer_control_button blue" type="submit"
+                value="Confirm">
+        </form>
+    </div>
+
 </body>
 
 <style>
     .body {
-        background-color:white;
+        background-color: white;
     }
 
     .website_header {
@@ -337,38 +360,38 @@
 
     .header_user_app_dns {
         position: relative;
-        height:90%;
+        height: 90%;
         width: 40%;
         top: 13%;
-        border-width:1px;
-        border-style:solid;
-        font-size:x-small;
-        color:white;
+        border-width: 1px;
+        border-style: solid;
+        font-size: x-small;
+        color: white;
     }
 
     .header_dns_title {
-    position: relative;
-    top: 20%;
-    width: 11%;
-    float: left;
-    height: 100%;
-    margin-left: 9.4%;
-    color:white;
+        position: relative;
+        top: 20%;
+        width: 11%;
+        float: left;
+        height: 100%;
+        margin-left: 9.4%;
+        color: white;
     }
 
     .header_user_app_dns_link {
         position: relative;
-        color:white;
-    
+        color: white;
+
     }
 
 
     .header_auto_refresher {
         color: white;
-        position : relative;
+        position: relative;
         float: left;
         margin-left: 1%;
-        top:13%;
+        top: 13%;
         height: 90%;
         width: 40%;
         font-size: x-small;
@@ -376,26 +399,26 @@
 
 
     .charts {
-        background-color:#f4f4f8;
+        background-color: #f4f4f8;
         position: absolute;
         top: 5.5%;
         margin-left: 1%;
         padding: 10px 4px 4px 4px;
         overflow: scroll;
-        height:92%;
+        height: 92%;
         width: 48%;
 
     }
 
     .charts_canvas {
-        margin-top : 2%;
+        margin-top: 2%;
         width: 100% !important;
         height: 30% !important;
     }
 
     .charts_control {
         height: 3%;
-        width : 100%;
+        width: 100%;
     }
 
     .charts_content {
@@ -415,13 +438,13 @@
 
     .instance_canvas_title {
         height: 2%;
-        width : 100%;
+        width: 100%;
     }
 
     .control_panel {
-       
-        background-color: 	 #fed766;
-        position : absolute;
+
+        background-color: #fed766;
+        position: absolute;
         top: 5.5%;
         margin-left: 50%;
         padding: 10px 3px 3px 3px;
@@ -431,7 +454,7 @@
 
     .control_panel_pool_monitor_chart {
         float: left;
-        position : relative;
+        position: relative;
         padding: 3px 3px 3px 3px;
         height: 98%;
         width: 50%;
@@ -439,17 +462,17 @@
 
     .control_panel_pool_monitor_chart_title {
         height: 3%;
-        width : 100%;
+        width: 100%;
     }
 
     .control_panel_pool_monitor_chart_canvas {
-        margin-top : 18%;
-	margin-left: 12%;
+        margin-top: 18%;
+        margin-left: 12%;
     }
 
     .control_panel_action_control {
         float: left;
-        position : relative;
+        position: relative;
         margin-top: 5%;
         padding: 3px 3px 3px 3px;
         height: 98%;
@@ -457,8 +480,8 @@
     }
 
     .auto_scaler_control_panel {
-        background-color:#fe4a49;
-        position : absolute;
+        background-color: #fe4a49;
+        position: absolute;
         top: 64.1%;
         margin-left: 50%;
         padding: 10px 3px 3px 3px;
@@ -467,7 +490,7 @@
     }
 
     .auto_scaler_control_panel_form {
-        position : relative;
+        position: relative;
         margin-left: 50%;
         padding: 3px 3px 3px 3px;
         height: 96%;
@@ -475,21 +498,21 @@
     }
 
     .range_input {
-        width : 82%;
+        width: 82%;
         color: white;
     }
 
 
     .load_balancer_control_form {
         position: relative;
-	    height: 40px;
+        height: 40px;
         top: 2%;
     }
 
     .load_balancer_control_button {
-        font-size : 8px;
-        width:90%;
-        height:90%;
+        font-size: 8px;
+        width: 90%;
+        height: 90%;
         color: white !important;
         text-transform: uppercase;
         text-decoration: none;
@@ -499,7 +522,7 @@
         display: inline-block;
         transition: all 0.4s ease 0s;
         border-radius: 50px;
-        box-shadow: 1px 2px 1px 0px  #cccccc;
+        box-shadow: 1px 2px 1px 0px #cccccc;
         background: transparent;
     }
 
@@ -514,7 +537,7 @@
         background: transparent;
     }
 
-   
+
 
     .load_balancer_control_button.purple {
         background: transparent;
@@ -525,20 +548,20 @@
         margin-left: 5%;
         background: transparent;
     }
-	
+
     .load_balancer_control_button.orange {
         background-color: #d06060;
         margin-left: 5%;
         background: transparent;
     }
-    
+
     .load_balancer_control_button.gold {
         background-color: #d06060;
         margin-left: 5%;
         background: transparent;
     }
 
-        
+
     .load_balancer_control_button.blue {
         background-color: #40809a;
         height: 20%;
@@ -547,59 +570,61 @@
 
 
     .ec2_app_control {
-	position: absolute;
-	padding: 10px 3px 3px 3px;
+        position: absolute;
+        padding: 10px 3px 3px 3px;
         background-color: #2ab7ca;
-    	height: 25%;
-	width: 48%;
-	top: 36.2%;
-	margin-left: 50%;
+        height: 25%;
+        width: 48%;
+        top: 36.2%;
+        margin-left: 50%;
     }
 
-.ec2_app_contorl_title {
+    .ec2_app_contorl_title {
         float: left;
         width: 50%;
 
-    } 
-.ec2_storage_action_control {
+    }
+
+    .ec2_storage_action_control {
         float: left;
-        position : relative;
+        position: relative;
         padding: 3px 3px 3px 3px;
         height: 80%;
         width: 40%;
         margin-top: 1.5%;
-}
+    }
 
-.rds_s3_stats_table {
-  border-collapse: collapse;
-  float: right;
-  position: relative;
-  padding: 5px 5px 5px 5px;
-  height: 80%;
-  width: 55%;
-  margin-top: 2.9%;
-  font-size: smaller;
-}
+    .rds_s3_stats_table {
+        border-collapse: collapse;
+        float: right;
+        position: relative;
+        padding: 5px 5px 5px 5px;
+        height: 80%;
+        width: 55%;
+        margin-top: 2.9%;
+        font-size: smaller;
+    }
 
-.rds_s3_stats_table td, th {
-  border: 1px solid white;
-  text-align: left;
-  padding: 8px;
-}
+    .rds_s3_stats_table td,
+    th {
+        border: 1px solid white;
+        text-align: left;
+        padding: 8px;
+    }
 
-.rds_s3_stats_table tr:nth-child(even) {
-  background-color: #e6e6ea;
-}
+    .rds_s3_stats_table tr:nth-child(even) {
+        background-color: #e6e6ea;
+    }
 
-.ec2_load_balancer_content {
- 	background-color:white;
+    .ec2_load_balancer_content {
+        background-color: white;
         margin-left: 50%;
-        position : relative;
+        position: relative;
         padding: 3px 3px 3px 3px;
         height: 85%;
         width: 40%;
 
-}
-
+    }
 </style>
+
 </html>
