@@ -280,10 +280,44 @@
         </div>
     </div>
 
+    <script>
+        var auto_scaler_state = {{ scaler_default_settings["state"] | tojson | safe}};
+        function paintStatus(){
+            switch (auto_scaler_state) {
+                case 'none':
+                break;
+                default:
+                    element = document.getElementById(auto_scaler_state)
+                    element.style.backgroundColor = "#32CD32";
+                break;
+            }
+        }
+    </script>
+
     <div class='auto_scaler_control_panel'>
         <div class='control_panel_pool_monitor_chart_title'>
             <div style="color:white">Auto Scaler Controller</div>
         </div>
+        <div class="auto_scaler_internal_status">
+            <div class='auto_scaler_status'>
+                <span id='ready' class="dot"></span>
+                <font class="dot_text" color='white' onload="paintStatus()">Ready</font>
+            </div>
+            <div class='auto_scaler_status'>
+                    <span id='resizing' class="dot"></span>
+                    <font class="dot_text" color='white'>Resizing</font>
+            </div>
+            <div class='auto_scaler_status'>
+                    <span id='cooldown' class="dot"></span>
+                    <font class="dot_text" color='white'>Cooldown</font>
+            </div>
+            <form action='/api/toggle_auto_scaler' class='load_balancer_control_form' method="POST" width="200">
+                <input class='load_balancer_control_button disableScaler' type="submit" value="{{scaler_default_settings["running"]}} Auto-scaler">
+            </form>
+    </div>
+    <script>
+            paintStatus();
+        </script>
         <form action='api/change_auto_scaler_strategy' class="auto_scaler_control_panel_form" method="POST">
             <font color='white'>
                 <span title='The auto scaler will scale up if average CPU Utialization is greater than this value'>
@@ -497,6 +531,34 @@
         width: 48%;
     }
 
+    .auto_scaler_internal_status {
+        position: relative;
+        top: 8%;
+        float: left;
+        padding: 3px 3px 3px 3px;
+        height: 96%;
+        width: 40%;
+    }
+
+    .auto_scaler_status {
+        margin-top: 8%;
+    }
+
+    .dot {
+        margin: auto;
+        margin-left: 8%;
+        height: 10px;
+        width: 150px;
+        background-color: #cccccc;
+        border-radius: 50%;
+        display: inline-block;
+        z-index: 100;
+    }
+
+    .dot_text {
+        margin: auto;
+    }
+
     .range_input {
         width: 82%;
         color: white;
@@ -561,6 +623,13 @@
         background: transparent;
     }
 
+    .load_balancer_control_button.disableScaler {
+        background-color: #d06060;
+        margin-top: 8.1%;
+        margin-left: 5%;
+        height: 110%;
+        background: transparent;
+    }
 
     .load_balancer_control_button.blue {
         background-color: #40809a;

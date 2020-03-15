@@ -12,6 +12,19 @@ class PoolMonitoringHelper:
 
         return instances_data_points
 
+    def get_current_cpu_utilization_timestamp(self):
+        average_cpu_util_for_instance = {}
+        all_samples = []
+        for instance_id in self._pool.get_registered_instances_ids():
+            all_samples += self._api.get_average_cpu_utilization(
+                [{'Name': 'InstanceId', 'Value': instance_id }], 3
+                )['Datapoints']
+            
+        all_samples.sort(key = lambda datapoint : datapoint['Timestamp'])
+
+        #Need error checking here
+        return all_samples[-1]['Timestamp']
+
     def get_current_cpu_utilization_for_registered_instances(self):
         average_cpu_util_for_instance = {}
         for instance_id in self._pool.get_registered_instances_ids():
