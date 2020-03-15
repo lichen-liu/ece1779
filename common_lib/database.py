@@ -83,7 +83,7 @@ def create_new_account(cnx, username, password_hash, salt):
 @database_operation
 def get_account_credential(cnx, username):
     '''
-    Return (account_id, password_hash, salt) if successful; otherwise None
+    Return (userid, password_hash, salt) if successful; otherwise None
     '''
     result = None
     try:
@@ -109,7 +109,7 @@ def get_account_credential(cnx, username):
 
 
 @database_operation
-def create_new_photo(cnx, account_id, filename):
+def create_new_photo(cnx, userid, filename):
     '''
     Return photo_id if successful; otherwise None
     '''
@@ -124,7 +124,7 @@ def create_new_photo(cnx, account_id, filename):
         (account_id, name)
         VALUES (%s, %s);
         """
-        insert_val = (account_id, filename)
+        insert_val = (userid, filename)
         cursor.execute(insert_sql, insert_val)
         result = cursor.lastrowid
         cnx.commit()
@@ -138,7 +138,7 @@ def create_new_photo(cnx, account_id, filename):
 
 
 @database_operation
-def get_account_photo(cnx, account_id):
+def get_account_photo(cnx, userid):
     '''
     Return [(photo_id, photo_name)] if successful; otherwise None
     '''
@@ -152,7 +152,7 @@ def get_account_photo(cnx, account_id):
         FROM ece1779.photo
         WHERE account_id = %s;
         """
-        get_val = (account_id,)
+        get_val = (userid,)
         cursor.execute(get_sql, get_val)
         get_results = cursor.fetchall()
         if get_results:
@@ -170,7 +170,7 @@ def get_account_photo(cnx, account_id):
 @database_operation
 def get_photo(cnx, photo_id):
     '''
-    Return (user_id, photo_name) if successful; otherwise None
+    Return (userid, photo_name) if successful; otherwise None
     '''
     result = None
     try:

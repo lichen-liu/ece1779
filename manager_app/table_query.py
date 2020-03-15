@@ -1,6 +1,6 @@
 from flask import render_template, redirect, request, url_for
 from manager_app import webapp
-from common_lib import s3, database, utility
+from common_lib import s3, database, utility, combined_aws
 import urllib
 
 
@@ -30,7 +30,7 @@ def table_s3_filesystem_handler():
     size_table = [(row[0], *s3.get_bucket_content_size(key=row[0])) for row in table]
 
     readable_table = [(row[0], utility.convert_bytes_to_human_readable(row[1]), row[2], row[3]) for row in size_table]
-    action_handler_assigner_row = (lambda item, _: url_for('table_s3_filesystem_handler', key=urllib.parse.quote(item)) if s3.is_path_s3_directory(item) else None, None, None, None)
+    action_handler_assigner_row = (lambda item, _: url_for('table_s3_filesystem_handler', key=item) if s3.is_path_s3_directory(item) else None, None, None, None)
     
     return render_table_page(title=path, 
         title_row=('key', 'size', 'num_directory', 'num_file'), action_handler_assigner_row=action_handler_assigner_row,
@@ -39,65 +39,84 @@ def table_s3_filesystem_handler():
 
 @webapp.route('/api/table/user_details', methods=['GET'])
 def table_user_details_handler():
-    account_table = database.get_account_table()
+    description = request.args.get('description')
+    if description:
+        description = urllib.parse.unquote(description)
+
+    # {userid: dict(key='username', 'num_photos', 'num_photos_files', 'photos_size', 'num_rectangles_files', 'rectangles_size', 'num_thumbnails_files', 'thumbnails_size')}
+    user_details_dict = {row[0]: 
+        {'username':row[1], 'num_photos_files':0, 'photos_size':0, 'num_rectangles_files':0, 'rectangles_size':0, 'num_thumbnails_files':0, 'thumbnails_size':0, 'num_photos':0} 
+        for row in database.get_account_table()}
+    for photo_table_row in database.get_photo_table():
+        photo_id, userid, photo_name = photo_table_row
+        saved_file_name = str(photo_id) + utility.get_file_extension(photo_name)
+
+        user_entry = user_details_dict[userid]
+
+        photo_size, _, photo_num_file = s3.get_bucket_content_size(key=s3.PHOTOS_DIR + saved_file_name)
+        if photo_num_file == 1:
+            user_entry['num_photos_files'] += 1
+            user_entry['photos_size'] += photo_size
+
+        rectangle_size, _, rectangle_num_file = s3.get_bucket_content_size(key=s3.RECTANGLES_DIR + saved_file_name)
+        if rectangle_num_file == 1:
+            user_entry['num_rectangles_files'] += 1
+            user_entry['rectangles_size'] += rectangle_size
+
+        thumbnail_size, _, thumbnail_num_file = s3.get_bucket_content_size(key=s3.THUMBNAILS_DIR + saved_file_name)
+        if thumbnail_num_file == 1:
+            user_entry['num_thumbnails_files'] += 1
+            user_entry['thumbnails_size'] += thumbnail_size
+
+        user_entry['num_photos'] += 1
+
+    # 'userid', 'username', 'num_photos', 'total_num_files', 'total_size', 'num_photos_files', 'photos_size', 'num_rectangles_files', 'rectangles_size', 'num_thumbnails_files', 'thumbnails_size'
     user_details_table = list()
+    for user_details_dict_row in user_details_dict.items():
+        userid, user_entry = user_details_dict_row
+
+        total_num_files = user_entry['num_photos_files'] + user_entry['num_rectangles_files'] + user_entry['num_thumbnails_files']
+        total_size = user_entry['photos_size'] + user_entry['rectangles_size'] + user_entry['thumbnails_size']
+
+        user_details_table.append((str(userid), user_entry['username'], 
+            user_entry['num_photos'], total_num_files, utility.convert_bytes_to_human_readable(total_size),
+            user_entry['num_photos_files'], utility.convert_bytes_to_human_readable(user_entry['photos_size']),
+            user_entry['num_rectangles_files'], utility.convert_bytes_to_human_readable(user_entry['rectangles_size']),
+            user_entry['num_thumbnails_files'], utility.convert_bytes_to_human_readable(user_entry['thumbnails_size']),
+            'Delete'))
     
-    for account_table_row in account_table:
-        account_id, username, _, _ = account_table_row
-        account_id = str(account_id)
-        
-        account_photo_table = database.get_account_photo(account_id)
-        
-        account_photos_count = 0
-        account_photos_size = 0
-        account_rectangles_count = 0
-        account_rectangles_size = 0
-        account_thumbnails_count = 0
-        account_thumbnails_size = 0
-        
-        if account_photo_table:
-            for account_photo_table_row in account_photo_table:
-                photo_id, photo_name = account_photo_table_row
-                saved_file_name = str(photo_id) + utility.get_file_extension(photo_name)
-
-                if s3.is_object_existed(key=s3.PHOTOS_DIR + saved_file_name):
-                    account_photos_count += 1
-                    account_photos_size += s3.get_bucket_content_size(key=s3.PHOTOS_DIR + saved_file_name)[0]
-
-                if s3.is_object_existed(key=s3.RECTANGLES_DIR + saved_file_name):
-                    account_rectangles_count += 1
-                    account_rectangles_size += s3.get_bucket_content_size(key=s3.RECTANGLES_DIR + saved_file_name)[0]
-
-                if s3.is_object_existed(key=s3.THUMBNAILS_DIR + saved_file_name):
-                    account_thumbnails_count += 1
-                    account_thumbnails_size += s3.get_bucket_content_size(key=s3.THUMBNAILS_DIR + saved_file_name)[0]
-
-        account_total_count = account_photos_count + account_rectangles_count + account_thumbnails_count
-        account_total_size = account_photos_size + account_rectangles_size + account_thumbnails_size
-
-        user_details_table.append(
-            (account_id, username, 
-            len(account_photo_table) if account_photo_table else 0, account_total_count, utility.convert_bytes_to_human_readable(account_total_size),
-            account_photos_count, utility.convert_bytes_to_human_readable(account_photos_size),
-            account_rectangles_count, utility.convert_bytes_to_human_readable(account_rectangles_size),
-            account_thumbnails_count, utility.convert_bytes_to_human_readable(account_thumbnails_size)))
-    
-    title_rows = ('account_id', 'username', 
+    title_rows = ('userid', 'username', 
         'num_photos', 'total_num_files', 'total_size',
         'num_photos_files', 'photos_size',
         'num_rectangles_files', 'rectangles_size',
-        'num_thumbnails_files', 'thumbnails_size')
+        'num_thumbnails_files', 'thumbnails_size', 'Delete User Photo')
 
-    ahs_account_id = lambda item, _: url_for('table_ece1779_account_handler', find_key='id', find_value=urllib.parse.quote(item))
-    ahs_username = lambda item, _: url_for('table_ece1779_account_handler', find_key='username', find_value=urllib.parse.quote(item))
+    ahs_userid = lambda item, _: url_for('table_ece1779_account_handler', find_key='id', find_value=item)
+    ahs_username = lambda item, _: url_for('table_ece1779_account_handler', find_key='username', find_value=item)
     ahs_num_photos = lambda item, row: url_for('table_ece1779_photo_handler', find_key='account_id', find_value=row[0])
-    action_handler_assigner_row=(ahs_account_id, ahs_username, 
+    ahs_delete_user_photo = lambda _, row: url_for('table_delete_user_photos_handler', userid=row[0])
+    action_handler_assigner_row=(ahs_userid, ahs_username, 
         ahs_num_photos, None, None,
         None, None,
         None, None,
-        None, None)
+        None, None, ahs_delete_user_photo)
     
-    return render_table_page(title='User Details', title_row=title_rows, action_handler_assigner_row=action_handler_assigner_row, table=user_details_table)
+    return render_table_page(title='User Details', title_row=title_rows, action_handler_assigner_row=action_handler_assigner_row, table=user_details_table, description=description)
+
+
+@webapp.route('/api/table/delete_user_photos', methods=['GET'])
+def table_delete_user_photos_handler():
+    userid = request.args.get('userid')
+    account_photo_table = database.get_account_photo(userid)
+    if account_photo_table:
+        for account_photo_row in account_photo_table:
+            photo_id, photo_name = account_photo_row
+            combined_aws.delete_photo_from_s3_and_database(photo_id, photo_name)
+        description='Successfully deleted all {} photos from userid <{}>!'.format(len(account_photo_table), userid)
+    else:
+        description='Userid <{}> does not have any photos!'.format(userid)
+    
+    return redirect(url_for('table_user_details_handler', description=description))
 
 
 def render_table_page(title, title_row, table, action_handler_assigner_row=None, description=None):

@@ -139,9 +139,9 @@ def account_verify_password(username, password):
     '''
     result = database.get_account_credential(username)
     if result:
-        account_id, encrypted_password, salt = result
+        userid, encrypted_password, salt = result
         if account_hash_password(password, salt) == encrypted_password:
-            return account_id
+            return userid
     return None
 
 
