@@ -17,7 +17,7 @@ class AutoScaler:
         # Allow resizing operation to take up to 2 mins 
         self._resizing_timeout = timedelta(seconds = 150) 
         self._next_pool_size = 0
-        self._cooldown_period = timedelta(seconds = 90)
+        self._cooldown_period =  60
         self._monitoring_interval = 10
         self._running_thread = threading.Thread(
             target=self.auto_scaling, daemon=True)
@@ -54,22 +54,32 @@ class AutoScaler:
 
     def auto_scaling(self):
         # averages = [0]
+        resize_in_process = False
         while True:
-            if(self._is_operation_finished_or_timeout()):
-                average = self.calculate_average_work_pool_cpu_usage() / 100
-                # averages.append(average)
-                # # Only track the last two minutes CPU utilization
-                # if len(averages) > 2:
-                #     averages = averages[1:]
-                # if (averages[0] + averages[1]) / 2.0 > self._max_threshold:
-                #     self.try_increase_pool_size()
-                # if (averages[0] + averages[1]) / 2.0 < self._min_threshold:
-                #     self.try_decrease_pool_size()
-                if average > self._max_threshold:
-                    self.try_increase_pool_size()
-                if average < self._min_threshold:
-                    self.try_decrease_pool_size()
-                time.sleep(self._monitoring_interval)
+            if(resize_in_process):
+                if(self.is_resizing_finished_or_timeout()):
+                    resize_in_process = self.resize_pool()
+            else:
+                resize_in_process = self.resize_pool()
+
+            time.sleep(self._monitoring_interval)
+
+    def resize_pool(self):
+        resize_in_process = False
+        average = self.calculate_average_work_pool_cpu_usage() / 100
+                    # averages.append(average)
+                    # # Only track the last two minutes CPU utilization
+                    # if len(averages) > 2:
+                    #     averages = averages[1:]
+                    # if (averages[0] + averages[1]) / 2.0 > self._max_threshold:
+                    #     self.try_increase_pool_size()
+                    # if (averages[0] + averages[1]) / 2.0 < self._min_threshold:
+                    #     self.try_decrease_pool_size()
+        if average > self._max_threshold:
+            resize_in_process = self.try_increase_pool_size()
+        if average < self._min_threshold:
+            resize_in_process = self.try_decrease_pool_size()
+        return resize_in_process
 
     def calculate_average_work_pool_cpu_usage(self):
         current_instance_utilizations = self._pool_monitor_helper.get_current_cpu_utilization_for_registered_instances()
@@ -86,17 +96,20 @@ class AutoScaler:
 
     def try_increase_pool_size(self):
         worker_count = self._pool_monitor_helper.get_number_of_running_workers_in_pool()
-        upsized_count = math.ceil(worker_count * self._growing_ratio)
+        if(worker_count >= self._pool.get_max_worker_count()):
+            return False
 
+        upsized_count = math.ceil(worker_count * self._growing_ratio)
         self._pool.increase_pool_by_size(upsized_count - worker_count)
         self.update_timestamp()
         self._next_pool_size = upsized_count
+        return True
 
     def try_decrease_pool_size(self):
         worker_count = self._pool_monitor_helper.get_number_of_running_workers_in_pool()
         min_required_worker = self._pool.get_min_worker_count()
         if worker_count <= min_required_worker:
-            return
+            return False
 
         downsized_count = math.floor(worker_count * self._shrinking_ratio)
         if(downsized_count < min_required_worker):
@@ -105,8 +118,10 @@ class AutoScaler:
         self._pool.decrease_pool_by_size(worker_count - downsized_count)
         self.update_timestamp()
         self._next_pool_size = downsized_count
+        return True
 
-    def _is_operation_finished_or_timeout(self):
+    def is_resizing_finished_or_timeout(self):
+        # Give a time allowance for AWS pool to adjust its size
         if(self._operation_timestamp + self._resizing_timeout < datetime.now()):
             return True
         if(self._pool_monitor_helper.get_number_of_running_workers_in_pool() == self._next_pool_size):

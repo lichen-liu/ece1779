@@ -16,7 +16,7 @@ class PoolMonitoringHelper:
         average_cpu_util_for_instance = {}
         for instance_id in self._pool.get_registered_instances_ids():
             samples_for_each_instance = self._api.get_average_cpu_utilization(
-                [{'Name': 'InstanceId', 'Value': instance_id }], 2
+                [{'Name': 'InstanceId', 'Value': instance_id }], 3
                 )['Datapoints']
             
             if(len(samples_for_each_instance)):
