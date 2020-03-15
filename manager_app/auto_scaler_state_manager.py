@@ -9,7 +9,7 @@ class ScalerStateManager:
     def __init__(self, auto_scaler, monitor_helper):
         # Time stamps
         self._resizing_start_timestamp = datetime(1970, 1, 1, 0, 0)
-        self._resizing_timeout = timedelta(seconds = 120) 
+        self._resizing_timeout = timedelta(seconds = 90) 
         self._resizing_complete_timestamp = datetime(1970, 1, 1, 0, 0)
         self._cooldown_interval = timedelta(seconds = 100) 
         self._latest_cpu_utilization_timestamp = datetime(1970, 1, 1, 0, 0)

@@ -19,6 +19,7 @@ class AutoScaler:
         self._running_thread = threading.Thread(
             target=self.auto_scaling, daemon=True)
         self._started = False
+        self._running = True
 
     def set_max_threshold(self, threshold):
         self._max_threshold = threshold
@@ -44,6 +45,14 @@ class AutoScaler:
     def get_shrinking_ratio(self):
         return self._shrinking_ratio
 
+    def get_running_status(self):
+        return self._running
+
+    def get_state(self):
+        if self._state_manager :
+            return self._state_manager._state
+        return None
+
     def start(self):
         if not self._started:
             self._started = True
@@ -51,7 +60,8 @@ class AutoScaler:
 
     def auto_scaling(self):
         while True:
-            self._state_manager.try_scale_pool_and_update_state()
+            if self._running :
+                self._state_manager.try_scale_pool_and_update_state()
             time.sleep(self._scaling_interval)
 
     def resize_pool(self):
@@ -62,7 +72,7 @@ class AutoScaler:
             resize_in_process = self.try_increase_pool_size()
         elif average < self._min_threshold:
             resize_in_process = self.try_decrease_pool_size()
-            
+
         return resize_in_process
 
     def calculate_average_work_pool_cpu_usage(self):
@@ -106,9 +116,15 @@ class AutoScaler:
     def desired_worker_num_reached(self):
         return self._pool_monitor_helper.get_number_of_running_workers_in_pool() == self._next_pool_size
 
-
-
-
+    def toggle_scaler(self):
+        
+        if(self._running):
+            self._state_manager = None
+            self._running = not self._running
+        else:
+            self._state_manager = auto_scaler_state_manager.ScalerStateManager(self, self._pool_monitor_helper)
+            self._running = not self._running
+            
 helper = pool_monitor_helper.get_monitor_helper()
 pool = ec2_pool.get_worker_pool()
 auto_scaler = AutoScaler(helper, pool)

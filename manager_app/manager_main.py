@@ -1,5 +1,5 @@
 from flask import render_template, redirect, request
-from manager_app import webapp, ec2_pool, pool_monitor_helper, worker_count_monitor, auto_scaler, manager_shutdown_helper
+from manager_app import webapp, ec2_pool, pool_monitor_helper, worker_count_monitor, auto_scaler, manager_shutdown_helper, auto_scaler_state_manager
 from datetime import datetime
 import helper
 from common_lib import database, s3, utility
@@ -66,6 +66,12 @@ def stop_all_handler():
     shutdown_helper.shutdown_manager()
     return redirect('/')
 
+@webapp.route('/api/toggle_auto_scaler', methods=['POST'])
+def toggle_auto_scaler_handler():
+    auto_s = auto_scaler.get_auto_scaler()
+    auto_s.toggle_scaler()
+    return redirect('/')
+
 
 def prepare_metrics_datapoints():
     '''
@@ -114,6 +120,21 @@ def prepare_autoscaler_default_values():
     scaler_default_settings['min_threshold'] = auto_s.get_min_threshold()
     scaler_default_settings['growing_ratio'] = auto_s.get_growing_ratio()
     scaler_default_settings['shrinking_ratio'] = auto_s.get_shrinking_ratio()
+    status = auto_s.get_running_status()
+    if(status):
+        scaler_default_settings['running'] = "Disable"
+    else:
+        scaler_default_settings['running'] = "Enable"
+
+    state = auto_s.get_state()
+    if state == auto_scaler_state_manager.ScalerState.READYTORESIZE :
+        scaler_default_settings['state'] = 'ready'
+    elif state == auto_scaler_state_manager.ScalerState.RESIZING :
+        scaler_default_settings['state'] = 'resizing'
+    elif state == auto_scaler_state_manager.ScalerState.RESIZINGCOOLDOWN :
+        scaler_default_settings['state'] = 'cooldown'
+    else:
+        scaler_default_settings['state'] = 'none'
     return scaler_default_settings
 
 def prepare_dns_name():
