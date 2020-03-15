@@ -22,3 +22,6 @@ pip install gunicorn
 
 echo "> Starting the user app on Port = 5000 ..."
 venv/bin/gunicorn --bind 0.0.0.0:5000 --workers=1 run_user_app:webapp
+
+echo "> Starting the dummy app on Port = 5001 ..."
+venv/bin/gunicorn --bind 0.0.0.0:5001 --workers=1 run_dummy_app:webapp
