@@ -50,16 +50,21 @@ class AutoScaler:
             self._running_thread.start()
 
     def auto_scaling(self):
-        averages = [0]
+        # averages = [0]
         while True:
             average = self.calculate_average_work_pool_cpu_usage() / 100
-            averages.append(average)
-            # Only track the last two minutes CPU utilization
-            if len(averages) > 2:
-                averages = averages[1:]
-            if (averages[0] + averages[1]) / 2.0 > self._max_threshold:
+            # averages.append(average)
+            # # Only track the last two minutes CPU utilization
+            # if len(averages) > 2:
+            #     averages = averages[1:]
+            # if (averages[0] + averages[1]) / 2.0 > self._max_threshold:
+            #     self.try_increase_pool_size()
+            # if (averages[0] + averages[1]) / 2.0 < self._min_threshold:
+            #     self.try_decrease_pool_size()
+            if average > self._max_threshold:
+                :
                 self.try_increase_pool_size()
-            if (averages[0] + averages[1]) / 2.0 < self._min_threshold:
+            if average < self._min_threshold:
                 self.try_decrease_pool_size()
             time.sleep(self._monitoring_interval)
 
