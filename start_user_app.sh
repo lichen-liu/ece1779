@@ -21,7 +21,7 @@ pip install boto3
 pip install gunicorn
 
 echo "> Starting the dummy app on Port = 5001 ..."
-venv/bin/gunicorn --bind 0.0.0.0:5001 --workers=1 run_dummy_app:webapp | tee dummy_app.log &
+venv/bin/gunicorn --bind 0.0.0.0:5001 --workers=1 run_dummy_app:webapp &> dummy_app.log &
 
 echo "> Starting the user app on Port = 5000 ..."
 venv/bin/gunicorn --bind 0.0.0.0:5000 --workers=1 run_user_app:webapp
