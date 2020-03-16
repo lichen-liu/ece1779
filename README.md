@@ -28,6 +28,7 @@ pip install opencv-python
 pip install cvlib
 pip install tensorflow
 pip install boto3
+pip install requests
 
 python run_user_app.py
 ```
@@ -73,6 +74,7 @@ pip install Flask
 pip install mysql-connector-python
 pip install awscli
 pip install boto3
+pip install requests
 ```
 
 Then set ~/.aws/credentials following this format:

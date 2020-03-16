@@ -19,6 +19,7 @@ pip install cvlib
 pip install tensorflow
 pip install boto3
 pip install gunicorn
+pip install requests
 
 echo "> Starting the dummy app on Port = 5001 ..."
 venv/bin/gunicorn --bind 0.0.0.0:5001 --workers=1 run_dummy_app:webapp &> dummy_app.log &
