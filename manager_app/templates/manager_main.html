@@ -166,6 +166,7 @@
             <input type="checkbox" id="countdown_refresh_enable" checked>
             <label for="countdown_refresh_enable"> Allow Refresh</label>
         </div>
+
         <div class='header_dns_title'>
             Load Balancer Url:
         </div>
@@ -176,6 +177,9 @@
             countdown();
         </script>
 
+        <form action="/" method="GET">
+            <button type="submit" name="logout" value="True" onclick="confirm('Are you sure to logout?')">Logout</button>
+        </form>
 
     </div>
 
