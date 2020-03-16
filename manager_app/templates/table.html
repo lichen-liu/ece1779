@@ -129,6 +129,7 @@
         }
     </script>
 
+    <p>{{description if description}}</p>
     <table class="main_table" id="core_table">
         <tr>
             {% for title_col_idx in range(title_row|length) %}
@@ -158,7 +159,6 @@
             </tr>
         {% endfor %}
     </table>
-    <p>{{description if description}}</p>
 
 </body>
 

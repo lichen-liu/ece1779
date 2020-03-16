@@ -31,7 +31,8 @@ def table_s3_filesystem_handler():
 
     return render_table_page(title=path, 
         title_row=('key', 'size', 'num_directory', 'num_file'), action_handler_assigner_row=action_handler_assigner_row,
-        table=readable_table, description='Total Size: ' + utility.convert_bytes_to_human_readable(s3.get_bucket_content_size(key=path)[0]))
+        table=readable_table,
+        description='Total Size: ' + utility.convert_bytes_to_human_readable(s3.get_bucket_content_size(key=path)[0]) + ' ; Number Items: ' + str(len(readable_table)))
 
 
 @webapp.route('/api/table/user_details', methods=['GET'])
