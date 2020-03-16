@@ -3,6 +3,7 @@ from manager_app import webapp, ec2_pool, pool_monitor_helper, worker_count_moni
 from datetime import datetime
 from common_lib import database, s3, utility, combined_aws
 import urllib
+import requests
 
 @webapp.route('/', methods=['GET','POST'])
 def main_handler():
@@ -18,7 +19,7 @@ def render_manager_main_page():
     'initial' : '#CCCC00', 'unused' : '#CCCCCC'},
     instances_status_counts = prepare_instance_status_count_info(status_by_id),
     scaler_default_settings = prepare_autoscaler_default_values(),
-    dns_name = prepare_dns_name(),
+    dns_status = prepare_dns_status(),
     rds_s3_stats = prepare_rds_s3_stats()
     )
 
@@ -136,9 +137,23 @@ def prepare_autoscaler_default_values():
         scaler_default_settings['state'] = 'none'
     return scaler_default_settings
 
-def prepare_dns_name():
+def prepare_dns_status():
+    '''
+    (dns_name, dns_is_online)
+    '''
     pool = ec2_pool.get_worker_pool()
-    return pool.get_load_balancer_dns_name()
+    dns_name = pool.get_load_balancer_dns_name()
+
+    dns_is_online = False
+    try:
+        r = requests.head('http://' + dns_name, timeout=5)
+        if r.status_code == 200:
+            dns_is_online = True
+    except Exception:
+        pass
+
+    return (dns_name, dns_is_online)
+
 
 def prepare_rds_s3_stats():
     ece1779_account_num_rows = len(database.get_account_table())

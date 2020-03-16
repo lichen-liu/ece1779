@@ -171,10 +171,19 @@
         </div>
 
 
+        {% set dns_name, dns_is_online = dns_status %}
+        {% if dns_is_online %}
+            {% set dns_online_color = "green" %}
+        {% else %}
+            {% set dns_online_color = "red" %}
+        {% endif %}
         <div class='header_dns_title'>
-            Load Balancer Url:
+            Load Balancer Url: 
+            <font color={{dns_online_color}}>  {{"ONLINE" if dns_is_online else "OFFLINE"}}</font>
         </div>
-        <a class='header_user_app_dns' href={{'http://' + dns_name}} target="_blank">{{dns_name}}</a>
+        <a class='header_user_app_dns' href={{'http://' + dns_name}} target="_blank">
+            {{dns_name}}
+        </a>
 
         <script>
             document.getElementById('refresh_countdown').innerHTML = countDown;
@@ -437,7 +446,7 @@
     .header_dns_title {
         position: relative;
         top: 20%;
-        width: 11%;
+        width: 13%;
         float: left;
         height: 100%;
         margin-left: 9.4%;
@@ -447,7 +456,6 @@
     .header_user_app_dns_link {
         position: relative;
         color: white;
-
     }
 
 
