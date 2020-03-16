@@ -2,8 +2,15 @@
 http://www.cs.toronto.edu/~delara/courses/ece1779/
 
 
-## 0.0 User App AWS LB URL
+## 0.0 URLS
+
+
+## 0.1 User App AWS LB URL
 http://ece1779-user-app-load-balancer-679239310.us-east-1.elb.amazonaws.com/
+
+
+## 0.2 Manager App AWS ELASTIC URL
+http://52.21.3.87:5000/
 
 
 ## 1.0 User App
