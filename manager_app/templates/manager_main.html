@@ -165,7 +165,11 @@
             This page will be refreshed automatically after <span id='refresh_countdown'></span> seconds.
             <input type="checkbox" id="countdown_refresh_enable" checked>
             <label for="countdown_refresh_enable"> Allow Refresh</label>
+            <form class='logout_form' action="/" method="GET">
+                <button class='load_balancer_control_button logout' type="submit" name="logout" value="True" onclick="confirm('Are you sure to logout?')">Logout</button>
+            </form>
         </div>
+
 
         <div class='header_dns_title'>
             Load Balancer Url:
@@ -176,10 +180,6 @@
             document.getElementById('refresh_countdown').innerHTML = countDown;
             countdown();
         </script>
-
-        <form action="/" method="GET">
-            <button type="submit" name="logout" value="True" onclick="confirm('Are you sure to logout?')">Logout</button>
-        </form>
 
     </div>
 
@@ -405,6 +405,33 @@
         border-style: solid;
         font-size: x-small;
         color: white;
+    }
+
+    .logout_form {
+            position: relative;
+            height: 150%;
+            width: 10%;
+            top: 5%;
+            font-size: x-small;
+            float:right;
+            margin-right:25%;
+    }
+
+    .load_balancer_control_button.logout {
+        background: transparent;
+        background-color: #444444;
+        font-size: 6px;
+        width: 90%;
+        height: 50%;
+        color: white !important;
+        text-transform: uppercase;
+        text-decoration: none;
+        padding: 3px;
+        border: 1px solid white !important;
+        display: inline-block;
+        transition: all 0.4s ease 0s;
+        border-radius: 50px;
+        box-shadow: 1px 2px 1px 0px #cccccc;
     }
 
     .header_dns_title {
