@@ -2,7 +2,7 @@
 <html>
 
 <body>
-    {% for thumbnail_row in thumbnails | batch(3, '') %}
+    {% for thumbnail_row in thumbnails | batch(8, '') %}
     <div class="row">
         {% for thumbnail in thumbnail_row %}
         {% if (thumbnail != '') %}
