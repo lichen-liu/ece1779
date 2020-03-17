@@ -30,13 +30,9 @@
     </div>
 
     <div class="gallery_section">
-
         <div class="gallery_display">
             <div id="gallery_updaing_display">
-                {% for thumbnail_row in thumbnails | batch(8, '') %}
-                <div class="row">
-                    {% for thumbnail in thumbnail_row %}
-                    {% if (thumbnail != '') %}
+                {% for thumbnail in thumbnails %}
                     {% set photo_id_str, photo_name, thumbnail_url = thumbnail %}
                     <div class="image_container">
                         <div>
@@ -49,27 +45,10 @@
                             </form>
                         </div>
                     </div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
                 {% endfor %}
             </div>
         </div>
     </div>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <script>
-        $(document).on('click', '#update_button', function () {
-            $.ajax({
-                url: "{{ url_for('render_thumbnail_gallery') }}",
-                type: "POST",
-                dataType: "json",
-                success: function (html_data) {
-                    console.log(html_data)
-                    $('#gallery_updaing_display').append(html_data)
-                }
-            });
-        });
-    </script>
 
     <style>
         .divider {
@@ -152,10 +131,6 @@
             float: top;
             height: 90%;
             width: 100%;
-        }
-
-        .row {
-            position: relative;
         }
 
         .gallery_display {

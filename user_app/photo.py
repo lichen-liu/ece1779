@@ -164,11 +164,6 @@ def display_photo_handler():
     return render_template('empty_go_home.html', title='Error', message='Please try again!')
 
 
-@webapp.route('/api/render_thumbnail_gallery', methods=['POST'])
-def render_thumbnail_gallery():
-    return jsonify({'data': render_template('thumbnail_gallery.html', thumbnails=get_thumbnails())})
-
-
 def get_thumbnails():
     '''
     [(photo_id_str, photo_name, thumbnail_url)]
