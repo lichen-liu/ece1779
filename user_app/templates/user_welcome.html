@@ -31,7 +31,7 @@
 
     <div class="gallery_section">
         <div class="gallery_display">
-            <div id="gallery_updaing_display">
+            <div id="gallery_updaing_display" style="display: flex; flex-wrap: wrap;">
                 {% for thumbnail in thumbnails %}
                     {% set photo_id_str, photo_name, thumbnail_url = thumbnail %}
                     <div class="image_container">

@@ -195,11 +195,8 @@ def get_object_url(key, bucket_name=BUCKET):
 
     :param bucket_name: Bucket to retrieve from
     :param key: S3 object name to retrieve
-    :return: url for the object if object was found, else None
+    :return: temporary url of the object
     '''
-
-    if not is_object_existed(key=key, bucket_name=bucket_name):
-        return None
     return boto3.client('s3').generate_presigned_url('get_object', ExpiresIn=3600, Params={'Bucket': bucket_name, 'Key': key})
 
 
