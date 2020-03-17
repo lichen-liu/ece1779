@@ -16,5 +16,5 @@ def get_min_worker_num():
 
 class Config(object):
     SECRET_KEY = 'ZHEGESECRETKEYYIDIANYEBUANQUAN'
-    PERMANENT_SESSION_LIFETIME = timedelta(minutes= 30)
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes= 60)
     SESSION_REFRESH_EACH_REQUEST = False
