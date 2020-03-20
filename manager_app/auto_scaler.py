@@ -9,7 +9,7 @@ class AutoScaler:
     def __init__(self, pool_monitor_helper, pool):
         self._max_threshold = 0.6
         self._min_threshold = 0.1
-        self._growing_ratio = 1.5
+        self._growing_ratio = 4
         self._shrinking_ratio = 0.5
         self._next_pool_size = 0
         self._scaling_interval = 5

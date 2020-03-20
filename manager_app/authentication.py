@@ -15,7 +15,7 @@ _SENDER_PASSWORD = 'ece1779password'
 
 
 # PUT YOUR EMAIL ADDRESS HERE
-_EMAIL_WHITELIST = ['liulichen112233@gmail.com', 'huang627158768@gmail.com', 'bwuzhang@gmail.com']
+_EMAIL_WHITELIST = ['shawnliok@gmail.com', 'brianr@cs.toronto.edu', 'liulichen112233@gmail.com', 'huang627158768@gmail.com', 'bwuzhang@gmail.com']
 
 
 def send_email(to_addr, msg):
