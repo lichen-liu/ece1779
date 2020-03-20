@@ -1,4 +1,4 @@
-from manager_app import pool_monitor_helper, ec2_pool
+from manager_app import pool_monitor_helper, ec2_pool, auto_scaler_state_manager
 from datetime import datetime, timedelta
 import threading
 import math
@@ -11,14 +11,15 @@ class AutoScaler:
         self._min_threshold = 0.1
         self._growing_ratio = 1.5
         self._shrinking_ratio = 0.5
-        self._pool_monitor_helper = pool_monitor_helper
+        self._next_pool_size = 0
+        self._scaling_interval = 5
         self._pool = pool
-        self._operation_timestamp = datetime(1970, 1, 1, 0, 0)
-        self._minimum_operation_cooldown = timedelta(seconds=60)
-        self._monitoring_interval = 10
+        self._pool_monitor_helper = pool_monitor_helper
+        self._state_manager = auto_scaler_state_manager.ScalerStateManager(self, self._pool_monitor_helper)
         self._running_thread = threading.Thread(
             target=self.auto_scaling, daemon=True)
         self._started = False
+        self._running = True
 
     def set_max_threshold(self, threshold):
         self._max_threshold = threshold
@@ -44,31 +45,39 @@ class AutoScaler:
     def get_shrinking_ratio(self):
         return self._shrinking_ratio
 
+    def get_running_status(self):
+        return self._running
+
+    def get_state(self):
+        if self._state_manager :
+            return self._state_manager._state
+        return None
+
     def start(self):
         if not self._started:
             self._started = True
             self._running_thread.start()
 
     def auto_scaling(self):
-        # averages = [0]
         while True:
-            average = self.calculate_average_work_pool_cpu_usage() / 100
-            # averages.append(average)
-            # # Only track the last two minutes CPU utilization
-            # if len(averages) > 2:
-            #     averages = averages[1:]
-            # if (averages[0] + averages[1]) / 2.0 > self._max_threshold:
-            #     self.try_increase_pool_size()
-            # if (averages[0] + averages[1]) / 2.0 < self._min_threshold:
-            #     self.try_decrease_pool_size()
-            if average > self._max_threshold:
-                self.try_increase_pool_size()
-            if average < self._min_threshold:
-                self.try_decrease_pool_size()
-            time.sleep(self._monitoring_interval)
+            if self._running :
+                self._state_manager.try_scale_pool_and_update_state()
+            time.sleep(self._scaling_interval)
+
+    def resize_pool(self):
+        resize_in_process = False
+        average = self.calculate_average_work_pool_cpu_usage() / 100
+
+        if average > self._max_threshold:
+            resize_in_process = self.try_increase_pool_size()
+        elif average < self._min_threshold:
+            resize_in_process = self.try_decrease_pool_size()
+
+        return resize_in_process
 
     def calculate_average_work_pool_cpu_usage(self):
         current_instance_utilizations = self._pool_monitor_helper.get_current_cpu_utilization_for_registered_instances()
+
         utilization_sum_up = 0
         instance_count = 0
         for instance_id in current_instance_utilizations:
@@ -81,34 +90,41 @@ class AutoScaler:
         return utilization_sum_up / instance_count
 
     def try_increase_pool_size(self):
-        if self.is_cooldown_finished():
-            worker_count = self._pool_monitor_helper.get_number_of_running_workers_in_pool()
-            upsized_count = math.ceil(worker_count * self._growing_ratio)
+        worker_count = self._pool_monitor_helper.get_number_of_running_workers_in_pool()
+        if(worker_count >= self._pool.get_max_worker_count()):
+            return False
 
-            self._pool.increase_pool_by_size(upsized_count - worker_count)
-            self.update_timestamp()
+        upsized_count = math.ceil(worker_count * self._growing_ratio)
+        self._pool.increase_pool_by_size(upsized_count - worker_count)
+        self._next_pool_size = upsized_count
+        return True
 
     def try_decrease_pool_size(self):
-        if self.is_cooldown_finished():
-            worker_count = self._pool_monitor_helper.get_number_of_running_workers_in_pool()
-            min_required_worker = self._pool.get_min_worker_count()
-            if worker_count <= min_required_worker:
-                return
+        worker_count = self._pool_monitor_helper.get_number_of_running_workers_in_pool()
+        min_required_worker = self._pool.get_min_worker_count()
+        if worker_count <= min_required_worker:
+            return False
 
-            downsized_count = math.floor(worker_count * self._shrinking_ratio)
-            if(downsized_count < min_required_worker):
-                downsized_count = min_required_worker
+        downsized_count = math.floor(worker_count * self._shrinking_ratio)
+        if(downsized_count < min_required_worker):
+            downsized_count = min_required_worker
 
-            self._pool.decrease_pool_by_size(worker_count - downsized_count)
-            self.update_timestamp()
+        self._pool.decrease_pool_by_size(worker_count - downsized_count)
+        self._next_pool_size = downsized_count
+        return True
 
-    def is_cooldown_finished(self):
-        return (self._operation_timestamp + self._minimum_operation_cooldown) < datetime.now()
+    def desired_worker_num_reached(self):
+        return self._pool_monitor_helper.get_number_of_running_workers_in_pool() == self._next_pool_size
 
-    def update_timestamp(self):
-        self._operation_timestamp = datetime.now()
-
-
+    def toggle_scaler(self):
+        
+        if(self._running):
+            self._state_manager = None
+            self._running = not self._running
+        else:
+            self._state_manager = auto_scaler_state_manager.ScalerStateManager(self, self._pool_monitor_helper)
+            self._running = not self._running
+            
 helper = pool_monitor_helper.get_monitor_helper()
 pool = ec2_pool.get_worker_pool()
 auto_scaler = AutoScaler(helper, pool)

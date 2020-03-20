@@ -8,9 +8,10 @@ class EC2Pool:
         self._load_balancer_dns_name = self.get_default_load_balancer()['DNSName']
         self._target_group_arn = self.init_default_target_group()
         self._min_work_count = manager_config.get_min_worker_num()
+        self._max_work_count = 10
         self._valid_status_for_deregistration = {'healthy', 'unhealthy'}
         self._hosting_ec2_id = manager_config.get_hosting_ec2_id()
-
+        
     def get_default_load_balancer(self):
         load_balancers = self._api.get_load_balancers()
         return load_balancers['LoadBalancers'][self._default_load_balancer_index]
@@ -24,6 +25,9 @@ class EC2Pool:
 
     def get_min_worker_count(self):
         return self._min_work_count
+
+    def get_max_worker_count(self):
+        return self._max_work_count
     
     def get_registered_instances_health_status(self):
         targets_status = self._api.get_health_status_on_group_targets(self._target_group_arn)

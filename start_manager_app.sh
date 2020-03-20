@@ -17,6 +17,9 @@ pip install mysql-connector-python
 pip install awscli
 pip install boto3
 pip install gunicorn
+pip install requests
+# For python 3.5, this package is available on python 3.6 by default
+pip install python2-secrets
 
 echo "> Starting the manager app on Port = 5000 ..."
 venv/bin/gunicorn --bind 0.0.0.0:5000 --workers=1 run_manager_app:webapp

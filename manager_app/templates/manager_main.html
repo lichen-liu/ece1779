@@ -157,6 +157,18 @@
     }
     </script>
 
+    {% set dns_name, dns_is_online = dns_status %}
+    {% if dns_is_online %}
+        {% set dns_online_color = "green" %}
+    {% else %}
+        {% set dns_online_color = "red" %}
+    {% endif %}
+
+    <div class='header_user_app_dns'>
+            <a  href={{'http://' + dns_name}} target="_blank">
+                {{dns_name}}
+            </a>
+            </div>
 
     <div class='website_header'>
 
@@ -165,17 +177,22 @@
             This page will be refreshed automatically after <span id='refresh_countdown'></span> seconds.
             <input type="checkbox" id="countdown_refresh_enable" checked>
             <label for="countdown_refresh_enable"> Allow Refresh</label>
+            <form class='logout_form' action="/" method="GET">
+                <button class='load_balancer_control_button logout' type="submit" name="logout" value="True" onclick="return confirm('Are you sure to logout?')">Logout</button>
+            </form>
         </div>
-        <div class='header_dns_title'>
-            Load Balancer Url:
-        </div>
-        <a class='header_user_app_dns' href={{'http://' + dns_name}} target="_blank">{{dns_name}}</a>
 
+        <div class='header_dns_title'>
+            Load Balancer Url: 
+        </div>
+        <div class='header_online_status'>
+        <font  color={{dns_online_color}}>  {{"ONLINE" if dns_is_online else "OFFLINE"}}</font>
+        </div>
+    
         <script>
             document.getElementById('refresh_countdown').innerHTML = countDown;
             countdown();
         </script>
-
 
     </div>
 
@@ -280,10 +297,44 @@
         </div>
     </div>
 
+    <script>
+        var auto_scaler_state = {{ scaler_default_settings["state"] | tojson | safe}};
+        function paintStatus(){
+            switch (auto_scaler_state) {
+                case 'none':
+                break;
+                default:
+                    element = document.getElementById(auto_scaler_state)
+                    element.style.backgroundColor = "#32CD32";
+                break;
+            }
+        }
+    </script>
+
     <div class='auto_scaler_control_panel'>
         <div class='control_panel_pool_monitor_chart_title'>
             <div style="color:white">Auto Scaler Controller</div>
         </div>
+        <div class="auto_scaler_internal_status">
+            <div class='auto_scaler_status'>
+                <span id='ready' class="dot"></span>
+                <font class="dot_text" color='white' onload="paintStatus()">Ready</font>
+            </div>
+            <div class='auto_scaler_status'>
+                    <span id='resizing' class="dot"></span>
+                    <font class="dot_text" color='white'>Resizing</font>
+            </div>
+            <div class='auto_scaler_status'>
+                    <span id='cooldown' class="dot"></span>
+                    <font class="dot_text" color='white'>Cooldown</font>
+            </div>
+            <form action='/api/toggle_auto_scaler' class='load_balancer_control_form' method="POST" width="200">
+                <input class='load_balancer_control_button disableScaler' type="submit" value="{{scaler_default_settings["running"]}} Auto-scaler">
+            </form>
+    </div>
+    <script>
+            paintStatus();
+        </script>
         <form action='api/change_auto_scaler_strategy' class="auto_scaler_control_panel_form" method="POST">
             <font color='white'>
                 <span title='The auto scaler will scale up if average CPU Utialization is greater than this value'>
@@ -356,17 +407,56 @@
         height: 4%;
         width: 98%;
         background-color: #44444479;
+        z-index: -100;
     }
 
     .header_user_app_dns {
-        position: relative;
-        height: 90%;
-        width: 40%;
-        top: 13%;
+        height: 20%;
         border-width: 1px;
         border-style: solid;
         font-size: x-small;
         color: white;
+        float: right;
+        overflow: hidden;
+        border-color: white;
+        margin-right: 7.9%;
+        z-index: 100;
+        margin-top: 0.5%;
+    }
+
+    .header_online_status {
+        position: relative;
+        height: 90%;
+        width: 10%;
+        margin-left: 60%;
+        top: 20%;
+    }
+
+    .logout_form {
+            position: relative;
+            height: 150%;
+            width: 10%;
+            top: 5%;
+            font-size: x-small;
+            float:right;
+            margin-right:25%;
+    }
+
+    .load_balancer_control_button.logout {
+        background: transparent;
+        background-color: #444444;
+        font-size: 6px;
+        width: 90%;
+        height: 50%;
+        color: white !important;
+        text-transform: uppercase;
+        text-decoration: none;
+        padding: 3px;
+        border: 1px solid white !important;
+        display: inline-block;
+        transition: all 0.4s ease 0s;
+        border-radius: 50px;
+        box-shadow: 1px 2px 1px 0px #cccccc;
     }
 
     .header_dns_title {
@@ -382,7 +472,6 @@
     .header_user_app_dns_link {
         position: relative;
         color: white;
-
     }
 
 
@@ -404,7 +493,7 @@
         top: 5.5%;
         margin-left: 1%;
         padding: 10px 4px 4px 4px;
-        overflow: scroll;
+        overflow: auto;
         height: 92%;
         width: 48%;
 
@@ -497,6 +586,34 @@
         width: 48%;
     }
 
+    .auto_scaler_internal_status {
+        position: relative;
+        top: 8%;
+        float: left;
+        padding: 3px 3px 3px 3px;
+        height: 96%;
+        width: 40%;
+    }
+
+    .auto_scaler_status {
+        margin-top: 8%;
+    }
+
+    .dot {
+        margin: auto;
+        margin-left: 8%;
+        height: 10px;
+        width: 150px;
+        background-color: #cccccc;
+        border-radius: 50%;
+        display: inline-block;
+        z-index: 100;
+    }
+
+    .dot_text {
+        margin: auto;
+    }
+
     .range_input {
         width: 82%;
         color: white;
@@ -561,6 +678,13 @@
         background: transparent;
     }
 
+    .load_balancer_control_button.disableScaler {
+        background-color: #d06060;
+        margin-top: 8.1%;
+        margin-left: 5%;
+        height: 110%;
+        background: transparent;
+    }
 
     .load_balancer_control_button.blue {
         background-color: #40809a;

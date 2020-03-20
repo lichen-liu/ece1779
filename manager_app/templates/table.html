@@ -6,8 +6,58 @@
 </head>
 
 <body>
-    <h1>{{title}}</h2>
-    </h1>
+    <div>
+        This page will be refreshed automatically after <span id='refresh_countdown'></span> seconds. 
+        <input type="checkbox" id="countdown_refresh_enable" checked>
+        <label for="countdown_refresh_enable"> Allow Refresh</label>
+    </div>
+
+    <script type="text/javascript">
+        const refresh_time = 60;
+        var countDown = refresh_time;
+    
+        function countdown() {
+            setInterval(function () {
+                if(countDown == 0) {
+                    if(isCountdownRefreshEnabled()) {
+                        window.location.reload(1);
+                        countDown = refresh_time
+                    }
+                    return;
+                }
+                countDown--;
+                document.getElementById('refresh_countdown').innerHTML = countDown;
+                return countDown;
+            }, 1000);
+        }
+    
+        function isCountdownRefreshEnabled() {
+            return document.getElementById('countdown_refresh_enable').checked;
+        }
+    
+        function enableCountdownRefresh() {
+            document.getElementById('countdown_refresh_enable').checked = true;
+        }
+    
+        function disableCountdownRefresh() {
+            document.getElementById('countdown_refresh_enable').checked = false;
+        }
+    
+    
+        document.getElementById('refresh_countdown').innerHTML = countDown;
+        countdown();
+    </script>
+
+
+    <br>
+    <form action="/" method="POST">
+        <input type="submit" value="Home" onclick="disableCountdownRefresh();">
+    </form>
+
+
+    <br>
+    <br>
+    <h1>{{title}}</h1>
     
 
     <script type="text/javascript">
@@ -78,6 +128,7 @@
         }
     </script>
 
+    <p>{{description if description}}</p>
     <table class="main_table" id="core_table">
         <tr>
             {% for title_col_idx in range(title_row|length) %}
@@ -107,62 +158,7 @@
             </tr>
         {% endfor %}
     </table>
-    <p>{{description if description}}</p>
 
-
-    <br>
-    <br>
-    <br>
-    <br>
-    <div>
-        This page will be refreshed automatically after <span id='refresh_countdown'></span> seconds. 
-        <input type="checkbox" id="countdown_refresh_enable" checked>
-        <label for="countdown_refresh_enable"> Allow Refresh</label>
-    </div>
-
-
-    <script type="text/javascript">
-        const refresh_time = 60;
-        var countDown = refresh_time;
-    
-        function countdown() {
-            setInterval(function () {
-                if(countDown == 0) {
-                    if(isCountdownRefreshEnabled()) {
-                        window.location.reload(1);
-                        countDown = refresh_time
-                    }
-                    return;
-                }
-                countDown--;
-                document.getElementById('refresh_countdown').innerHTML = countDown;
-                return countDown;
-            }, 1000);
-        }
-    
-        function isCountdownRefreshEnabled() {
-            return document.getElementById('countdown_refresh_enable').checked;
-        }
-    
-        function enableCountdownRefresh() {
-            document.getElementById('countdown_refresh_enable').checked = true;
-        }
-    
-        function disableCountdownRefresh() {
-            document.getElementById('countdown_refresh_enable').checked = false;
-        }
-    
-    
-        document.getElementById('refresh_countdown').innerHTML = countDown;
-        countdown();
-    </script>
-
-
-    <br>
-    <br>
-    <form action="/" method="POST">
-        <input type="submit" value="Home" onclick="disableCountdownRefresh();">
-    </form>
 </body>
 
 <style>

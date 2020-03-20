@@ -1,9 +1,9 @@
 from flask import render_template, redirect, request
-from manager_app import webapp, ec2_pool, pool_monitor_helper, worker_count_monitor, auto_scaler, manager_shutdown_helper
+from manager_app import webapp, ec2_pool, pool_monitor_helper, worker_count_monitor, auto_scaler, manager_shutdown_helper, auto_scaler_state_manager
 from datetime import datetime
-import helper
-from common_lib import database, s3, utility
+from common_lib import database, s3, utility, combined_aws
 import urllib
+import requests
 
 @webapp.route('/', methods=['GET','POST'])
 def main_handler():
@@ -19,7 +19,7 @@ def render_manager_main_page():
     'initial' : '#CCCC00', 'unused' : '#CCCCCC'},
     instances_status_counts = prepare_instance_status_count_info(status_by_id),
     scaler_default_settings = prepare_autoscaler_default_values(),
-    dns_name = prepare_dns_name(),
+    dns_status = prepare_dns_status(),
     rds_s3_stats = prepare_rds_s3_stats()
     )
 
@@ -52,18 +52,24 @@ def get_worker_count_graph_handler():
 
 @webapp.route('/api/delete_all_user_storage', methods=['POST'])
 def delete_all_user_storage():
-    helper.reset_data()
+    combined_aws.delete_all_photos_from_s3_and_database()
     return redirect('/')
 
 @webapp.route('/api/delete_everything', methods=['POST'])
 def delete_everything():
-    helper.reset_all()
+    combined_aws.delete_everything_from_s3_and_database()
     return redirect('/')
 
 @webapp.route('/api/stop_all', methods=['POST'])
 def stop_all_handler():
     shutdown_helper  = manager_shutdown_helper.get_manager_shutdown_helper()
     shutdown_helper.shutdown_manager()
+    return redirect('/')
+
+@webapp.route('/api/toggle_auto_scaler', methods=['POST'])
+def toggle_auto_scaler_handler():
+    auto_s = auto_scaler.get_auto_scaler()
+    auto_s.toggle_scaler()
     return redirect('/')
 
 
@@ -114,11 +120,40 @@ def prepare_autoscaler_default_values():
     scaler_default_settings['min_threshold'] = auto_s.get_min_threshold()
     scaler_default_settings['growing_ratio'] = auto_s.get_growing_ratio()
     scaler_default_settings['shrinking_ratio'] = auto_s.get_shrinking_ratio()
+    status = auto_s.get_running_status()
+    if(status):
+        scaler_default_settings['running'] = "Disable"
+    else:
+        scaler_default_settings['running'] = "Enable"
+
+    state = auto_s.get_state()
+    if state == auto_scaler_state_manager.ScalerState.READYTORESIZE :
+        scaler_default_settings['state'] = 'ready'
+    elif state == auto_scaler_state_manager.ScalerState.RESIZING :
+        scaler_default_settings['state'] = 'resizing'
+    elif state == auto_scaler_state_manager.ScalerState.RESIZINGCOOLDOWN :
+        scaler_default_settings['state'] = 'cooldown'
+    else:
+        scaler_default_settings['state'] = 'none'
     return scaler_default_settings
 
-def prepare_dns_name():
+def prepare_dns_status():
+    '''
+    (dns_name, dns_is_online)
+    '''
     pool = ec2_pool.get_worker_pool()
-    return pool.get_load_balancer_dns_name()
+    dns_name = pool.get_load_balancer_dns_name()
+
+    dns_is_online = False
+    try:
+        r = requests.head('http://' + dns_name, timeout=5)
+        if r.status_code == 200:
+            dns_is_online = True
+    except Exception:
+        pass
+
+    return (dns_name, dns_is_online)
+
 
 def prepare_rds_s3_stats():
     ece1779_account_num_rows = len(database.get_account_table())

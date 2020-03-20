@@ -2,8 +2,15 @@
 http://www.cs.toronto.edu/~delara/courses/ece1779/
 
 
-## 0.0 User App AWS LB URL
+## 0.0 URLS
+
+
+## 0.1 User App AWS LB URL
 http://ece1779-user-app-load-balancer-679239310.us-east-1.elb.amazonaws.com/
+
+
+## 0.2 Manager App AWS ELASTIC URL
+http://52.21.3.87:5000/
 
 
 ## 1.0 User App
@@ -21,8 +28,9 @@ pip install opencv-python
 pip install cvlib
 pip install tensorflow
 pip install boto3
+pip install requests
 
-python run_user_app_local.py
+python run_user_app.py
 ```
 
 Then set ~/.aws/credentials following this format:
@@ -53,13 +61,6 @@ tmux ls
 ```
 
 
-### 1.3 Helper Script
-Use this script to check and manage S3 and RDS content.
-```
-python helper.py
-```
-
-
 ## 2.0 Manager App
 
 
@@ -70,8 +71,10 @@ python -m venv venv
 venv\Scripts\activate
 source venv/bin/activate
 pip install Flask
+pip install mysql-connector-python
 pip install awscli
 pip install boto3
+pip install requests
 ```
 
 Then set ~/.aws/credentials following this format:

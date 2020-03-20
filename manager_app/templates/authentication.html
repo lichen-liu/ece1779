@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Authentication</title>
+</head>
+
+<body>
+    <h1>{{title}}</h1>
+    
+
+    <form action={{form_action}} method="POST">
+        <label for="textfield_name"></label>{{textfield_label}}<br>
+        <input type="text" name="textfield_name" value={{textfield_value if textfield_value}}><br><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <br>
+    <p>{{description if description}}</p>
+
+</html>
