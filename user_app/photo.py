@@ -1,5 +1,5 @@
 import os
-
+import sys
 from flask import redirect, render_template, request, current_app, abort, jsonify
 from user_app import webapp, account, main, image_processing
 from common_lib import utility, database, s3, combined_aws
@@ -13,7 +13,7 @@ def photo_upload_handler():
     if username is not None or password is not None:
         is_from_api = True
     print('is_from_api=' + str(is_from_api), flush=True)
-
+    sys.stdout.flush()
     error_message = validate_user_and_input_format(request)
     if error_message is not None:
         if is_from_api:
