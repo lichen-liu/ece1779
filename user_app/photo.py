@@ -12,7 +12,7 @@ def photo_upload_handler():
     password = request.form.get('password')
     if username is not None or password is not None:
         is_from_api = True
-    print('is_from_api=' + str(is_from_api))
+    print('is_from_api=' + str(is_from_api), flush=True)
 
     error_message = validate_user_and_input_format(request)
     if error_message is not None:
